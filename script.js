@@ -5,7 +5,8 @@ document.addEventListener('DOMContentLoaded', function() {
         'escala-panel': document.getElementById('escala-panel'),
         'multi-panel': document.getElementById('multi-panel'),
         'calendario-panel': document.getElementById('calendario-panel'),
-        'word-counter-panel': document.getElementById('word-counter-panel')
+        'word-counter-panel': document.getElementById('word-counter-panel'),
+        'rubricas-panel': document.getElementById('rubricas-panel')
     };
 
     // Obtener todos los botones del menú
@@ -14,7 +15,8 @@ document.addEventListener('DOMContentLoaded', function() {
         'menu-escala': document.getElementById('menu-escala'),
         'menu-multi': document.getElementById('menu-multi'),
         'menu-calendario': document.getElementById('menu-calendario'),
-        'menu-word-counter': document.getElementById('menu-word-counter')
+        'menu-word-counter': document.getElementById('menu-word-counter'),
+        'menu-rubricas': document.getElementById('menu-rubricas')
     };
 
     // Mapeo de botones a paneles
@@ -23,7 +25,8 @@ document.addEventListener('DOMContentLoaded', function() {
         'menu-escala': 'escala-panel',
         'menu-multi': 'multi-panel',
         'menu-calendario': 'calendario-panel',
-        'menu-word-counter': 'word-counter-panel'
+        'menu-word-counter': 'word-counter-panel',
+        'menu-rubricas': 'rubricas-panel'
     };
 
     // Función para ocultar todos los paneles

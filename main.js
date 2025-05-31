@@ -357,7 +357,7 @@ function initializePanels() {
     elements.menuCalculadora.classList.add('active');
     elements.menuEscala.classList.remove('active');
     elements.menuMulti.classList.remove('active');
-  }
+}
 
   // Agregar event listeners para el manejo de inputs en la calculadora múltiple
   if (!elements.sectionsContainer.dataset.hasInputListener) {
@@ -408,7 +408,7 @@ document.addEventListener('DOMContentLoaded', function() {
     menuEscala: document.getElementById('menu-escala'),
     sectionsContainer: document.getElementById('sections-container')
   };
-
+  
   // Verificar que los elementos necesarios existan
   if (!Object.values(elements).every(el => el)) {
     console.warn('No se encontraron todos los elementos necesarios');
@@ -418,26 +418,26 @@ document.addEventListener('DOMContentLoaded', function() {
   // Configurar event listeners para los menús
   if (elements.menuCalculadora) {
     elements.menuCalculadora.addEventListener('click', function(e) {
-      e.preventDefault();
-      hideAllPanels();
-      updateActiveMenuItem('menu-calculadora');
+    e.preventDefault();
+    hideAllPanels();
+    updateActiveMenuItem('menu-calculadora');
       elements.calcPanel.style.display = 'block';
-    });
+  });
   }
 
   if (elements.menuEscala) {
     elements.menuEscala.addEventListener('click', function(e) {
-      e.preventDefault();
-      hideAllPanels();
-      updateActiveMenuItem('menu-escala');
+    e.preventDefault();
+    hideAllPanels();
+    updateActiveMenuItem('menu-escala');
       elements.escalaPanel.style.display = 'block';
-      generarTablaEscala();
-    });
+    generarTablaEscala();
+  });
   }
 
   if (elements.menuMulti) {
     elements.menuMulti.addEventListener('click', function(e) {
-      e.preventDefault();
+    e.preventDefault();
       window.location.hash = 'multi';
       elements.calcPanel.style.display = "none";
       elements.escalaPanel.style.display = "none";
@@ -1541,7 +1541,7 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('calc-panel').style.display = "none";
       document.getElementById('escala-panel').style.display = "none";
       document.getElementById('multi-panel').style.display = "block";
-      this.classList.add('active');
+    this.classList.add('active');
       document.getElementById('menu-calculadora').classList.remove('active');
       document.getElementById('menu-escala').classList.remove('active');
       
@@ -1551,7 +1551,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   }
-
+  
   // Agregar el event listener para el manejo de inputs en la calculadora múltiple
   if (sectionsContainer) {
     sectionsContainer.addEventListener('input', function(e) {
@@ -1572,7 +1572,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const nextInput = nextRow.querySelector('.grade');
             if (nextInput) {
               nextInput.focus();
-            }
+      }
           }
         }
       }
@@ -1583,10 +1583,10 @@ document.addEventListener('DOMContentLoaded', function() {
         else if (v < 1) v = 1;
         else if (v > 100) v = 100;
         target.value = v ? v : '';
-      }
+    }
     });
   }
-  
+
   // Actualizar event listeners
   window.addEventListener('hashchange', initializePanels);
   initializePanels();

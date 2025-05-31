@@ -429,19 +429,31 @@ function generarTablaEscala() {
     }
   }
 
-  // Obtener y validar valores
-  let puntajeMax = Math.max(1, parseFloat(elementos.puntajeMax.value) || 100);
-  let exigencia = Math.min(100, Math.max(1, parseFloat(elementos.exigencia.value) || 60));
-  let notaMin = Math.max(1, Math.min(7, parseFloat(elementos.notaMin.value) || 1.0));
-  let notaMax = Math.max(notaMin + 0.1, Math.min(7, parseFloat(elementos.notaMax.value) || 7.0));
-  let notaAprob = Math.max(notaMin, Math.min(notaMax, parseFloat(elementos.notaAprob.value) || 4.0));
+  // Obtener valores
+  let puntajeMax = elementos.puntajeMax.value ? parseFloat(elementos.puntajeMax.value) : null;
+  let exigencia = elementos.exigencia.value ? parseFloat(elementos.exigencia.value) : null;
+  let notaMin = elementos.notaMin.value ? parseFloat(elementos.notaMin.value) : null;
+  let notaMax = elementos.notaMax.value ? parseFloat(elementos.notaMax.value) : null;
+  let notaAprob = elementos.notaAprob.value ? parseFloat(elementos.notaAprob.value) : null;
 
-  // Actualizar los valores en los inputs
-  elementos.puntajeMax.value = puntajeMax;
-  elementos.exigencia.value = exigencia;
-  elementos.notaMin.value = notaMin.toFixed(1);
-  elementos.notaMax.value = notaMax.toFixed(1);
-  elementos.notaAprob.value = notaAprob.toFixed(1);
+  // Si algún campo necesario está vacío, limpiar la tabla y retornar
+  if (puntajeMax === null || exigencia === null || notaMin === null || notaMax === null || notaAprob === null) {
+    elementos.tablaEscala.innerHTML = '';
+    return;
+  }
+
+  // Validar y ajustar valores
+  puntajeMax = Math.max(1, puntajeMax);
+  exigencia = Math.min(100, Math.max(1, exigencia));
+  
+  // Ajustar notas si son de doble dígito
+  if (notaMin >= 10) notaMin = notaMin / 10;
+  if (notaMax >= 10) notaMax = notaMax / 10;
+  if (notaAprob >= 10) notaAprob = notaAprob / 10;
+  
+  notaMin = Math.max(1, Math.min(7, notaMin));
+  notaMax = Math.max(notaMin + 0.1, Math.min(7, notaMax));
+  notaAprob = Math.max(notaMin, Math.min(notaMax, notaAprob));
 
   // Calcular puntaje de aprobación según la fórmula
   const puntajeAprob = puntajeMax * (exigencia / 100);
@@ -525,13 +537,55 @@ document.addEventListener('DOMContentLoaded', function() {
     if (input) {
       input.addEventListener('input', generarTablaEscala);
       input.addEventListener('blur', function() {
-        if (this.value === '') {
+        // Para puntajeMax y exigencia, aplicar valores por defecto al perder el foco
+        if (id === 'puntajeMax' || id === 'exigencia') {
+          if (this.value === '') {
+            // Aplicar valores por defecto solo al perder el foco
+            if (id === 'puntajeMax') {
+              this.value = '100';
+            } else { // exigencia
+              this.value = '60';
+            }
+          } else {
+            // Si hay un valor, validarlo
+            let valor = parseFloat(this.value);
+            if (!isNaN(valor)) {
+              if (id === 'puntajeMax') {
+                this.value = Math.max(1, valor);
+              } else { // exigencia
+                this.value = Math.min(100, Math.max(1, valor));
+              }
+            }
+          }
+          generarTablaEscala();
+          return;
+        }
+
+        // Para el resto de los campos, mantener la validación existente
+        if (this.value !== '') {
+          let valor = parseFloat(this.value);
           switch(id) {
-            case 'puntajeMax': this.value = '100'; break;
-            case 'exigencia': this.value = '60'; break;
-            case 'notaMin': this.value = '1.0'; break;
-            case 'notaMax': this.value = '7.0'; break;
-            case 'notaAprob': this.value = '4.0'; break;
+            case 'notaMin': 
+              if (!isNaN(valor)) {
+                if (valor >= 10) valor = valor / 10;
+                this.value = Math.max(1, Math.min(7, valor)).toFixed(1);
+              }
+              break;
+            case 'notaMax': 
+              if (!isNaN(valor)) {
+                if (valor >= 10) valor = valor / 10;
+                const notaMin = parseFloat(document.getElementById('notaMin').value) || 1.0;
+                this.value = Math.max(notaMin + 0.1, Math.min(7, valor)).toFixed(1);
+              }
+              break;
+            case 'notaAprob': 
+              if (!isNaN(valor)) {
+                if (valor >= 10) valor = valor / 10;
+                const notaMin = parseFloat(document.getElementById('notaMin').value) || 1.0;
+                const notaMax = parseFloat(document.getElementById('notaMax').value) || 7.0;
+                this.value = Math.max(notaMin, Math.min(notaMax, valor)).toFixed(1);
+              }
+              break;
           }
           generarTablaEscala();
         }
@@ -782,11 +836,28 @@ document.addEventListener('DOMContentLoaded', function() {
     const config = obtenerConfiguracionModo();
     
     // Obtener valores actuales de los inputs (si están modificados por el usuario)
-    const puntajeMax = parseFloat(document.getElementById('puntajeMax').value) || config.puntajeMax;
-    const notaMin = parseFloat(document.getElementById('notaMin').value) || config.notaMin;
-    const notaMax = parseFloat(document.getElementById('notaMax').value) || config.notaMax;
-    const notaAprob = parseFloat(document.getElementById('notaAprob').value) || config.notaAprob;
-    const exigencia = (parseFloat(document.getElementById('exigencia').value) || config.exigencia) / 100;
+    const puntajeMax = document.getElementById('puntajeMax').value ? parseFloat(document.getElementById('puntajeMax').value) : 100;
+    const exigencia = (document.getElementById('exigencia').value ? parseFloat(document.getElementById('exigencia').value) : 60) / 100;
+    
+    // Para las notas, verificar si hay valores y si son de doble dígito
+    let notaMin = document.getElementById('notaMin').value ? parseFloat(document.getElementById('notaMin').value) : null;
+    let notaMax = document.getElementById('notaMax').value ? parseFloat(document.getElementById('notaMax').value) : null;
+    let notaAprob = document.getElementById('notaAprob').value ? parseFloat(document.getElementById('notaAprob').value) : null;
+
+    // Si alguna nota está vacía, usar valores por defecto
+    if (notaMin === null || notaMax === null || notaAprob === null) {
+      return 'Completa las notas';
+    }
+
+    // Ajustar notas si son de doble dígito
+    if (notaMin >= 10) notaMin = notaMin / 10;
+    if (notaMax >= 10) notaMax = notaMax / 10;
+    if (notaAprob >= 10) notaAprob = notaAprob / 10;
+
+    // Validar rangos de notas
+    notaMin = Math.max(1, Math.min(7, notaMin));
+    notaMax = Math.max(notaMin + 0.1, Math.min(7, notaMax));
+    notaAprob = Math.max(notaMin, Math.min(notaMax, notaAprob));
     
     if (isNaN(puntaje) || puntaje > puntajeMax || puntaje < 0) {
       return 'Inválido';
@@ -796,7 +867,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let nota;
     
     if (puntaje >= puntajeAprobacion) {
-      nota = notaAprob + ((puntaje - puntajeAprob) * (notaMax - notaAprob)) / (puntajeMax - puntajeAprobacion);
+      nota = notaAprob + ((puntaje - puntajeAprobacion) * (notaMax - notaAprob)) / (puntajeMax - puntajeAprobacion);
     } else {
       nota = notaMin + (puntaje * (notaAprob - notaMin)) / puntajeAprobacion;
     }
@@ -806,9 +877,10 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function actualizarNota() {
-    const puntaje = parseFloat(puntajeInput.value);
+    const puntaje = parseFloat(document.getElementById('puntaje-input').value);
+    const notaResult = document.getElementById('nota-result');
     
-    if (puntajeInput.value === '' || isNaN(puntaje)) {
+    if (document.getElementById('puntaje-input').value === '') {
       notaResult.textContent = '-.-';
       notaResult.style.color = 'var(--text-light)';
       return;
@@ -817,10 +889,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const nota = convertirPuntajeANota(puntaje);
     notaResult.textContent = nota;
     
-    const config = obtenerConfiguracionModo();
-    const notaAprob = parseFloat(document.getElementById('notaAprob').value) || config.notaAprob;
+    if (nota === 'Completa las notas' || nota === 'Inválido') {
+      notaResult.style.color = 'var(--del-btn-bgg)';
+      return;
+    }
     
-    if (nota !== 'Inválido' && parseFloat(nota) >= notaAprob) {
+    const notaAprob = document.getElementById('notaAprob').value ? 
+      parseFloat(document.getElementById('notaAprob').value) : 4.0;
+    
+    if (parseFloat(nota) >= (notaAprob >= 10 ? notaAprob / 10 : notaAprob)) {
       notaResult.style.color = 'var(--text-light)';
     } else {
       notaResult.style.color = 'var(--del-btn-bgg)';

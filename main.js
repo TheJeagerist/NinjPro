@@ -2847,3 +2847,38 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
+// Manejo del menú móvil
+document.addEventListener('DOMContentLoaded', function() {
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+  const sideMenu = document.getElementById('side-menu');
+  const overlay = document.getElementById('mobile-menu-overlay');
+  
+  // Función para cerrar el menú
+  function closeMobileMenu() {
+    sideMenu.classList.remove('show');
+    overlay.classList.remove('show');
+  }
+
+  // Toggle del menú al hacer clic en el botón
+  mobileMenuBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    sideMenu.classList.toggle('show');
+    overlay.classList.toggle('show');
+  });
+
+  // Cerrar el menú al hacer clic en un enlace
+  sideMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', closeMobileMenu);
+  });
+
+  // Cerrar el menú al hacer clic en el overlay
+  overlay.addEventListener('click', closeMobileMenu);
+
+  // Cerrar el menú al hacer clic fuera de él
+  document.addEventListener('click', function(e) {
+    if (!sideMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+      closeMobileMenu();
+    }
+  });
+});
+

@@ -246,6 +246,18 @@ container.addEventListener('input', function(e) {
     else if (v < 1) v = 1;
     else if (v > 99) v = 99;
     target.value = v ? v : '';
+
+    // Si el valor tiene 2 dígitos, mover al siguiente input
+    if (target.value.length === 2) {
+      const currentRow = target.closest('.row');
+      const nextRow = currentRow.nextElementSibling;
+      if (nextRow) {
+        const nextInput = nextRow.querySelector('.grade');
+        if (nextInput) {
+          nextInput.focus();
+        }
+      }
+    }
   }
   // Ponderaciones
   if (target.classList.contains('weight')) {
@@ -302,68 +314,143 @@ function initializeElements() {
 
 // Inicializar el panel activo según la URL o mostrar calculadora por defecto
 function initializePanels() {
-  // Inicializar eventos del menú
-  document.getElementById('menu-calculadora').addEventListener('click', function(e) {
-    e.preventDefault();
-    hideAllPanels();
-    updateActiveMenuItem('menu-calculadora');
-    document.getElementById('calc-panel').style.display = 'block';
-  });
+  const elements = {
+    calcPanel: document.getElementById('calc-panel'),
+    escalaPanel: document.getElementById('escala-panel'),
+    multiPanel: document.getElementById('multi-panel'),
+    menuCalculadora: document.getElementById('menu-calculadora'),
+    menuEscala: document.getElementById('menu-escala'),
+    menuMulti: document.getElementById('menu-multi'),
+    sectionsContainer: document.getElementById('sections-container')
+  };
 
-  document.getElementById('menu-escala').addEventListener('click', function(e) {
-    e.preventDefault();
-    hideAllPanels();
-    updateActiveMenuItem('menu-escala');
-    document.getElementById('escala-panel').style.display = 'block';
-  });
-
-  document.getElementById('menu-multi').addEventListener('click', function(e) {
-    e.preventDefault();
-    hideAllPanels();
-    updateActiveMenuItem('menu-multi');
-    document.getElementById('multi-panel').style.display = 'block';
-  });
-
-  document.getElementById('menu-calendario').addEventListener('click', function(e) {
-    e.preventDefault();
-    hideAllPanels();
-    updateActiveMenuItem('menu-calendario');
-    document.getElementById('calendario-panel').style.display = 'block';
-    renderCalendario();
-  });
-
-  document.getElementById('menu-inventario').addEventListener('click', function(e) {
-    e.preventDefault();
-    hideAllPanels();
-    updateActiveMenuItem('menu-inventario');
-    document.getElementById('inventario-panel').style.display = 'block';
-  });
-
-  // Mostrar el panel de calculadora por defecto y activar su botón
-  document.getElementById('calc-panel').style.display = 'block';
-  updateActiveMenuItem('menu-calculadora');
-
-  if (!initializeElements()) return;
+  // Verificar que todos los elementos necesarios existan
+  if (!Object.values(elements).every(el => el)) {
+    console.warn('No se encontraron todos los elementos necesarios');
+    return;
+  }
 
   const hash = window.location.hash;
+
   if (hash === '#escala') {
-    calcPanel.style.display = "none";
-    escalaPanel.style.display = "block";
-    menuEscala.classList.add('active');
-    menuCalculadora.classList.remove('active');
+    elements.calcPanel.style.display = "none";
+    elements.escalaPanel.style.display = "block";
+    elements.multiPanel.style.display = "none";
+    elements.menuEscala.classList.add('active');
+    elements.menuCalculadora.classList.remove('active');
+    elements.menuMulti.classList.remove('active');
     generarTablaEscala();
+  } else if (hash === '#multi') {
+    elements.calcPanel.style.display = "none";
+    elements.escalaPanel.style.display = "none";
+    elements.multiPanel.style.display = "block";
+    elements.menuMulti.classList.add('active');
+    elements.menuCalculadora.classList.remove('active');
+    elements.menuEscala.classList.remove('active');
+    if (elements.sectionsContainer.children.length === 0) {
+      addSection();
+    }
   } else {
-    calcPanel.style.display = "block";
-    escalaPanel.style.display = "none";
-    menuCalculadora.classList.add('active');
-    menuEscala.classList.remove('active');
+    elements.calcPanel.style.display = "block";
+    elements.escalaPanel.style.display = "none";
+    elements.multiPanel.style.display = "none";
+    elements.menuCalculadora.classList.add('active');
+    elements.menuEscala.classList.remove('active');
+    elements.menuMulti.classList.remove('active');
+  }
+
+  // Agregar event listeners para el manejo de inputs en la calculadora múltiple
+  if (!elements.sectionsContainer.dataset.hasInputListener) {
+    elements.sectionsContainer.addEventListener('input', function(e) {
+      const target = e.target;
+      if (target.classList.contains('grade')) {
+        target.value = target.value.replace(/\D/g, '');
+        let v = parseInt(target.value, 10);
+        if (isNaN(v)) v = '';
+        else if (v < 1) v = 1;
+        else if (v > 99) v = 99;
+        target.value = v ? v : '';
+
+        // Si el valor tiene 2 dígitos, mover al siguiente input
+        if (target.value.length === 2) {
+          const currentRow = target.closest('.section-row');
+          const nextRow = currentRow.nextElementSibling;
+          if (nextRow) {
+            const nextInput = nextRow.querySelector('.grade');
+            if (nextInput) {
+              nextInput.focus();
+            }
+          }
+        }
+      }
+      if (target.classList.contains('weight')) {
+        target.value = target.value.replace(/\D/g, '');
+        let v = parseInt(target.value, 10);
+        if (isNaN(v)) v = '';
+        else if (v < 1) v = 1;
+        else if (v > 100) v = 100;
+        target.value = v ? v : '';
+      }
+    });
+    elements.sectionsContainer.dataset.hasInputListener = 'true';
   }
 }
 
-// Esperar a que el DOM esté completamente cargado
+// Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
   // Inicializar elementos
-  if (!initializeElements()) return;
+  const elements = {
+    menuMulti: document.getElementById('menu-multi'),
+    calcPanel: document.getElementById('calc-panel'),
+    escalaPanel: document.getElementById('escala-panel'),
+    multiPanel: document.getElementById('multi-panel'),
+    menuCalculadora: document.getElementById('menu-calculadora'),
+    menuEscala: document.getElementById('menu-escala'),
+    sectionsContainer: document.getElementById('sections-container')
+  };
+
+  // Verificar que los elementos necesarios existan
+  if (!Object.values(elements).every(el => el)) {
+    console.warn('No se encontraron todos los elementos necesarios');
+    return;
+  }
+
+  // Configurar event listeners para los menús
+  if (elements.menuCalculadora) {
+    elements.menuCalculadora.addEventListener('click', function(e) {
+      e.preventDefault();
+      hideAllPanels();
+      updateActiveMenuItem('menu-calculadora');
+      elements.calcPanel.style.display = 'block';
+    });
+  }
+
+  if (elements.menuEscala) {
+    elements.menuEscala.addEventListener('click', function(e) {
+      e.preventDefault();
+      hideAllPanels();
+      updateActiveMenuItem('menu-escala');
+      elements.escalaPanel.style.display = 'block';
+      generarTablaEscala();
+    });
+  }
+
+  if (elements.menuMulti) {
+    elements.menuMulti.addEventListener('click', function(e) {
+      e.preventDefault();
+      window.location.hash = 'multi';
+      elements.calcPanel.style.display = "none";
+      elements.escalaPanel.style.display = "none";
+      elements.multiPanel.style.display = "block";
+      this.classList.add('active');
+      elements.menuCalculadora.classList.remove('active');
+      elements.menuEscala.classList.remove('active');
+      
+      if (elements.sectionsContainer && elements.sectionsContainer.children.length === 0) {
+        addSection();
+      }
+    });
+  }
 
   // Inicializar filas y plantillas
   initRows();
@@ -372,40 +459,13 @@ document.addEventListener('DOMContentLoaded', function() {
   // Inicializar el calendario
   initCalendario();
 
-  // Configurar event listeners para los menús
-  document.getElementById('menu-calculadora').addEventListener('click', function(e) {
-    e.preventDefault();
-    hideAllPanels();
-    updateActiveMenuItem('menu-calculadora');
-    document.getElementById('calc-panel').style.display = 'block';
-  });
-
-  document.getElementById('menu-escala').addEventListener('click', function(e) {
-    e.preventDefault();
-    hideAllPanels();
-    updateActiveMenuItem('menu-escala');
-    document.getElementById('escala-panel').style.display = 'block';
-    generarTablaEscala();
-  });
-
-  document.getElementById('menu-multi').addEventListener('click', function(e) {
-    e.preventDefault();
-    hideAllPanels();
-    updateActiveMenuItem('menu-multi');
-    document.getElementById('multi-panel').style.display = 'block';
-  });
-
-  document.getElementById('menu-calendario').addEventListener('click', function(e) {
-    e.preventDefault();
-    hideAllPanels();
-    updateActiveMenuItem('menu-calendario');
-    document.getElementById('calendario-panel').style.display = 'block';
-    renderCalendario();
-  });
-
   // Mostrar el panel de calculadora por defecto
-  document.getElementById('calc-panel').style.display = 'block';
+  elements.calcPanel.style.display = 'block';
   updateActiveMenuItem('menu-calculadora');
+
+  // Configurar event listener para cambios de hash
+  window.addEventListener('hashchange', initializePanels);
+  initializePanels();
 });
 
 function generarTablaEscala() {
@@ -1290,7 +1350,15 @@ function addSection() {
   section.className = 'section-panel';
   section.innerHTML = `
     <div class="section-header">
-      <div class="section-title">Estudiante ${sectionCounter}</div>
+      <div class="section-title-container" style="display: flex; align-items: center; gap: 8px;">
+        <div class="section-title" style="margin-right: 0;">Estudiante ${sectionCounter}</div>
+        <button class="btn-edit-name" onclick="editSectionName(this.previousElementSibling)" style="background: none; border: none; cursor: pointer; padding: 2px; display: flex; align-items: center; color: var(--text-light); opacity: 0.7; transition: opacity 0.2s;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+          </svg>
+        </button>
+      </div>
       <div class="section-result">Promedio: <span>0.00</span></div>
     </div>
     <div class="section-controls">
@@ -1464,6 +1532,8 @@ function calculateMultipleAverages() {
 document.addEventListener('DOMContentLoaded', function() {
   // Agregar event listener para el menú de múltiples promedios
   const menuMulti = document.getElementById('menu-multi');
+  const sectionsContainer = document.getElementById('sections-container');
+  
   if (menuMulti) {
     menuMulti.addEventListener('click', function(e) {
       e.preventDefault();
@@ -1471,57 +1541,52 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('calc-panel').style.display = "none";
       document.getElementById('escala-panel').style.display = "none";
       document.getElementById('multi-panel').style.display = "block";
-    this.classList.add('active');
+      this.classList.add('active');
       document.getElementById('menu-calculadora').classList.remove('active');
       document.getElementById('menu-escala').classList.remove('active');
       
       // Si no hay secciones, agregar la primera
-      if (document.getElementById('sections-container').children.length === 0) {
+      if (sectionsContainer && sectionsContainer.children.length === 0) {
         addSection();
       }
     });
   }
-  
-  // Actualizar la inicialización de paneles
-  function initializePanels() {
-    if (!initializeElements()) return;
 
-    const hash = window.location.hash;
-    const calcPanel = document.getElementById('calc-panel');
-    const escalaPanel = document.getElementById('escala-panel');
-    const multiPanel = document.getElementById('multi-panel');
-    const menuCalculadora = document.getElementById('menu-calculadora');
-    const menuEscala = document.getElementById('menu-escala');
-    const menuMulti = document.getElementById('menu-multi');
+  // Agregar el event listener para el manejo de inputs en la calculadora múltiple
+  if (sectionsContainer) {
+    sectionsContainer.addEventListener('input', function(e) {
+      const target = e.target;
+      if (target.classList.contains('grade')) {
+        target.value = target.value.replace(/\D/g, '');
+        let v = parseInt(target.value, 10);
+        if (isNaN(v)) v = '';
+        else if (v < 1) v = 1;
+        else if (v > 99) v = 99;
+        target.value = v ? v : '';
 
-    if (hash === '#escala') {
-      calcPanel.style.display = "none";
-      escalaPanel.style.display = "block";
-      multiPanel.style.display = "none";
-      menuEscala.classList.add('active');
-      menuCalculadora.classList.remove('active');
-      menuMulti.classList.remove('active');
-      generarTablaEscala();
-    } else if (hash === '#multi') {
-      calcPanel.style.display = "none";
-      escalaPanel.style.display = "none";
-      multiPanel.style.display = "block";
-      menuMulti.classList.add('active');
-      menuCalculadora.classList.remove('active');
-      menuEscala.classList.remove('active');
-      if (document.getElementById('sections-container').children.length === 0) {
-        addSection();
+        // Si el valor tiene 2 dígitos, mover al siguiente input
+        if (target.value.length === 2) {
+          const currentRow = target.closest('.section-row');
+          const nextRow = currentRow.nextElementSibling;
+          if (nextRow) {
+            const nextInput = nextRow.querySelector('.grade');
+            if (nextInput) {
+              nextInput.focus();
+            }
+          }
+        }
       }
-    } else {
-      calcPanel.style.display = "block";
-      escalaPanel.style.display = "none";
-      multiPanel.style.display = "none";
-      menuCalculadora.classList.add('active');
-      menuEscala.classList.remove('active');
-      menuMulti.classList.remove('active');
-    }
+      if (target.classList.contains('weight')) {
+        target.value = target.value.replace(/\D/g, '');
+        let v = parseInt(target.value, 10);
+        if (isNaN(v)) v = '';
+        else if (v < 1) v = 1;
+        else if (v > 100) v = 100;
+        target.value = v ? v : '';
+      }
+    });
   }
-
+  
   // Actualizar event listeners
   window.addEventListener('hashchange', initializePanels);
   initializePanels();
@@ -1576,7 +1641,15 @@ function addSectionWithName(nombre) {
   section.className = 'section-panel';
   section.innerHTML = `
     <div class="section-header">
-      <div class="section-title">${nombre}</div>
+      <div class="section-title-container" style="display: flex; align-items: center; gap: 8px;">
+        <div class="section-title" style="margin-right: 0;">${nombre}</div>
+        <button class="btn-edit-name" onclick="editSectionName(this.previousElementSibling)" style="background: none; border: none; cursor: pointer; padding: 2px; display: flex; align-items: center; color: var(--text-light); opacity: 0.7; transition: opacity 0.2s;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+          </svg>
+        </button>
+      </div>
       <div class="section-result">Promedio: <span>0.00</span></div>
     </div>
     <div class="section-controls">
@@ -1939,11 +2012,13 @@ function initCalendario() {
 
   document.getElementById('prev-month').addEventListener('click', () => {
     currentDate.setMonth(currentDate.getMonth() - 1);
+    console.log('Mes actual:', currentDate.getMonth() + 1, 'Año:', currentDate.getFullYear());
     renderCalendario();
   });
 
   document.getElementById('next-month').addEventListener('click', () => {
     currentDate.setMonth(currentDate.getMonth() + 1);
+    console.log('Mes actual:', currentDate.getMonth() + 1, 'Año:', currentDate.getFullYear());
     renderCalendario();
   });
 
@@ -2143,7 +2218,9 @@ function renderCalendario() {
       const tiposEventos = new Set(eventos[fecha].map(e => e.tipo));
       tiposEventos.forEach(tipo => {
         if (tipo) {
-          elemento.classList.add(`evento-${tipo}`);
+          // Reemplazar espacios por guiones para que el nombre de la clase sea válido
+          const tipoClase = `evento-${tipo.replace(/\s+/g, '-')}`;
+          elemento.classList.add(tipoClase);
         }
       });
       
@@ -2310,9 +2387,9 @@ function limpiarFormulario() {
 }
 
 // Inicializar el calendario cuando se carga el documento
-document.addEventListener('DOMContentLoaded', function() {
-  initCalendario();
-});
+// document.addEventListener('DOMContentLoaded', function() {
+//   initCalendario();
+// });
 
 function hideAllPanels() {
   // Ocultar todos los paneles principales
@@ -2693,4 +2770,80 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ... existing code ...
+
+// Función para editar el nombre de una sección
+function editSectionName(titleElement) {
+  const currentName = titleElement.textContent;
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.value = currentName;
+  input.className = 'section-title-input';
+  input.style.width = '150px';
+  input.style.fontSize = '1em';
+  input.style.padding = '2px 5px';
+  input.style.border = '1px solid var(--border-color)';
+  input.style.borderRadius = '4px';
+  input.style.background = 'var(--input-bg)';
+  input.style.color = 'var(--text)';
+
+  // Reemplazar el título con el input
+  titleElement.innerHTML = '';
+  titleElement.appendChild(input);
+  input.focus();
+  input.select();
+
+  // Función para guardar el cambio
+  function saveName() {
+    const newName = input.value.trim() || currentName;
+    titleElement.innerHTML = newName;
+  }
+
+  // Guardar al presionar Enter o al perder el foco
+  input.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      saveName();
+      e.preventDefault();
+    }
+  });
+
+  input.addEventListener('blur', saveName);
+}
+
+// Agregar el event listener dentro del DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function() {
+  const sectionsContainer = document.getElementById('sections-container');
+  if (sectionsContainer) {
+    sectionsContainer.addEventListener('input', function(e) {
+      const target = e.target;
+      if (target.classList.contains('grade')) {
+        target.value = target.value.replace(/\D/g, '');
+        let v = parseInt(target.value, 10);
+        if (isNaN(v)) v = '';
+        else if (v < 1) v = 1;
+        else if (v > 99) v = 99;
+        target.value = v ? v : '';
+
+        // Si el valor tiene 2 dígitos, mover al siguiente input
+        if (target.value.length === 2) {
+          const currentRow = target.closest('.section-row');
+          const nextRow = currentRow.nextElementSibling;
+          if (nextRow) {
+            const nextInput = nextRow.querySelector('.grade');
+            if (nextInput) {
+              nextInput.focus();
+            }
+          }
+        }
+      }
+      if (target.classList.contains('weight')) {
+        target.value = target.value.replace(/\D/g, '');
+        let v = parseInt(target.value, 10);
+        if (isNaN(v)) v = '';
+        else if (v < 1) v = 1;
+        else if (v > 100) v = 100;
+        target.value = v ? v : '';
+      }
+    });
+  }
+});
 

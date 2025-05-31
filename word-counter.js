@@ -41,6 +41,149 @@ document.addEventListener('DOMContentLoaded', function() {
     let studentsData = [];
     let currentStudent = null;
 
+    // Variables del timer
+    let timer = null;
+    let startTime = 0;
+    let elapsed = 0;
+    let timerRunning = false;
+    let timerDisplay = null;
+    
+    // Función para inicializar el timer
+    function initTimer() {
+        if (!panel || timerDisplay) return; // Evitar inicialización duplicada
+        
+        // Crear contenedor del timer
+        const timerContainer = document.createElement('div');
+        timerContainer.style.display = 'inline-flex';
+        timerContainer.style.alignItems = 'center';
+        timerContainer.style.marginLeft = '15px';
+        timerContainer.style.padding = '4px 12px';
+        timerContainer.style.borderRadius = '15px';
+        timerContainer.style.backgroundColor = '#f0f0f0';
+        timerContainer.style.transition = 'all 0.3s ease';
+        
+        // Crear indicador de estado
+        const statusDot = document.createElement('span');
+        statusDot.style.width = '8px';
+        statusDot.style.height = '8px';
+        statusDot.style.borderRadius = '50%';
+        statusDot.style.backgroundColor = '#888';
+        statusDot.style.marginRight = '8px';
+        statusDot.style.transition = 'background-color 0.3s ease';
+        
+        // Crear display del timer
+        timerDisplay = document.createElement('span');
+        timerDisplay.id = 'timer-display';
+        timerDisplay.style.fontFamily = 'monospace';
+        timerDisplay.style.color = '#333';
+        timerDisplay.textContent = '0.0s';
+        
+        // Ensamblar elementos
+        timerContainer.appendChild(statusDot);
+        timerContainer.appendChild(timerDisplay);
+        
+        const statsDiv = panel.querySelector('.word-counter-stats p');
+        if (statsDiv) {
+            statsDiv.appendChild(document.createTextNode(' | '));
+            statsDiv.appendChild(timerContainer);
+        }
+
+        // Actualizar estado visual cuando el timer cambia
+        function updateTimerState() {
+            if (timerRunning) {
+                statusDot.style.backgroundColor = '#4CAF50';
+                timerContainer.style.backgroundColor = '#e8f5e9';
+            } else if (elapsed > 0) {
+                statusDot.style.backgroundColor = '#FFA000';
+                timerContainer.style.backgroundColor = '#fff3e0';
+            } else {
+                statusDot.style.backgroundColor = '#888';
+                timerContainer.style.backgroundColor = '#f0f0f0';
+            }
+        }
+
+        // Modificar las funciones existentes para actualizar el estado visual
+        const originalStartTimer = startTimer;
+        startTimer = function() {
+            originalStartTimer();
+            updateTimerState();
+        };
+
+        const originalStopTimer = stopTimer;
+        stopTimer = function() {
+            originalStopTimer();
+            updateTimerState();
+        };
+
+        const originalResetTimer = resetTimer;
+        resetTimer = function() {
+            originalResetTimer();
+            updateTimerState();
+        };
+    }
+
+    function updateTimerDisplay() {
+        if (timerDisplay) {
+            const minutes = Math.floor(elapsed / 60000);
+            const seconds = ((elapsed % 60000) / 1000).toFixed(1);
+            timerDisplay.textContent = minutes > 0 ? 
+                `${minutes}m ${seconds}s` : 
+                `${seconds}s`;
+        }
+    }
+
+    // Inicializar el timer después de verificar los elementos
+    if (!missingElements.length) {
+        initTimer();
+    }
+
+    function startTimer() {
+        if (!timerRunning) {
+            startTime = Date.now() - elapsed;
+            timer = setInterval(() => {
+                elapsed = Date.now() - startTime;
+                updateTimerDisplay();
+            }, 100);
+            timerRunning = true;
+        }
+    }
+
+    function stopTimer() {
+        if (timerRunning) {
+            clearInterval(timer);
+            timerRunning = false;
+            updateTimerDisplay();
+        }
+    }
+
+    function resetTimer() {
+        stopTimer();
+        elapsed = 0;
+        updateTimerDisplay();
+    }
+
+    // Controlar el timer con la barra espaciadora
+    document.addEventListener('keydown', function(e) {
+        if (panel.style.display !== 'none' && e.code === 'Space' && !e.repeat) {
+            e.preventDefault();
+            if (timerRunning) {
+                stopTimer();
+            } else {
+                startTimer();
+            }
+        }
+    });
+
+    // Resetear timer al cambiar de estudiante o cargar texto
+    function resetAllCounters() {
+        wordCount.textContent = '0';
+        mispronounced.textContent = '0';
+        errorPercentage.textContent = '0%';
+        resetTimer();
+    }
+
+    // --- FIN TIMER ---
+
     // Función para descargar la plantilla
     downloadTemplateBtn.addEventListener('click', () => {
         // Crear un nuevo libro de Excel
@@ -48,10 +191,10 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Crear los datos de ejemplo
         const exampleData = [
-            ['Nombre del Estudiante'], // Encabezado
-            ['Juan Pérez'],           // Ejemplo 1
-            ['María García'],         // Ejemplo 2
-            ['Carlos Rodríguez']      // Ejemplo 3
+            ['Nombre del Estudiante', 'Tiempo (s)'], // Encabezado
+            ['Juan Pérez', ''],           // Ejemplo 1
+            ['María García', ''],         // Ejemplo 2
+            ['Carlos Rodríguez', '']      // Ejemplo 3
         ];
         
         // Crear una hoja de trabajo
@@ -180,7 +323,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 fecha: new Date().toLocaleString(),
                 palabrasSeleccionadas: parseInt(wordCount.textContent) || 0,
                 palabrasMalPronunciadas: parseInt(mispronounced.textContent) || 0,
-                porcentajeErrores: parseFloat(errorPercentage.textContent) || 0
+                porcentajeErrores: parseFloat(errorPercentage.textContent) || 0,
+                tiempo: (elapsed / 1000).toFixed(1)
             };
             currentStudent.resultados.push(resultado);
         }
@@ -191,11 +335,7 @@ document.addEventListener('DOMContentLoaded', function() {
             currentStudentName.textContent = currentStudent.nombre;
             currentStudentInfo.style.display = 'block';
             saveProgressBtn.disabled = false;
-            
-            // Resetear el contador y las selecciones
-            wordCount.textContent = '0';
-            mispronounced.textContent = '0';
-            errorPercentage.textContent = '0%';
+            resetAllCounters();
             
             // Limpiar las selecciones de palabras si hay texto cargado
             if (textContent.innerHTML) {
@@ -208,6 +348,7 @@ document.addEventListener('DOMContentLoaded', function() {
             currentStudent = null;
             currentStudentInfo.style.display = 'none';
             saveProgressBtn.disabled = true;
+            resetAllCounters();
         }
     });
 
@@ -218,11 +359,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 fecha: new Date().toLocaleString(),
                 palabrasSeleccionadas: parseInt(wordCount.textContent) || 0,
                 palabrasMalPronunciadas: parseInt(mispronounced.textContent) || 0,
-                porcentajeErrores: parseFloat(errorPercentage.textContent) || 0
+                porcentajeErrores: parseFloat(errorPercentage.textContent) || 0,
+                tiempo: (elapsed / 1000).toFixed(1)
             };
             
             currentStudent.resultados.push(resultado);
             alert('Progreso guardado para ' + currentStudent.nombre);
+            resetTimer();
         }
     });
 
@@ -243,7 +386,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     'Fecha': ultimoResultado.fecha,
                     'Palabras Seleccionadas': ultimoResultado.palabrasSeleccionadas,
                     'Palabras Mal Pronunciadas': ultimoResultado.palabrasMalPronunciadas,
-                    'Porcentaje de Errores': ultimoResultado.porcentajeErrores + '%'
+                    'Porcentaje de Errores': ultimoResultado.porcentajeErrores + '%',
+                    'Tiempo (s)': ultimoResultado.tiempo
                 };
             }
         });

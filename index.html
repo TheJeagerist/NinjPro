@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Promedio Ponderado</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Menú lateral -->
+  <nav class="side-menu" id="side-menu">
+    <button id="collapse-menu-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+    </button>
+    <a href="#" id="menu-calculadora" class="active" data-tooltip="Calculadora">
+      <span class="icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+          <line x1="8" y1="6" x2="16" y2="6"></line>
+          <line x1="8" y1="10" x2="16" y2="10"></line>
+          <line x1="8" y1="14" x2="16" y2="14"></line>
+          <line x1="8" y1="18" x2="16" y2="18"></line>
+        </svg>
+      </span>
+      <span class="menu-label">Calculadora</span>
+    </a>
+    <a href="#escala" id="menu-escala" data-tooltip="Escala de Notas">
+      <span class="icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
+          <line x1="12" y1="10" x2="12" y2="16"></line>
+          <line x1="9" y1="13" x2="15" y2="13"></line>
+        </svg>
+      </span>
+      <span class="menu-label">Escala de Notas</span>
+    </a>
+    <a href="#multi" id="menu-multi" data-tooltip="Múltiples Promedios">
+      <span class="icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7"></rect>
+          <rect x="14" y="3" width="7" height="7"></rect>
+          <rect x="14" y="14" width="7" height="7"></rect>
+          <rect x="3" y="14" width="7" height="7"></rect>
+        </svg>
+      </span>
+      <span class="menu-label">Múltiples Promedios</span>
+    </a>
+    <a href="#calendario" id="menu-calendario" data-tooltip="Calendario">
+      <span class="icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+      </span>
+      <span class="menu-label">Calendario</span>
+    </a>
+    <a href="#word-counter" id="menu-word-counter" data-tooltip="Contador de Palabras">
+      <span class="icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 7V4h16v3"></path>
+          <path d="M9 20h6"></path>
+          <path d="M12 4v16"></path>
+        </svg>
+      </span>
+      <span class="menu-label">Contador de Palabras</span>
+    </a>
+  </nav>
+
+  
+
+  <!-- Fondos animados (BGs) -->
+   <div id="bg-wrap" style="position:fixed;z-index:0;top:0;left:0;width:100vw;height:100vh;pointer-events:none;opacity:0;transition:opacity 0.6s;">
+  <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" style="width:100vw;height:100vh;display:block;">
+    <defs>
+      <radialGradient id="Gradient1" cx="50%" cy="50%" fx="0.441602%" fy="50%" r=".5">
+        <animate attributeName="fx" dur="34s" values="0%;3%;0%" repeatCount="indefinite"/>
+        <stop offset="0%" stop-color="rgba(255, 0, 255, 1)"/>
+        <stop offset="100%" stop-color="rgba(255, 0, 255, 0)"/>
+      </radialGradient>
+      <radialGradient id="Gradient2" cx="50%" cy="50%" fx="2.68147%" fy="50%" r=".5">
+        <animate attributeName="fx" dur="23.5s" values="0%;3%;0%" repeatCount="indefinite"/>
+        <stop offset="0%" stop-color="rgba(255, 255, 0, 1)"/>
+        <stop offset="100%" stop-color="rgba(255, 255, 0, 0)"/>
+      </radialGradient>
+      <radialGradient id="Gradient3" cx="50%" cy="50%" fx="0.836536%" fy="50%" r=".5">
+        <animate attributeName="fx" dur="21.5s" values="0%;3%;0%" repeatCount="indefinite"/>
+        <stop offset="0%" stop-color="rgba(0, 255, 255, 1)"/>
+        <stop offset="100%" stop-color="rgba(0, 255, 255, 0)"/>
+      </radialGradient>
+    </defs>
+    <rect x="13.744%" y="1.18473%" width="100%" height="100%" fill="url(#Gradient1)" transform="rotate(334.41 50 50)">
+      <animate attributeName="x" dur="20s" values="25%;0%;25%" repeatCount="indefinite"/>
+      <animate attributeName="y" dur="21s" values="0%;25%;0%" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="7s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="-2.17916%" y="35.4267%" width="100%" height="100%" fill="url(#Gradient2)" transform="rotate(255.072 50 50)">
+      <animate attributeName="x" dur="23s" values="-25%;0%;-25%" repeatCount="indefinite"/>
+      <animate attributeName="y" dur="24s" values="0%;50%;0%" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="12s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="9.00483%" y="14.5733%" width="100%" height="100%" fill="url(#Gradient3)" transform="rotate(139.903 50 50)">
+      <animate attributeName="x" dur="25s" values="0%;25%;0%" repeatCount="indefinite"/>
+      <animate attributeName="y" dur="12s" values="0%;25%;0%" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="rotate" from="360 50 50" to="0 50 50" dur="9s" repeatCount="indefinite"/>
+    </rect>
+  </svg>
+</div>
+<div id="bg-wrap-dark" style="position:fixed;z-index:0;top:0;left:0;width:100vw;height:100vh;pointer-events:none;opacity:0;transition:opacity 0.6s;">
+  <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" style="width:100vw;height:100vh;display:block;">
+    <defs>
+      <radialGradient id="DarkGradient1" cx="50%" cy="50%" fx="0.441602%" fy="50%" r=".5">
+        <animate attributeName="fx" dur="34s" values="0%;3%;0%" repeatCount="indefinite"/>
+        <stop offset="0%" stop-color="rgba(125, 0, 255, 1)"/>
+        <stop offset="100%" stop-color="rgba(125, 0, 255, 0)"/>
+      </radialGradient>
+      <radialGradient id="DarkGradient2" cx="50%" cy="50%" fx="2.68147%" fy="50%" r=".5">
+        <animate attributeName="fx" dur="23.5s" values="0%;3%;0%" repeatCount="indefinite"/>
+        <stop offset="0%" stop-color="rgba(0, 255, 255, 0.7)"/>
+        <stop offset="100%" stop-color="rgba(0, 255, 255, 0)"/>
+      </radialGradient>
+      <radialGradient id="DarkGradient3" cx="50%" cy="50%" fx="0.836536%" fy="50%" r=".5">
+        <animate attributeName="fx" dur="21.5s" values="0%;3%;0%" repeatCount="indefinite"/>
+        <stop offset="0%" stop-color="rgba(255, 80, 220, 0.8)"/>
+        <stop offset="100%" stop-color="rgba(255, 80, 220, 0)"/>
+      </radialGradient>
+    </defs>
+    <rect x="13.744%" y="1.18473%" width="100%" height="100%" fill="url(#DarkGradient1)" transform="rotate(334.41 50 50)">
+      <animate attributeName="x" dur="20s" values="25%;0%;25%" repeatCount="indefinite"/>
+      <animate attributeName="y" dur="21s" values="0%;25%;0%" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="7s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="-2.17916%" y="35.4267%" width="100%" height="100%" fill="url(#DarkGradient2)" transform="rotate(255.072 50 50)">
+      <animate attributeName="x" dur="23s" values="-25%;0%;-25%" repeatCount="indefinite"/>
+      <animate attributeName="y" dur="24s" values="0%;50%;0%" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="12s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="9.00483%" y="14.5733%" width="100%" height="100%" fill="url(#DarkGradient3)" transform="rotate(139.903 50 50)">
+      <animate attributeName="x" dur="25s" values="0%;25%;0%" repeatCount="indefinite"/>
+      <animate attributeName="y" dur="12s" values="0%;25%;0%" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="rotate" from="360 50 50" to="0 50 50" dur="9s" repeatCount="indefinite"/>
+    </rect>
+  </svg>
+</div>
+<div id="bg-wrap-rosa" style="position:fixed;z-index:0;top:0;left:0;width:100vw;height:100vh;pointer-events:none;opacity:0;transition:opacity 0.6s;">
+  <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" style="width:100vw;height:100vh;display:block;">
+    <defs>
+      <radialGradient id="RosaGradient1" cx="50%" cy="50%" fx="1%" fy="50%" r=".5">
+        <stop offset="0%" stop-color="#fe67d2"/>
+        <stop offset="100%" stop-color="#fe67d200"/>
+      </radialGradient>
+      <radialGradient id="RosaGradient2" cx="50%" cy="50%" fx="2%" fy="50%" r=".5">
+        <stop offset="0%" stop-color="#ffc6ec"/>
+        <stop offset="100%" stop-color="#ffc6ec00"/>
+      </radialGradient>
+      <radialGradient id="RosaGradient3" cx="50%" cy="50%" fx="1%" fy="50%" r=".5">
+        <stop offset="0%" stop-color="#fff7b2"/>
+        <stop offset="100%" stop-color="#fff7b200"/>
+      </radialGradient>
+    </defs>
+    <rect x="13.744%" y="1.18473%" width="100%" height="100%" fill="url(#RosaGradient1)" transform="rotate(334.41 50 50)">
+      <animate attributeName="x" dur="20s" values="25%;0%;25%" repeatCount="indefinite"/>
+      <animate attributeName="y" dur="21s" values="0%;25%;0%" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="7s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="-2.17916%" y="35.4267%" width="100%" height="100%" fill="url(#RosaGradient2)" transform="rotate(255.072 50 50)">
+      <animate attributeName="x" dur="23s" values="-25%;0%;-25%" repeatCount="indefinite"/>
+      <animate attributeName="y" dur="24s" values="0%;50%;0%" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="12s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="9.00483%" y="14.5733%" width="100%" height="100%" fill="url(#RosaGradient3)" transform="rotate(139.903 50 50)">
+      <animate attributeName="x" dur="25s" values="0%;25%;0%" repeatCount="indefinite"/>
+      <animate attributeName="y" dur="12s" values="0%;25%;0%" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="rotate" from="360 50 50" to="0 50 50" dur="9s" repeatCount="indefinite"/>
+    </rect>
+  </svg>
+</div>
+<div id="bg-wrap-oscuro" style="position:fixed;z-index:0;top:0;left:0;width:100vw;height:100vh;pointer-events:none;opacity:0;transition:opacity 0.6s;">
+  <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" style="width:100vw;height:100vh;display:block;">
+    <defs>
+      <radialGradient id="OscuroGradient1" cx="50%" cy="50%" r=".5">
+        <stop offset="0%" stop-color="#222d46"/>
+        <stop offset="100%" stop-color="#222d4600"/>
+      </radialGradient>
+      <radialGradient id="OscuroGradient2" cx="50%" cy="50%" r=".5">
+        <stop offset="0%" stop-color="#232736"/>
+        <stop offset="100%" stop-color="#23273600"/>
+      </radialGradient>
+      <radialGradient id="OscuroGradient3" cx="50%" cy="50%" r=".5">
+        <stop offset="0%" stop-color="#2e2f38"/>
+        <stop offset="100%" stop-color="#2e2f3800"/>
+      </radialGradient>
+    </defs>
+    <rect x="15%" y="3%" width="100%" height="100%" fill="url(#OscuroGradient1)" />
+    <rect x="2%" y="30%" width="100%" height="100%" fill="url(#OscuroGradient2)" />
+    <rect x="8%" y="15%" width="100%" height="100%" fill="url(#OscuroGradient3)" />
+  </svg>
+</div>
+
+
+  <!-- ...PEGA AQUÍ LOS CUATRO DIVS: #bg-wrap, #bg-wrap-dark, #bg-wrap-rosa, #bg-wrap-oscuro... -->
+  <!-- Puedes copiar tal cual como en tu archivo actual, son SVGs grandes -->
+
+  <!-- Selector de temas -->
+  <div id="theme-menu">
+    <button class="theme-btn" data-theme="theme-dark" title="Modo Neón">🎇</button>
+    <button class="theme-btn" data-theme="theme-light" title="Modo Claro">🌞</button>
+    <button class="theme-btn" data-theme="theme-rosa" title="Modo Rosa">🌸</button>
+    <button class="theme-btn" data-theme="theme-oscuro" title="Modo Oscuro">🌑</button>
+  </div>
+
+  <div class="container" id="calc-panel">
+      <h1>Calculadora de Promedio Ponderado</h1>
+      
+      <!-- Panel superior con plantillas -->
+      <div class="top-panel">
+        <select id="tplSelect"><option value="">Seleccionar ramo</option></select>
+        <button id="show-ramo-panel" class="add-ramo-btn">+ Agregar Ramo</button>
+      </div>
+
+      <!-- Panel de guardado de ramos -->
+      <div class="template-controls" id="ramo-panel" style="display:none;">
+        <input type="text" id="tplName" placeholder="Nombre de ramo">
+        <div class="template-buttons">
+          <button id="delTpl">Eliminar</button>
+          <button id="saveTpl">Guardar</button>
+        </div>
+        <button id="hide-ramo-panel">Cerrar</button>
+      </div>
+
+      <div class="main">
+        <!-- Panel de notas -->
+        <div class="grades-panel">
+          <!-- Campo para respuestas correctas PAES -->
+          <div id="paes-input" style="display: none;" class="paes-input-container">
+            <label for="respuestas-correctas">Respuestas Correctas</label>
+            <input type="number" id="respuestas-correctas" min="0" max="60" placeholder="0-60">
+            <button onclick="calcularPuntajePAES()">Calcular Puntaje PAES</button>
+          </div>
+
+          <!-- Panel normal de notas -->
+          <div id="notas-normales">
+            <div class="controls">
+              <button class="btn-add" onclick="addRow()">+</button>
+              <button class="btn-remove" onclick="removeRow()">-</button>
+              <button class="btn-reset" onclick="resetAll()">↻</button>
+            </div>
+            
+            <div class="rows-wrapper">
+              <div class="labels">
+                <div>Nota</div>
+                <div>Ponderación</div>
+              </div>
+              <div id="rows-container"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel de resultados -->
+        <div class="results-panel">
+          <div id="result-panel" class="result-panel red">
+            <div id="result-title">Promedio ponderado</div>
+            <div id="result-value">0.00</div>
+            <div id="result-status">Reprobado</div>
+          </div>
+          
+          <div id="needed-panel" class="result-panel" style="display:none;">
+            <div id="needed-title">Nota mínima necesaria</div>
+            <div id="needed-value">-</div>
+          </div>
+
+          <!-- Botón calcular -->
+          <button id="calcBtn" onclick="calculateAverage()">Calcular Promedio</button>
+        </div>
+      </div>
+    </div>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="main.js"></script>
+  <div id="escala-panel" style="display:none;max-width:900px;margin:40px auto 0 auto;">
+    <div class="container" style="background: var(--card-bg);">
+      <h2>Generador de Escala de Notas</h2>
+      <div id="modo-actual" class="modo-actual hidden">Modo PAES: <span id="modo-paes-texto"></span></div>
+      
+      <!-- Panel de edición -->
+      <div class="inputs">
+        <div class="input-group">
+          <label for="puntajeMax">Puntaje máximo</label>
+          <input type="number" id="puntajeMax" min="1" value="100">
+        </div>
+        <div class="input-group">
+          <label for="exigencia">Exigencia (%)</label>
+          <input type="number" id="exigencia" min="0" max="100" value="60">
+        </div>
+        <div class="input-group">
+          <label for="notaMin">Nota mínima</label>
+          <input type="number" id="notaMin" step="0.1" min="1" max="10" value="1.0">
+        </div>
+        <div class="input-group">
+          <label for="notaMax">Nota máxima</label>
+          <input type="number" id="notaMax" step="0.1" min="1" max="10" value="7.0">
+        </div>
+        <div class="input-group">
+          <label for="notaAprob">Nota de aprobación</label>
+          <input type="number" id="notaAprob" step="0.1" min="1" max="10" value="4.0">
+        </div>
+      </div>
+
+      <!-- Botones de modo -->
+      <div class="tabla-controls">
+        <button class="tabla-mode-btn active" data-mode="normal">Normal</button>
+        <button class="tabla-mode-btn" data-mode="simce">SIMCE</button>
+        <div class="paes-container">
+          <button class="tabla-mode-btn has-dropdown" data-mode="paes">PAES</button>
+          <div class="paes-dropdown">
+            <button class="paes-dropdown-item" data-paes-mode="competencia-lectora">Competencia Lectora</button>
+            <button class="paes-dropdown-item" data-paes-mode="m1">M1 Matemáticas</button>
+            <button class="paes-dropdown-item" data-paes-mode="m2">M2 Matemáticas</button>
+            <button class="paes-dropdown-item" data-paes-mode="ciencias">Ciencias</button>
+            <button class="paes-dropdown-item" data-paes-mode="historia">Historia</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Conversor de puntaje a nota -->
+      <div class="conversor-container">
+        <div class="conversor-title">Conversor de Puntaje a Nota</div>
+        <div class="conversor-inputs">
+          <div class="conversor-group">
+            <label class="conversor-label">Puntaje</label>
+            <input type="number" class="conversor-input" id="puntaje-input" placeholder="Ingrese puntaje">
+          </div>
+          <div class="conversor-group">
+            <label class="conversor-label">Nota</label>
+            <div class="conversor-result" id="nota-result">-.-</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Conversor de respuestas a puntaje PAES -->
+      <div class="conversor-container" id="conversor-paes">
+        <div class="conversor-title">Conversor de Respuestas a Puntaje PAES</div>
+        <div class="conversor-inputs">
+          <div class="conversor-group">
+            <label class="conversor-label">Respuestas Correctas</label>
+            <input type="number" class="conversor-input" id="respuestas-input" min="0" max="60" placeholder="0-60">
+          </div>
+          <div class="conversor-group">
+            <label class="conversor-label">Puntaje PAES</label>
+            <div class="conversor-result" id="puntaje-paes-result">-</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Control de visibilidad de columnas -->
+      <div class="columnas-control">
+        <button id="toggle-columnas" class="tabla-mode-btn">
+          <span class="columnas-icon">📊</span>
+          <span class="columnas-texto">Ocultar tabla</span>
+        </button>
+      </div>
+
+      <!-- Tabla de escala -->
+      <div id="tablaEscala" class="tabla-multi"></div>
+    </div>
+  </div>
+
+  <div id="multi-panel" style="display:none;">
+    <div class="container">
+      <h1>Calculadora de Notas Parciales</h1>
+      
+      <div class="multi-controls">
+        <button class="btn-add-section" onclick="addSection()"> Agregar Estudiante</button>
+        <button class="btn-remove-section" onclick="removeSection()">Eliminar Estudiante</button>
+        <input type="file" id="input-excel-multi" accept=".xls,.xlsx" style="display:none" />
+        <button id="btn-cargar-excel-multi" type="button">Cargar Curso (Excel)</button>
+        <button id="btn-descargar-excel-multi" type="button">Descargar Excel</button>
+      </div>
+
+      <!-- Controles de notas y porcentajes -->
+      <div class="notas-control">
+        <div class="control-group">
+          <input type="number" id="cantidad-notas" min="1" value="1" placeholder="Cantidad de notas">
+          <button onclick="aplicarCantidadNotas()" class="btn-aplicar">Número de notas</button>
+        </div>
+        <div class="control-group">
+          <input type="number" id="porcentaje-comun" min="1" max="100" value="100" placeholder="Porcentaje a dividir">
+          <button onclick="aplicarPorcentajeComun()" class="btn-aplicar">Porcentaje a dividir</button>
+        </div>
+      </div>
+
+      <div id="sections-container">
+        <!-- Las secciones se agregarán aquí dinámicamente -->
+      </div>
+
+      <div class="multi-results">
+        <div id="multi-result-panel" class="result-panel">
+          <div id="multi-result-title">Promedio General</div>
+          <div id="multi-result-value">0.00</div>
+          <div id="multi-result-status">-</div>
+        </div>
+        <button id="calcMultiBtn" onclick="calculateMultipleAverages()">Calcular Promedios</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="calendario-panel" style="display:none;">
+    <div class="container">
+      <h1>Calendario de Eventos</h1>
+      
+      <div class="calendario-container">
+        <div class="calendario-wrapper">
+          <div class="calendario-header">
+            <button id="prev-month">←</button>
+            <h2 id="month-year">Mes Año</h2>
+            <button id="next-month">→</button>
+          </div>
+          
+          <div class="calendario-dias">
+            <div class="dia-semana">Dom</div>
+            <div class="dia-semana">Lun</div>
+            <div class="dia-semana">Mar</div>
+            <div class="dia-semana">Mié</div>
+            <div class="dia-semana">Jue</div>
+            <div class="dia-semana">Vie</div>
+            <div class="dia-semana">Sáb</div>
+          </div>
+          
+          <div id="calendario-grid" class="calendario-grid">
+            <!-- Los días se generarán dinámicamente -->
+          </div>
+        </div>
+
+        <div class="eventos-panel">
+          <h3>Próximos Eventos</h3>
+          <div class="eventos-filtro">
+            <select id="filtro-eventos">
+              <option value="todos">Todos los eventos</option>
+              <option value="hoy">Hoy</option>
+              <option value="semana">Esta semana</option>
+              <option value="mes">Este mes</option>
+            </select>
+            <div style="display:flex;gap:4px;margin-top:6px;">
+              <select id="filtro-ramo" style="font-size:0.95em;padding:2px 6px;"><option value="">Ramo</option></select>
+              <select id="filtro-curso" style="font-size:0.95em;padding:2px 6px;"><option value="">Curso</option></select>
+              <select id="filtro-sala" style="font-size:0.95em;padding:2px 6px;"><option value="">Sala</option></select>
+            </div>
+          </div>
+          <div id="lista-eventos" class="lista-eventos">
+            <!-- Los eventos se generarán dinámicamente -->
+          </div>
+          <button id="btn-cargar-excel" class="btn-agregar" style="margin-top:10px;">Cargar desde Excel</button>
+          <input type="file" id="input-cargar-excel" accept=".xls,.xlsx" style="display:none;" />
+          <button id="btn-descargar-plantilla-excel" class="btn-agregar" style="margin-top:10px;">Descargar plantilla Excel</button>
+          <button id="btn-exportar-eventos-excel" class="btn-agregar" style="margin-top:10px;">Exportar eventos a Excel</button>
+        </div>
+      </div>
+
+      <!-- Modal para agregar eventos -->
+      <div id="evento-modal" class="modal">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <h3 class="modal-title">Agregar Evento</h3>
+          <form id="evento-form">
+            <div class="form-group">
+              <label for="evento-titulo">Título</label>
+              <input type="text" id="evento-titulo" required>
+            </div>
+            <div class="form-group">
+              <label for="evento-fecha">Fecha</label>
+              <input type="date" id="evento-fecha" required>
+            </div>
+            <div class="form-group">
+              <label for="evento-hora">Hora</label>
+              <input type="time" id="evento-hora" required>
+            </div>
+            <div class="form-group">
+              <label for="evento-tipo">Tipo de Evento</label>
+              <select id="evento-tipo" required>
+                <option value="">Seleccionar tipo</option>
+                <option value="prueba">Prueba</option>
+                <option value="feria">Feria</option>
+                <option value="celebracion">Celebración</option>
+                <option value="feriado">Feriado</option>
+                <option value="dia-institucional">Día Institucional</option>
+                <option value="aniversario">Aniversario</option>
+                <option value="reunion">Reunión</option>
+                <option value="ceremonia">Ceremonia</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="evento-ramo">Ramo</label>
+              <input type="text" id="evento-ramo" required>
+            </div>
+            <div class="form-group">
+              <label for="evento-curso">Curso</label>
+              <input type="text" id="evento-curso" required>
+            </div>
+            <div class="form-group">
+              <label for="evento-lugar">Lugar</label>
+              <input type="text" id="evento-lugar" required>
+            </div>
+            <div class="form-group">
+              <label for="evento-descripcion">Descripción</label>
+              <textarea id="evento-descripcion"></textarea>
+            </div>
+            <button type="submit">Guardar Evento</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel del Contador de Palabras -->
+  <div id="word-counter-panel" style="display:none;">
+    <div class="container">
+      <h1>Contador de Palabras</h1>
+
+      <!-- Panel de estudiantes -->
+      <div class="students-panel">
+        <div class="students-controls">
+          <input type="file" id="students-excel" accept=".xls,.xlsx" style="display: none;">
+          <button id="load-students" class="btn-primary">Cargar Lista de Estudiantes</button>
+          <button id="download-template" class="btn-download">Descargar Plantilla</button>
+          <select id="student-select" disabled>
+            <option value="">Seleccionar estudiante</option>
+          </select>
+          <button id="save-progress" class="btn-success" disabled>Guardar Progreso</button>
+          <button id="export-results" class="btn-export" disabled>Exportar Resultados</button>
+        </div>
+        <div id="current-student-info" class="student-info" style="display: none;">
+          <p>Estudiante actual: <span id="current-student-name">-</span></p>
+        </div>
+      </div>
+      
+      <div class="file-upload-area" id="upload-area">
+        <input type="file" id="file-input" accept=".docx,.txt">
+        <p>Haz clic aquí o arrastra un archivo .docx o .txt</p>
+      </div>
+
+      <div class="word-counter-content">
+        <div class="word-counter-text" id="text-content">
+          <!-- El texto se insertará aquí -->
+        </div>
+        
+        <div class="word-counter-stats">
+          <p>Palabras seleccionadas: <span id="word-count">0</span></p>
+          <p>Palabras mal pronunciadas: <span id="mispronounced-count" class="error-count">0</span></p>
+          <p>Porcentaje de errores: <span id="error-percentage">0%</span></p>
+        </div>
+      </div>
+
+      <button id="close-word-counter" class="close">&times;</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="script.js"></script>
+  <script src="word-counter.js"></script>
+</body>
+</html>
+

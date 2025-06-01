@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const iniciarEvaluacionBtn = document.getElementById('iniciar-evaluacion');
     const guardarEvaluacionBtn = document.getElementById('guardar-evaluacion');
     const limpiarEvaluacionBtn = document.getElementById('limpiar-evaluacion');
+    const exportarCursoPdfBtn = document.getElementById('exportar-curso-pdf');
     const evaluacionResultado = document.getElementById('evaluacion-resultado');
     
     // Variables para el modo evaluación
@@ -68,6 +69,10 @@ document.addEventListener('DOMContentLoaded', function() {
         limpiarEvaluacionBtn.addEventListener('click', limpiarEvaluacion);
     }
     
+    if (exportarCursoPdfBtn) {
+        exportarCursoPdfBtn.addEventListener('click', exportarCursoPdf);
+    }
+    
     // Función para cambiar modo
     function cambiarModo(modo) {
         modoActual = modo;
@@ -79,6 +84,12 @@ document.addEventListener('DOMContentLoaded', function() {
         // Mostrar/ocultar paneles
         if (evaluacionPanel) {
             evaluacionPanel.style.display = modo === 'evaluacion' ? 'block' : 'none';
+        }
+        
+        // Mostrar/ocultar selector de rúbricas guardadas
+        const rubricasSelector = document.querySelector('.rubricas-selector');
+        if (rubricasSelector) {
+            rubricasSelector.style.display = modo === 'evaluacion' ? 'none' : 'block';
         }
         
         if (modo === 'evaluacion') {
@@ -191,9 +202,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const rubricaSeleccionada = evalRubricaSelect?.value;
         
         const puedeIniciar = cursoSeleccionado && estudianteSeleccionado && rubricaSeleccionada;
+        const puedeExportar = cursoSeleccionado && rubricaSeleccionada;
         
         if (iniciarEvaluacionBtn) {
             iniciarEvaluacionBtn.disabled = !puedeIniciar;
+        }
+        
+        if (exportarCursoPdfBtn) {
+            exportarCursoPdfBtn.disabled = !puedeExportar;
         }
     }
     
@@ -414,8 +430,118 @@ document.addEventListener('DOMContentLoaded', function() {
         
         alert(`Evaluación guardada exitosamente.\nEstudiante: ${evaluacionEnCurso.estudiante}\nPuntaje: ${evaluacionEnCurso.puntajeTotal}/${evaluacionEnCurso.puntajeMaximo}\nNota: ${evaluacionParaGuardar.nota}`);
         
-        // Limpiar evaluación
-        limpiarEvaluacion();
+        // Pasar al siguiente estudiante en lugar de limpiar todo
+        pasarASiguienteEstudiante();
+    }
+    
+    // Función para pasar al siguiente estudiante
+    function pasarASiguienteEstudiante() {
+        if (!evalEstudianteSelect || !evaluacionEnCurso) return;
+        
+        const estudiantesOptions = Array.from(evalEstudianteSelect.options);
+        const estudianteActualIndex = estudiantesOptions.findIndex(option => option.value === evaluacionEnCurso.estudiante);
+        
+        // Buscar el siguiente estudiante no evaluado
+        let siguienteIndex = -1;
+        const evaluaciones = JSON.parse(localStorage.getItem('evaluaciones_rubricas') || '[]');
+        
+        for (let i = estudianteActualIndex + 1; i < estudiantesOptions.length; i++) {
+            const option = estudiantesOptions[i];
+            if (option.value && option.value !== '') {
+                // Verificar si este estudiante ya fue evaluado con esta rúbrica
+                const yaEvaluado = evaluaciones.some(eval => 
+                    eval.curso === evaluacionEnCurso.curso && 
+                    eval.estudiante === option.value && 
+                    eval.rubrica.id === evaluacionEnCurso.rubrica.id
+                );
+                
+                if (!yaEvaluado) {
+                    siguienteIndex = i;
+                    break;
+                }
+            }
+        }
+        
+        // Si no hay más estudiantes sin evaluar, buscar desde el principio
+        if (siguienteIndex === -1) {
+            for (let i = 1; i < estudianteActualIndex; i++) {
+                const option = estudiantesOptions[i];
+                if (option.value && option.value !== '') {
+                    const yaEvaluado = evaluaciones.some(eval => 
+                        eval.curso === evaluacionEnCurso.curso && 
+                        eval.estudiante === option.value && 
+                        eval.rubrica.id === evaluacionEnCurso.rubrica.id
+                    );
+                    
+                    if (!yaEvaluado) {
+                        siguienteIndex = i;
+                        break;
+                    }
+                }
+            }
+        }
+        
+        if (siguienteIndex !== -1) {
+            // Hay un siguiente estudiante, seleccionarlo
+            evalEstudianteSelect.value = estudiantesOptions[siguienteIndex].value;
+            
+            // Inicializar nueva evaluación para este estudiante
+            const nuevoEstudiante = estudiantesOptions[siguienteIndex].value;
+            evaluacionEnCurso = {
+                curso: evaluacionEnCurso.curso,
+                estudiante: nuevoEstudiante,
+                rubrica: evaluacionEnCurso.rubrica,
+                respuestas: {},
+                puntajeTotal: 0,
+                puntajeMaximo: evaluacionEnCurso.puntajeMaximo
+            };
+            
+            // Limpiar selecciones de la rúbrica
+            limpiarSeleccionesRubrica();
+            
+            // Actualizar visualización del resultado
+            mostrarResultadoEvaluacion();
+            
+        } else {
+            // No hay más estudiantes sin evaluar
+            alert('¡Todos los estudiantes del curso han sido evaluados con esta rúbrica!');
+            
+            // Preguntar si quiere continuar evaluando o finalizar
+            const continuar = confirm('¿Deseas continuar evaluando estudiantes que ya fueron evaluados anteriormente?');
+            
+            if (continuar) {
+                // Buscar el primer estudiante para reiniciar
+                if (estudiantesOptions.length > 1 && estudiantesOptions[1].value) {
+                    evalEstudianteSelect.value = estudiantesOptions[1].value;
+                    
+                    evaluacionEnCurso = {
+                        curso: evaluacionEnCurso.curso,
+                        estudiante: estudiantesOptions[1].value,
+                        rubrica: evaluacionEnCurso.rubrica,
+                        respuestas: {},
+                        puntajeTotal: 0,
+                        puntajeMaximo: evaluacionEnCurso.puntajeMaximo
+                    };
+                    
+                    limpiarSeleccionesRubrica();
+                    mostrarResultadoEvaluacion();
+                }
+            } else {
+                // Finalizar evaluación
+                limpiarEvaluacion();
+            }
+        }
+    }
+    
+    // Función para limpiar solo las selecciones de la rúbrica
+    function limpiarSeleccionesRubrica() {
+        if (!rubricaContent) return;
+        
+        // Quitar la clase 'selected' de todos los botones
+        const botonesSeleccionados = rubricaContent.querySelectorAll('.nivel-boton.selected');
+        botonesSeleccionados.forEach(boton => {
+            boton.classList.remove('selected');
+        });
     }
     
     // Función para limpiar evaluación
@@ -1306,5 +1432,256 @@ document.addEventListener('DOMContentLoaded', function() {
     // Al inicializar, actualizar el selector de rúbricas guardadas
     if (window.RubricaConfig) {
         window.RubricaConfig.actualizarSelectorRubricas();
+    }
+
+    // Función para exportar evaluaciones del curso a PDF
+    function exportarCursoPdf() {
+        const curso = evalCursoSelect?.value;
+        const rubricaId = evalRubricaSelect?.value;
+        
+        if (!curso || !rubricaId) {
+            alert('Por favor selecciona un curso y una rúbrica');
+            return;
+        }
+        
+        // Obtener datos necesarios
+        const cursosData = JSON.parse(localStorage.getItem('cursosData') || '{}');
+        const estudiantes = cursosData[curso] || [];
+        const rubricas = JSON.parse(localStorage.getItem('rubricas_guardadas') || '[]');
+        const rubrica = rubricas.find(r => r.id === rubricaId);
+        const evaluaciones = JSON.parse(localStorage.getItem('evaluaciones_rubricas') || '[]');
+        
+        if (!rubrica) {
+            alert('Rúbrica no encontrada');
+            return;
+        }
+        
+        if (estudiantes.length === 0) {
+            alert('No hay estudiantes en el curso seleccionado');
+            return;
+        }
+        
+        try {
+            // Crear PDF usando jsPDF
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+            
+            let estudiante_num = 0;
+            
+            estudiantes.forEach((estudiante, index) => {
+                const nombreEstudiante = typeof estudiante === 'object' ? 
+                    (estudiante.nombre || estudiante.Nombre || `Estudiante ${estudiante.id || index + 1}`) : 
+                    estudiante;
+                
+                // Buscar evaluación del estudiante
+                const evaluacionEstudiante = evaluaciones.find(eval => 
+                    eval.curso === curso && 
+                    eval.estudiante === nombreEstudiante && 
+                    eval.rubrica.id === rubricaId
+                );
+                
+                // Nueva página para cada estudiante (excepto el primero)
+                if (index > 0) {
+                    doc.addPage();
+                }
+                
+                estudiante_num++;
+                
+                // Generar página del estudiante
+                generarPaginaEstudiante(doc, rubrica, nombreEstudiante, curso, evaluacionEstudiante, estudiante_num);
+            });
+            
+            // Guardar PDF
+            const fechaHora = new Date().toLocaleString('es-ES').replace(/[/:]/g, '-');
+            doc.save(`Evaluaciones_${curso}_${rubrica.titulo}_${fechaHora}.pdf`);
+            
+        } catch (error) {
+            console.error('Error al generar PDF:', error);
+            alert('Error al generar el PDF: ' + error.message);
+        }
+    }
+    
+    // Función auxiliar para generar página de estudiante
+    function generarPaginaEstudiante(doc, rubrica, nombreEstudiante, curso, evaluacion, numeroEstudiante) {
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+        let yPosition = 20;
+        
+        // Encabezado del documento
+        doc.setFontSize(18);
+        doc.setFont('helvetica', 'bold');
+        doc.text('EVALUACIÓN DE RÚBRICA', pageWidth / 2, yPosition, { align: 'center' });
+        yPosition += 15;
+        
+        // Información del estudiante
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'normal');
+        doc.text(`Estudiante: ${nombreEstudiante}`, 20, yPosition);
+        yPosition += 8;
+        doc.text(`Curso: ${curso}`, 20, yPosition);
+        yPosition += 8;
+        doc.text(`Rúbrica: ${rubrica.titulo}`, 20, yPosition);
+        yPosition += 8;
+        doc.text(`Fecha: ${new Date().toLocaleDateString('es-ES')}`, 20, yPosition);
+        yPosition += 15;
+        
+        // Información de evaluación
+        if (evaluacion) {
+            const porcentaje = evaluacion.puntajeMaximo > 0 ? 
+                (evaluacion.puntajeTotal / evaluacion.puntajeMaximo * 100).toFixed(1) : 0;
+            
+            doc.setFont('helvetica', 'bold');
+            doc.text(`Puntaje: ${evaluacion.puntajeTotal}/${evaluacion.puntajeMaximo} (${porcentaje}%)`, 20, yPosition);
+            yPosition += 8;
+            doc.text(`Nota: ${evaluacion.nota}`, 20, yPosition);
+            yPosition += 15;
+        } else {
+            doc.setFont('helvetica', 'italic');
+            doc.text('SIN EVALUAR', 20, yPosition);
+            yPosition += 15;
+        }
+        
+        // Tabla de rúbrica
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(10);
+        doc.text('CRITERIOS Y NIVELES DE DESEMPEÑO', 20, yPosition);
+        yPosition += 10;
+        
+        // Calcular anchos de columna dinámicamente
+        const tableWidth = pageWidth - 40;
+        const criterioWidth = tableWidth * 0.25; // 25% para criterio
+        const nivelWidth = (tableWidth - criterioWidth) / rubrica.criterios[0].niveles.length;
+        
+        // Encabezados de la tabla
+        let xPos = 20;
+        const headerHeight = 15;
+        
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(9);
+        
+        // Encabezado criterio
+        doc.rect(xPos, yPosition, criterioWidth, headerHeight);
+        doc.text('CRITERIO', xPos + 2, yPosition + 10);
+        xPos += criterioWidth;
+        
+        // Encabezados de niveles
+        rubrica.criterios[0].niveles.forEach(nivel => {
+            doc.rect(xPos, yPosition, nivelWidth, headerHeight);
+            const headerText = `${nivel.nivel} (${nivel.puntos}pts)`;
+            const headerLines = doc.splitTextToSize(headerText, nivelWidth - 4);
+            doc.text(headerLines, xPos + 2, yPosition + 7);
+            xPos += nivelWidth;
+        });
+        
+        yPosition += headerHeight;
+        
+        // Función para calcular altura necesaria para una fila
+        function calcularAlturaFila(criterio) {
+            doc.setFontSize(8);
+            let maxHeight = 15; // Altura mínima
+            
+            // Calcular altura necesaria para el criterio
+            const criterioLines = doc.splitTextToSize(criterio.titulo, criterioWidth - 4);
+            const criterioHeight = criterioLines.length * 4 + 8;
+            maxHeight = Math.max(maxHeight, criterioHeight);
+            
+            // Calcular altura necesaria para cada nivel
+            criterio.niveles.forEach(nivel => {
+                // Solo usar la descripción del nivel, sin agregar texto de selección
+                const nivelText = nivel.descripcion;
+                const nivelLines = doc.splitTextToSize(nivelText, nivelWidth - 4);
+                const nivelHeight = nivelLines.length * 4 + 8;
+                maxHeight = Math.max(maxHeight, nivelHeight);
+            });
+            
+            return maxHeight;
+        }
+        
+        // Generar filas de criterios
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(8);
+        
+        rubrica.criterios.forEach((criterio, criterioIndex) => {
+            const filaHeight = calcularAlturaFila(criterio);
+            
+            // Verificar si necesitamos nueva página
+            if (yPosition + filaHeight > pageHeight - 30) {
+                doc.addPage();
+                yPosition = 20;
+                
+                // Repetir encabezados en nueva página
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(9);
+                xPos = 20;
+                
+                doc.rect(xPos, yPosition, criterioWidth, headerHeight);
+                doc.text('CRITERIO', xPos + 2, yPosition + 10);
+                xPos += criterioWidth;
+                
+                rubrica.criterios[0].niveles.forEach(nivel => {
+                    doc.rect(xPos, yPosition, nivelWidth, headerHeight);
+                    const headerText = `${nivel.nivel} (${nivel.puntos}pts)`;
+                    const headerLines = doc.splitTextToSize(headerText, nivelWidth - 4);
+                    doc.text(headerLines, xPos + 2, yPosition + 7);
+                    xPos += nivelWidth;
+                });
+                
+                yPosition += headerHeight;
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(8);
+            }
+            
+            xPos = 20;
+            
+            // Celda del criterio
+            doc.rect(xPos, yPosition, criterioWidth, filaHeight);
+            const criterioLines = doc.splitTextToSize(criterio.titulo, criterioWidth - 4);
+            doc.text(criterioLines, xPos + 2, yPosition + 6);
+            xPos += criterioWidth;
+            
+            // Celdas de niveles
+            criterio.niveles.forEach((nivel, nivelIndex) => {
+                doc.rect(xPos, yPosition, nivelWidth, filaHeight);
+                
+                // Verificar si este nivel fue seleccionado
+                const nivelSeleccionado = evaluacion && 
+                    evaluacion.respuestas[criterioIndex] === nivelIndex;
+                
+                if (nivelSeleccionado) {
+                    // Resaltar nivel seleccionado solo con fondo verde
+                    doc.setFillColor(200, 255, 200);
+                    doc.rect(xPos + 1, yPosition + 1, nivelWidth - 2, filaHeight - 2, 'F');
+                    doc.rect(xPos, yPosition, nivelWidth, filaHeight);
+                }
+                
+                // Usar solo la descripción del nivel, sin texto de selección
+                const nivelText = nivel.descripcion;
+                doc.setFont('helvetica', 'normal');
+                
+                // Dividir texto en líneas que quepan en la celda
+                const nivelLines = doc.splitTextToSize(nivelText, nivelWidth - 4);
+                
+                // Dibujar texto línea por línea
+                let textY = yPosition + 6;
+                nivelLines.forEach((line) => {
+                    doc.text(line, xPos + 2, textY);
+                    textY += 4;
+                });
+                
+                xPos += nivelWidth;
+            });
+            
+            yPosition += filaHeight;
+        });
+        
+        // Pie de página
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'italic');
+        doc.text(`Página ${numeroEstudiante} - Generado el ${new Date().toLocaleString('es-ES')}`, 
+                 pageWidth / 2, pageHeight - 10, { align: 'center' });
     }
 });

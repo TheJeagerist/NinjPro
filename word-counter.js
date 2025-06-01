@@ -10,131 +10,127 @@ document.addEventListener('DOMContentLoaded', function() {
     const panel = document.getElementById('word-counter-panel');
 
     // Elementos del panel de estudiantes
-    const studentsExcel = document.getElementById('students-excel');
-    const downloadTemplateBtn = document.getElementById('download-template');
-    const loadStudentsBtn = document.getElementById('load-students');
+    const courseSelect = document.getElementById('course-select');
     const studentSelect = document.getElementById('student-select');
-    const saveProgressBtn = document.getElementById('save-progress');
-    const exportResultsBtn = document.getElementById('export-results');
+    const currentCourseName = document.getElementById('current-course-name');
     const currentStudentName = document.getElementById('current-student-name');
     const currentStudentInfo = document.getElementById('current-student-info');
+    const studentReadingsCount = document.getElementById('student-readings-count');
 
-    // Verificar que todos los elementos necesarios existen
-    const requiredElements = {
-        fileInput, uploadArea, textContent, wordCount, mispronounced, 
-        errorPercentage, closeButton, panel, studentsExcel, downloadTemplateBtn,
-        loadStudentsBtn, studentSelect, saveProgressBtn, exportResultsBtn, 
-        currentStudentName, currentStudentInfo
-    };
+    // Elementos del timer
+    const startTimerBtn = document.getElementById('start-timer');
+    const stopTimerBtn = document.getElementById('stop-timer');
+    const resetTimerBtn = document.getElementById('reset-timer');
+    const timerDisplay = document.getElementById('timer-display');
 
-    // Verificar si algún elemento falta
-    const missingElements = Object.entries(requiredElements)
-        .filter(([key, value]) => !value)
-        .map(([key]) => key);
-
-    if (missingElements.length > 0) {
-        console.error('Elementos faltantes:', missingElements);
-        return; // Detener la ejecución si faltan elementos
-    }
-
-    // Datos de estudiantes
-    let studentsData = [];
-    let currentStudent = null;
+    // Elementos de guardado y exportación
+    const saveReadingBtn = document.getElementById('save-reading-data');
+    const exportReadingsBtn = document.getElementById('export-readings');
 
     // Variables del timer
     let timer = null;
     let startTime = 0;
     let elapsed = 0;
     let timerRunning = false;
-    let timerDisplay = null;
     
-    // Función para inicializar el timer
-    function initTimer() {
-        if (!panel || timerDisplay) return; // Evitar inicialización duplicada
-        
-        // Crear contenedor del timer
-        const timerContainer = document.createElement('div');
-        timerContainer.style.display = 'inline-flex';
-        timerContainer.style.alignItems = 'center';
-        timerContainer.style.marginLeft = '15px';
-        timerContainer.style.padding = '4px 12px';
-        timerContainer.style.borderRadius = '15px';
-        timerContainer.style.backgroundColor = '#f0f0f0';
-        timerContainer.style.transition = 'all 0.3s ease';
-        
-        // Crear indicador de estado
-        const statusDot = document.createElement('span');
-        statusDot.style.width = '8px';
-        statusDot.style.height = '8px';
-        statusDot.style.borderRadius = '50%';
-        statusDot.style.backgroundColor = '#888';
-        statusDot.style.marginRight = '8px';
-        statusDot.style.transition = 'background-color 0.3s ease';
-        
-        // Crear display del timer
-        timerDisplay = document.createElement('span');
-        timerDisplay.id = 'timer-display';
-        timerDisplay.style.fontFamily = 'monospace';
-        timerDisplay.style.color = '#333';
-        timerDisplay.textContent = '0.0s';
-        
-        // Ensamblar elementos
-        timerContainer.appendChild(statusDot);
-        timerContainer.appendChild(timerDisplay);
-        
-        const statsDiv = panel.querySelector('.word-counter-stats p');
-        if (statsDiv) {
-            statsDiv.appendChild(document.createTextNode(' | '));
-            statsDiv.appendChild(timerContainer);
-        }
+    // Variables de datos
+    let currentCourse = null;
+    let currentStudent = null;
+    let readingsData = JSON.parse(localStorage.getItem('readingsData') || '{}');
 
-        // Actualizar estado visual cuando el timer cambia
-        function updateTimerState() {
-            if (timerRunning) {
-                statusDot.style.backgroundColor = '#4CAF50';
-                timerContainer.style.backgroundColor = '#e8f5e9';
-            } else if (elapsed > 0) {
-                statusDot.style.backgroundColor = '#FFA000';
-                timerContainer.style.backgroundColor = '#fff3e0';
+    // Inicializar cuando se abre el panel
+    function initWordCounter() {
+        loadCoursesFromConfig();
+        updateUI();
+    }
+
+    // Cargar cursos desde los datos de configuración
+    function loadCoursesFromConfig() {
+        const cursosData = JSON.parse(localStorage.getItem('cursosData') || '{}');
+        const courses = Object.keys(cursosData);
+        
+        // Llenar el selector de cursos
+        courseSelect.innerHTML = '<option value="">Seleccionar curso</option>';
+        courses.forEach(course => {
+            const option = document.createElement('option');
+            option.value = course;
+            option.textContent = `${course} (${cursosData[course].length} estudiantes)`;
+            courseSelect.appendChild(option);
+        });
+
+        // Habilitar selector de cursos si hay cursos
+        courseSelect.disabled = courses.length === 0;
+        
+        if (courses.length === 0) {
+            courseSelect.innerHTML = '<option value="">No hay cursos cargados - Ve a Ajustes</option>';
+            studentSelect.innerHTML = '<option value="">No hay cursos disponibles</option>';
+        } else {
+            studentSelect.innerHTML = '<option value="">Primero selecciona un curso</option>';
+        }
+        
+        // Resetear selección de estudiantes
+        studentSelect.disabled = true;
+        currentCourse = null;
+        currentStudent = null;
+    }
+
+    // Cargar estudiantes de un curso específico
+    function loadStudentsFromCourse(courseName) {
+        const cursosData = JSON.parse(localStorage.getItem('cursosData') || '{}');
+        const students = cursosData[courseName] || [];
+        
+        // Llenar el selector de estudiantes
+        studentSelect.innerHTML = '<option value="">Seleccionar estudiante</option>';
+        students.forEach((estudiante, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = estudiante.nombre || estudiante;
+            studentSelect.appendChild(option);
+        });
+
+        // Habilitar selector de estudiantes
+        studentSelect.disabled = students.length === 0;
+        
+        if (students.length === 0) {
+            studentSelect.innerHTML = '<option value="">No hay estudiantes en este curso</option>';
+        }
+    }
+
+    // Actualizar interfaz de usuario
+    function updateUI() {
+        const hasStudent = currentStudent !== null;
+        const hasText = textContent.textContent.trim().length > 0;
+        const canSave = hasStudent && hasText && (elapsed > 0 || getSelectedWords() > 0);
+
+        // Habilitar/deshabilitar controles del timer
+        startTimerBtn.disabled = !hasStudent || !hasText;
+        stopTimerBtn.disabled = !hasStudent || !hasText;
+        resetTimerBtn.disabled = !hasStudent || !hasText;
+
+        // Habilitar/deshabilitar botón de guardar
+        saveReadingBtn.disabled = !canSave;
+
+        // Habilitar/deshabilitar botón de exportar
+        exportReadingsBtn.disabled = Object.keys(readingsData).length === 0;
+
+        // Mostrar/ocultar información del estudiante
+        if (currentStudent && currentCourse) {
+            currentStudentInfo.style.display = 'block';
+            currentCourseName.textContent = currentCourse;
+            currentStudentName.textContent = currentStudent.nombre;
+            const readings = readingsData[currentStudent.id] || [];
+            studentReadingsCount.textContent = readings.length;
             } else {
-                statusDot.style.backgroundColor = '#888';
-                timerContainer.style.backgroundColor = '#f0f0f0';
-            }
+            currentStudentInfo.style.display = 'none';
         }
-
-        // Modificar las funciones existentes para actualizar el estado visual
-        const originalStartTimer = startTimer;
-        startTimer = function() {
-            originalStartTimer();
-            updateTimerState();
-        };
-
-        const originalStopTimer = stopTimer;
-        stopTimer = function() {
-            originalStopTimer();
-            updateTimerState();
-        };
-
-        const originalResetTimer = resetTimer;
-        resetTimer = function() {
-            originalResetTimer();
-            updateTimerState();
-        };
     }
 
+    // Funciones del timer
     function updateTimerDisplay() {
-        if (timerDisplay) {
             const minutes = Math.floor(elapsed / 60000);
-            const seconds = ((elapsed % 60000) / 1000).toFixed(1);
-            timerDisplay.textContent = minutes > 0 ? 
-                `${minutes}m ${seconds}s` : 
-                `${seconds}s`;
-        }
-    }
-
-    // Inicializar el timer después de verificar los elementos
-    if (!missingElements.length) {
-        initTimer();
+        const seconds = Math.floor((elapsed % 60000) / 1000);
+        const milliseconds = Math.floor((elapsed % 1000) / 100);
+        timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${milliseconds}`;
     }
 
     function startTimer() {
@@ -145,6 +141,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateTimerDisplay();
             }, 100);
             timerRunning = true;
+            startTimerBtn.textContent = '▶ Corriendo...';
+            startTimerBtn.disabled = true;
+            stopTimerBtn.disabled = false;
         }
     }
 
@@ -152,6 +151,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (timerRunning) {
             clearInterval(timer);
             timerRunning = false;
+            startTimerBtn.textContent = '▶ Continuar';
+            startTimerBtn.disabled = false;
+            stopTimerBtn.disabled = true;
             updateTimerDisplay();
         }
     }
@@ -159,335 +161,378 @@ document.addEventListener('DOMContentLoaded', function() {
     function resetTimer() {
         stopTimer();
         elapsed = 0;
+        startTimerBtn.textContent = '▶ Iniciar';
         updateTimerDisplay();
+        updateUI();
     }
 
-    // Controlar el timer con la barra espaciadora
+    // Event listeners del timer
+    startTimerBtn.addEventListener('click', startTimer);
+    stopTimerBtn.addEventListener('click', stopTimer);
+    resetTimerBtn.addEventListener('click', resetTimer);
+
+    // Control con barra espaciadora
     document.addEventListener('keydown', function(e) {
         if (panel.style.display !== 'none' && e.code === 'Space' && !e.repeat) {
             e.preventDefault();
             if (timerRunning) {
                 stopTimer();
-            } else {
+            } else if (!startTimerBtn.disabled) {
                 startTimer();
             }
         }
     });
 
-    // Resetear timer al cambiar de estudiante o cargar texto
+    // Selección de curso
+    courseSelect.addEventListener('change', function() {
+        const selectedCourse = this.value;
+        currentCourse = selectedCourse;
+        currentStudent = null;
+        
+        if (selectedCourse) {
+            loadStudentsFromCourse(selectedCourse);
+        } else {
+            studentSelect.innerHTML = '<option value="">Primero selecciona un curso</option>';
+            studentSelect.disabled = true;
+        }
+        
+        resetTimer();
+        updateUI();
+    });
+
+    // Selección de estudiante
+    studentSelect.addEventListener('change', function() {
+        const selectedIndex = this.value;
+        
+        if (selectedIndex !== '' && currentCourse) {
+            const cursosData = JSON.parse(localStorage.getItem('cursosData') || '{}');
+            const estudiantes = cursosData[currentCourse] || [];
+            const estudiante = estudiantes[parseInt(selectedIndex)];
+            
+            if (estudiante) {
+                currentStudent = {
+                    id: `${currentCourse}_${estudiante.nombre || estudiante}`.replace(/\s+/g, '_'),
+                    nombre: estudiante.nombre || estudiante,
+                    curso: currentCourse,
+                    index: selectedIndex
+                };
+            }
+        } else {
+            currentStudent = null;
+        }
+        
+        resetTimer();
+        updateUI();
+    });
+
+    // Obtener número de palabras seleccionadas
+    function getSelectedWords() {
+        return parseInt(wordCount.textContent) || 0;
+    }
+
+    // Obtener número de palabras mal pronunciadas
+    function getMispronounced() {
+        return parseInt(mispronounced.textContent) || 0;
+    }
+
+    // Obtener porcentaje de errores
+    function getErrorPercentage() {
+        return parseFloat(errorPercentage.textContent.replace('%', '')) || 0;
+    }
+
+    // Guardar datos de lectura
+    saveReadingBtn.addEventListener('click', function() {
+        if (!currentStudent || !currentCourse) {
+            alert('Selecciona un curso y un estudiante primero');
+            return;
+        }
+
+        const readingData = {
+            fecha: new Date().toISOString(),
+            fechaLegible: new Date().toLocaleDateString('es-ES'),
+            horaLegible: new Date().toLocaleTimeString('es-ES'),
+            curso: currentCourse,
+            palabrasLeidas: getSelectedWords(),
+            palabrasMalPronunciadas: getMispronounced(),
+            porcentajeErrores: getErrorPercentage(),
+            tiempoSegundos: Math.round(elapsed / 1000 * 10) / 10,
+            tiempoFormateado: timerDisplay.textContent,
+            textoLeido: textContent.textContent.substring(0, 100) + '...' // Primeros 100 caracteres
+        };
+
+        // Inicializar array si no existe
+        if (!readingsData[currentStudent.id]) {
+            readingsData[currentStudent.id] = [];
+        }
+
+        // Agregar nueva lectura
+        readingsData[currentStudent.id].push(readingData);
+
+        // Guardar en localStorage
+        localStorage.setItem('readingsData', JSON.stringify(readingsData));
+
+        // Resetear counters y timer
+        resetAllCounters();
+        
+        // Actualizar UI
+        updateUI();
+
+        alert(`Lectura guardada para ${currentStudent.nombre} del curso ${currentCourse}`);
+    });
+
+    // Exportar todos los datos a Excel
+    exportReadingsBtn.addEventListener('click', function() {
+        if (Object.keys(readingsData).length === 0) {
+            alert('No hay datos para exportar');
+            return;
+        }
+
+        const wb = XLSX.utils.book_new();
+        const data = [];
+
+        // Encabezados
+        data.push([
+            'Estudiante',
+            'Curso', 
+            'Fecha',
+            'Hora',
+            'Palabras Leídas',
+            'Palabras Mal Pronunciadas',
+            'Porcentaje de Errores',
+            'Tiempo (segundos)',
+            'Tiempo Formateado',
+            'Texto Leído (muestra)'
+        ]);
+
+        // Obtener información de estudiantes
+        const cursosData = JSON.parse(localStorage.getItem('cursosData') || '{}');
+        const studentsInfo = {};
+        
+        Object.entries(cursosData).forEach(([courseName, students]) => {
+            students.forEach((estudiante) => {
+                const id = `${courseName}_${estudiante.nombre || estudiante}`.replace(/\s+/g, '_');
+                studentsInfo[id] = {
+                    nombre: estudiante.nombre || estudiante,
+                    curso: courseName
+                };
+            });
+        });
+
+        // Agregar datos de cada estudiante
+        Object.entries(readingsData).forEach(([studentId, readings]) => {
+            const studentInfo = studentsInfo[studentId] || { nombre: 'Desconocido', curso: 'Desconocido' };
+            
+            readings.forEach(reading => {
+                data.push([
+                    studentInfo.nombre,
+                    reading.curso || studentInfo.curso,
+                    reading.fechaLegible,
+                    reading.horaLegible,
+                    reading.palabrasLeidas,
+                    reading.palabrasMalPronunciadas,
+                    reading.porcentajeErrores + '%',
+                    reading.tiempoSegundos,
+                    reading.tiempoFormateado,
+                    reading.textoLeido
+                ]);
+            });
+        });
+
+        // Crear hoja de trabajo
+        const ws = XLSX.utils.aoa_to_sheet(data);
+        
+        // Ajustar ancho de columnas
+        const colWidths = [
+            { wch: 20 }, // Estudiante
+            { wch: 15 }, // Curso
+            { wch: 12 }, // Fecha
+            { wch: 10 }, // Hora
+            { wch: 15 }, // Palabras Leídas
+            { wch: 20 }, // Palabras Mal Pronunciadas
+            { wch: 18 }, // Porcentaje de Errores
+            { wch: 15 }, // Tiempo (segundos)
+            { wch: 15 }, // Tiempo Formateado
+            { wch: 30 }  // Texto Leído
+        ];
+        ws['!cols'] = colWidths;
+
+        // Agregar hoja al libro
+        XLSX.utils.book_append_sheet(wb, ws, 'Lecturas');
+
+        // Generar archivo
+        const fileName = `lecturas_estudiantes_${new Date().toISOString().split('T')[0]}.xlsx`;
+        XLSX.writeFile(wb, fileName);
+    });
+
+    // Resetear todos los contadores
     function resetAllCounters() {
         wordCount.textContent = '0';
         mispronounced.textContent = '0';
         errorPercentage.textContent = '0%';
+        
+        // Limpiar selecciones en el texto
+        const spans = textContent.querySelectorAll('span');
+        spans.forEach(span => {
+            span.classList.remove('selected', 'mispronounced');
+        });
+        
         resetTimer();
     }
 
-    // --- FIN TIMER ---
-
-    // Función para descargar la plantilla
-    downloadTemplateBtn.addEventListener('click', () => {
-        // Crear un nuevo libro de Excel
-        const wb = XLSX.utils.book_new();
-        
-        // Crear los datos de ejemplo
-        const exampleData = [
-            ['Nombre del Estudiante', 'Tiempo (s)'], // Encabezado
-            ['Juan Pérez', ''],           // Ejemplo 1
-            ['María García', ''],         // Ejemplo 2
-            ['Carlos Rodríguez', '']      // Ejemplo 3
-        ];
-        
-        // Crear una hoja de trabajo
-        const ws = XLSX.utils.aoa_to_sheet(exampleData);
-        
-        // Agregar la hoja al libro
-        XLSX.utils.book_append_sheet(wb, ws, 'Lista de Estudiantes');
-        
-        // Generar el archivo y descargarlo
-        XLSX.writeFile(wb, 'plantilla_estudiantes.xlsx');
-    });
-
-    // Prevenir el comportamiento por defecto del botón del medio
-    document.addEventListener('mousedown', function(e) {
-        if (e.button === 1) { // botón del medio
-            e.preventDefault();
+    // Manejar carga de archivos
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            handleFile(file);
         }
     });
 
-    // Manejar el arrastrar y soltar
-    uploadArea.addEventListener('dragover', (e) => {
+    // Drag and drop
+    uploadArea.addEventListener('dragover', function(e) {
         e.preventDefault();
-        uploadArea.style.borderColor = '#1976d2';
+        uploadArea.style.backgroundColor = '#f0f0f0';
     });
 
-    uploadArea.addEventListener('dragleave', () => {
-        uploadArea.style.borderColor = '';
+    uploadArea.addEventListener('dragleave', function(e) {
+        uploadArea.style.backgroundColor = '';
     });
 
-    uploadArea.addEventListener('drop', (e) => {
+    uploadArea.addEventListener('drop', function(e) {
         e.preventDefault();
-        uploadArea.style.borderColor = '';
+        uploadArea.style.backgroundColor = '';
         const file = e.dataTransfer.files[0];
-        handleFile(file);
+        if (file) {
+            handleFile(file);
+        }
     });
 
-    // Manejar la selección de archivo
-    uploadArea.addEventListener('click', () => {
+    uploadArea.addEventListener('click', function() {
         fileInput.click();
     });
 
-    fileInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        handleFile(file);
-    });
-
-    // Cerrar panel
-    closeButton.addEventListener('click', () => {
-        panel.style.display = 'none';
-        const menuWordCounter = document.getElementById('menu-word-counter');
-        if (menuWordCounter) {
-            menuWordCounter.classList.remove('active');
-        }
-    });
-
-    // Evento para cargar lista de estudiantes
-    loadStudentsBtn.addEventListener('click', () => {
-        studentsExcel.click();
-    });
-
-    // Función para leer el archivo Excel
-    async function readExcelFile(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
-                    
-                    // Filtrar filas vacías y omitir la primera fila (encabezado)
-                    const validData = jsonData
-                        .slice(1) // Omitir la primera fila
-                        .filter(row => row.length > 0 && row[0]); // Asegurarse de que la fila tiene datos
-                    
-                    if (validData.length === 0) {
-                        reject(new Error('No se encontraron estudiantes en el archivo'));
-                        return;
-                    }
-                    
-                    resolve(validData);
-                } catch (error) {
-                    reject(new Error('Error al procesar el archivo Excel: ' + error.message));
-                }
-            };
-            reader.onerror = () => reject(new Error('Error al leer el archivo'));
-            reader.readAsArrayBuffer(file);
-        });
-    }
-
-    studentsExcel.addEventListener('change', async (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            try {
-                const data = await readExcelFile(file);
-                studentsData = data.map(row => ({
-                    nombre: row[0],
-                    resultados: []
-                }));
-                
-                // Actualizar el selector de estudiantes
-                updateStudentSelect();
-                
-                // Habilitar el selector y botones
-                studentSelect.disabled = false;
-                saveProgressBtn.disabled = false;
-                exportResultsBtn.disabled = false;
-
-                // Mostrar mensaje de éxito
-                alert(`Se cargaron ${studentsData.length} estudiantes exitosamente`);
-            } catch (error) {
-                console.error('Error al cargar el archivo:', error);
-                alert('Error al cargar el archivo: ' + error.message);
-            }
-        }
-    });
-
-    // Evento para seleccionar estudiante
-    studentSelect.addEventListener('change', () => {
-        const selectedValue = studentSelect.value;
-        
-        // Si hay un estudiante actual, guardar su progreso antes de cambiar
-        if (currentStudent) {
-            const resultado = {
-                fecha: new Date().toLocaleString(),
-                palabrasSeleccionadas: parseInt(wordCount.textContent) || 0,
-                palabrasMalPronunciadas: parseInt(mispronounced.textContent) || 0,
-                porcentajeErrores: parseFloat(errorPercentage.textContent) || 0,
-                tiempo: (elapsed / 1000).toFixed(1)
-            };
-            currentStudent.resultados.push(resultado);
-        }
-        
-        // Actualizar al nuevo estudiante
-        if (selectedValue) {
-            currentStudent = studentsData.find(s => s.nombre === selectedValue);
-            currentStudentName.textContent = currentStudent.nombre;
-            currentStudentInfo.style.display = 'block';
-            saveProgressBtn.disabled = false;
-            resetAllCounters();
-            
-            // Limpiar las selecciones de palabras si hay texto cargado
-            if (textContent.innerHTML) {
-                const spans = textContent.getElementsByTagName('span');
-                Array.from(spans).forEach(span => {
-                    span.classList.remove('selected', 'double-clicked');
-                });
-            }
-        } else {
-            currentStudent = null;
-            currentStudentInfo.style.display = 'none';
-            saveProgressBtn.disabled = true;
-            resetAllCounters();
-        }
-    });
-
-    // Evento para guardar progreso
-    saveProgressBtn.addEventListener('click', () => {
-        if (currentStudent) {
-            const resultado = {
-                fecha: new Date().toLocaleString(),
-                palabrasSeleccionadas: parseInt(wordCount.textContent) || 0,
-                palabrasMalPronunciadas: parseInt(mispronounced.textContent) || 0,
-                porcentajeErrores: parseFloat(errorPercentage.textContent) || 0,
-                tiempo: (elapsed / 1000).toFixed(1)
-            };
-            
-            currentStudent.resultados.push(resultado);
-            alert('Progreso guardado para ' + currentStudent.nombre);
-            resetTimer();
-        }
-    });
-
-    // Evento para exportar resultados
-    exportResultsBtn.addEventListener('click', () => {
-        const wb = XLSX.utils.book_new();
-        
-        // Crear un objeto para almacenar el último resultado de cada estudiante
-        const ultimosResultados = {};
-        
-        // Iterar sobre los datos y mantener solo el último resultado de cada estudiante
-        studentsData.forEach(student => {
-            if (student.resultados.length > 0) {
-                // Tomar el último resultado del estudiante
-                const ultimoResultado = student.resultados[student.resultados.length - 1];
-                ultimosResultados[student.nombre] = {
-                    'Nombre': student.nombre,
-                    'Fecha': ultimoResultado.fecha,
-                    'Palabras Seleccionadas': ultimoResultado.palabrasSeleccionadas,
-                    'Palabras Mal Pronunciadas': ultimoResultado.palabrasMalPronunciadas,
-                    'Porcentaje de Errores': ultimoResultado.porcentajeErrores + '%',
-                    'Tiempo (s)': ultimoResultado.tiempo
-                };
-            }
-        });
-        
-        // Convertir el objeto de últimos resultados a un array
-        const data = Object.values(ultimosResultados);
-
-        const ws = XLSX.utils.json_to_sheet(data);
-        XLSX.utils.book_append_sheet(wb, ws, "Resultados");
-        
-        // Guardar archivo
-        XLSX.writeFile(wb, 'resultados_pronunciacion.xlsx');
-    });
-
+    // Procesar archivo
     function handleFile(file) {
-        if (!file) return;
+        const fileName = file.name.toLowerCase();
 
-        if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+        if (fileName.endsWith('.txt')) {
             const reader = new FileReader();
             reader.onload = function(e) {
-                const arrayBuffer = e.target.result;
-                alert('El procesamiento de archivos .docx requiere una biblioteca adicional. Por favor, usa archivos .txt por ahora.');
-            };
-            reader.readAsArrayBuffer(file);
-        } else if (file.type === 'text/plain') {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const text = e.target.result;
-                displayText(text);
+                displayText(e.target.result);
             };
             reader.readAsText(file);
+        } else if (fileName.endsWith('.docx')) {
+            // Aquí necesitarías una librería como mammoth.js para procesar DOCX
+            alert('La funcionalidad de DOCX requiere la librería mammoth.js');
         } else {
-            alert('Por favor, sube un archivo .docx o .txt');
+            alert('Formato de archivo no soportado. Use .txt o .docx');
         }
     }
 
-    function updateStats() {
-        const totalWords = textContent.getElementsByTagName('span').length;
-        const mispronounceCount = textContent.getElementsByClassName('double-clicked').length;
-        const percentage = totalWords > 0 ? ((mispronounceCount / totalWords) * 100).toFixed(1) : 0;
-        
-        mispronounced.textContent = mispronounceCount;
-        errorPercentage.textContent = `${percentage}%`;
-    }
-
-    function toggleMispronounced(element) {
-        element.classList.toggle('double-clicked');
-        updateStats();
-    }
-
+    // Mostrar texto en pantalla
     function displayText(text) {
-        const words = text.split(/\s+/).filter(word => word.length > 0);
-        textContent.innerHTML = words
-            .map((word, index) => `<span data-index="${index}">${word}</span>`)
-            .join(' ');
-
-        const spans = textContent.getElementsByTagName('span');
-        Array.from(spans).forEach(span => {
-            let lastClickTime = 0;
-
-            span.addEventListener('click', function(e) {
-                const currentTime = new Date().getTime();
-                const index = parseInt(this.dataset.index);
-
-                if (currentTime - lastClickTime < 300) {
-                    toggleMispronounced(this);
-                } else {
-                    Array.from(spans).forEach(s => {
-                        const sIndex = parseInt(s.dataset.index);
-                        if (sIndex <= index) {
-                            s.classList.add('selected');
-                        } else {
-                            s.classList.remove('selected');
-                        }
-                    });
-                    wordCount.textContent = index + 1;
-                }
-
-                lastClickTime = currentTime;
+        const words = text.split(/\s+/).filter(word => word.trim().length > 0);
+        textContent.innerHTML = '';
+        
+        words.forEach((word, index) => {
+            const span = document.createElement('span');
+            span.textContent = word + ' ';
+            span.dataset.index = index;
+            
+            // Event listener para click izquierdo (seleccionar hasta esa palabra)
+            span.addEventListener('click', function() {
+                selectWordsUpTo(index);
             });
-
+            
+            // Event listener para click del botón de la rueda (marcar como mal pronunciada)
             span.addEventListener('mousedown', function(e) {
-                if (e.button === 1) {
+                if (e.button === 1) { // Botón de la rueda
                     e.preventDefault();
                     toggleMispronounced(this);
                 }
             });
+            
+            // Prevenir el comportamiento por defecto del botón de la rueda
+            span.addEventListener('auxclick', function(e) {
+                if (e.button === 1) {
+                    e.preventDefault();
+                }
+            });
+            
+            textContent.appendChild(span);
+        });
+        
+        resetAllCounters();
+        updateUI();
+    }
+
+    // Seleccionar palabras desde la primera hasta el índice especificado
+    function selectWordsUpTo(index) {
+        const spans = textContent.querySelectorAll('span');
+        
+        spans.forEach((span, i) => {
+            if (i <= index) {
+                span.classList.add('selected');
+                // No remover la clase mispronounced si ya la tiene
+            } else {
+                span.classList.remove('selected');
+            }
         });
 
         updateStats();
     }
 
-    // Función para actualizar el selector de estudiantes
-    function updateStudentSelect() {
-        studentSelect.innerHTML = '<option value="">Seleccionar estudiante</option>';
-        studentsData.forEach(student => {
-            const option = document.createElement('option');
-            option.value = student.nombre;
-            option.textContent = student.nombre;
-            studentSelect.appendChild(option);
+    // Alternar palabra como mal pronunciada
+    function toggleMispronounced(element) {
+        element.classList.toggle('mispronounced');
+        // Si se marca como mal pronunciada, también debe estar seleccionada
+        if (element.classList.contains('mispronounced')) {
+            element.classList.add('selected');
+        }
+        updateStats();
+    }
+
+    // Actualizar estadísticas
+    function updateStats() {
+        const selectedSpans = textContent.querySelectorAll('span.selected');
+        const mispronuncedSpans = textContent.querySelectorAll('span.mispronounced');
+        
+        const selectedCount = selectedSpans.length;
+        const mispronuncedCount = mispronuncedSpans.length;
+        
+        wordCount.textContent = selectedCount;
+        mispronounced.textContent = mispronuncedCount;
+        
+        if (selectedCount > 0) {
+            const errorRate = (mispronuncedCount / selectedCount * 100).toFixed(1);
+            errorPercentage.textContent = errorRate + '%';
+        } else {
+            errorPercentage.textContent = '0%';
+        }
+        
+        updateUI();
+    }
+
+    // Cerrar panel
+    closeButton.addEventListener('click', function() {
+        panel.style.display = 'none';
+        stopTimer();
+    });
+
+    // Inicializar cuando se muestre el panel
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                if (panel.style.display !== 'none' && panel.style.display !== '') {
+                    initWordCounter();
+                }
+            }
         });
+    });
+
+    observer.observe(panel, { attributes: true });
+
+    // Inicializar si el panel ya está visible
+    if (panel.style.display !== 'none') {
+        initWordCounter();
     }
 }); 

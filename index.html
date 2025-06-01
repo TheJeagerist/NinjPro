@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Calculadora de Promedio Ponderado</title>
   <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 </head>
 <body>
@@ -92,6 +93,15 @@
         </svg>
       </span>
       <span class="menu-label">Rúbricas</span>
+    </a>
+    <a href="#config" id="menu-config" data-tooltip="Configuración" class="menu-config">
+      <span class="icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </span>
+      <span class="menu-label">Configuración</span>
     </a>
   </nav>
 
@@ -299,6 +309,16 @@
 
           <!-- Botón calcular -->
           <button id="calcBtn" onclick="calculateAverage()">Calcular Promedio</button>
+        </div>
+
+        <!-- Agregar en la sección de la calculadora -->
+        <div class="student-selector">
+            <select id="curso-select" class="curso-select">
+                <option value="">Seleccionar Curso</option>
+            </select>
+            <select id="estudiante-select" class="estudiante-select">
+                <option value="">Seleccionar Estudiante</option>
+            </select>
         </div>
       </div>
     </div>
@@ -548,17 +568,29 @@
       <!-- Panel de estudiantes -->
       <div class="students-panel">
         <div class="students-controls">
-          <input type="file" id="students-excel" accept=".xls,.xlsx" style="display: none;">
-          <button id="load-students" class="btn-primary">Cargar Lista de Estudiantes</button>
-          <button id="download-template" class="btn-download">Descargar Plantilla</button>
-          <select id="student-select" disabled>
-            <option value="">Seleccionar estudiante</option>
-          </select>
-          <button id="save-progress" class="btn-success" disabled>Guardar Progreso</button>
-          <button id="export-results" class="btn-export" disabled>Exportar Resultados</button>
+          <div class="course-student-selection">
+            <select id="course-select" disabled>
+              <option value="">Seleccionar curso</option>
+            </select>
+            <select id="student-select" disabled>
+              <option value="">Primero selecciona un curso</option>
+            </select>
+          </div>
+          <div class="timer-controls">
+            <button id="start-timer" class="btn-success" disabled>▶ Iniciar</button>
+            <button id="stop-timer" class="btn-secondary" disabled>⏸ Pausar</button>
+            <button id="reset-timer" class="btn-secondary" disabled>🔄 Reiniciar</button>
+            <span id="timer-display" style="font-family: monospace; font-size: 1.2em; margin-left: 10px;">00:00.0</span>
+          </div>
+          <div class="action-buttons">
+            <button id="save-reading-data" class="btn-success" disabled>💾 Guardar Lectura</button>
+            <button id="export-readings" class="btn-export" disabled>📊 Exportar Todo</button>
+          </div>
         </div>
         <div id="current-student-info" class="student-info" style="display: none;">
-          <p>Estudiante actual: <span id="current-student-name">-</span></p>
+          <p>Curso: <strong id="current-course-name">-</strong></p>
+          <p>Estudiante: <strong id="current-student-name">-</strong></p>
+          <p>Lecturas registradas: <span id="student-readings-count">0</span></p>
         </div>
       </div>
       
@@ -576,6 +608,12 @@
           <p>Palabras seleccionadas: <span id="word-count">0</span></p>
           <p>Palabras mal pronunciadas: <span id="mispronounced-count" class="error-count">0</span></p>
           <p>Porcentaje de errores: <span id="error-percentage">0%</span></p>
+          <div style="font-size: 0.9em; color: #666; margin-top: 15px; padding: 10px; background: rgba(0,0,0,0.05); border-radius: 5px;">
+            <p style="margin: 5px 0;"><strong>💡 Instrucciones:</strong></p>
+            <p style="margin: 5px 0;">• <strong>Click izquierdo</strong> en una palabra: Selecciona desde la primera palabra hasta esa palabra</p>
+            <p style="margin: 5px 0;">• <strong>Click con rueda del mouse</strong>: Marca la palabra como mal pronunciada (rojo)</p>
+            <p style="margin: 5px 0;">• <strong>Barra espaciadora</strong>: Iniciar/pausar cronómetro</p>
+          </div>
         </div>
       </div>
 
@@ -585,7 +623,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="script.js"></script>
-  <script src="word-counter.js"></script>
+  
  
 
   <!-- Panel de Rúbricas -->
@@ -612,6 +650,73 @@
       <div id="rubrica-content" class="rubrica-content">
         <!-- Aquí se mostrará la rúbrica cargada o el formulario para crear una nueva -->
       </div>
+    </div>
+  </div>
+
+  <!-- Panel de Configuración -->
+  <div id="config-panel" class="config-panel">
+    <div class="container">
+        <h2>Configuración</h2>
+        
+        <div class="config-section">
+            <h3>Gestión de Cursos</h3>
+            
+            <div class="config-controls">
+                <button id="btn-cargar-excel-config" class="btn-primary" type="button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="12" y1="18" x2="12" y2="12"></line>
+                        <line x1="9" y1="15" x2="15" y2="15"></line>
+                    </svg>
+                    Cargar Lista de Estudiantes
+                </button>
+                
+                <button id="btn-descargar-plantilla-config" class="btn-secondary" type="button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Descargar Plantilla Excel
+                </button>
+            </div>
+
+            <div class="cursos-list">
+                <h4>Cursos Cargados</h4>
+                <div id="lista-cursos" class="lista-cursos">
+                    <!-- Los cursos se cargarán dinámicamente aquí -->
+                </div>
+                
+                <!-- Panel para mostrar estudiantes del curso seleccionado -->
+                <div id="estudiantes-panel" class="estudiantes-panel" style="display: none;">
+                    <h4 id="curso-seleccionado-titulo">Estudiantes del curso</h4>
+                    <div class="estudiantes-header">
+                        <span class="estudiantes-count" id="estudiantes-count">0 estudiantes</span>
+                        <button id="cerrar-estudiantes" class="btn-cerrar">✕</button>
+                    </div>
+                    <div id="lista-estudiantes" class="lista-estudiantes">
+                        <!-- Los estudiantes se mostrarán aquí -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <!-- Panel independiente para mostrar estudiantes del curso -->
+  <div id="estudiantes-sidebar" class="estudiantes-sidebar">
+    <div class="estudiantes-sidebar-content">
+        <div class="estudiantes-sidebar-header">
+            <h3 id="estudiantes-sidebar-titulo">Estudiantes del curso</h3>
+            <button id="cerrar-estudiantes-sidebar" class="btn-cerrar-sidebar">✕</button>
+        </div>
+        <div class="estudiantes-sidebar-info">
+            <span id="estudiantes-sidebar-count">0 estudiantes</span>
+        </div>
+        <div id="estudiantes-sidebar-lista" class="estudiantes-sidebar-lista">
+            <!-- Los estudiantes se mostrarán aquí -->
+        </div>
     </div>
   </div>
 </body>

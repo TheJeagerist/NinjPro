@@ -246,6 +246,16 @@ async function leerExcelEstudiantes(file) {
 function guardarDatosCurso(data) {
     cursosData = { ...cursosData, ...data };
     localStorage.setItem('cursosData', JSON.stringify(cursosData));
+    
+    // Actualizar todos los selectores de cursos en la aplicación
+    if (typeof actualizarSelectoresCurso === 'function') {
+        actualizarSelectoresCurso();
+    }
+    
+    // También disparar evento personalizado para que otros módulos se actualicen
+    window.dispatchEvent(new CustomEvent('cursosActualizados', { 
+        detail: { cursosData: cursosData } 
+    }));
 }
 
 // Función para actualizar la lista de cursos en el panel
@@ -440,20 +450,64 @@ function descargarPlantillaExcel() {
 
 // Función para actualizar los selectores de curso en toda la aplicación
 function actualizarSelectoresCurso() {
-    const selectores = document.querySelectorAll('.curso-select');
+    // Selectores básicos
+    const selectores = document.querySelectorAll('.curso-select, .curso-select-multi');
     selectores.forEach(selector => {
         const valorActual = selector.value;
         selector.innerHTML = '<option value="">Seleccionar Curso</option>';
         
-        Object.keys(cursosData).forEach(curso => {
-            const option = document.createElement('option');
-            option.value = curso;
-            option.textContent = curso;
-            selector.appendChild(option);
-        });
+        if (Object.keys(cursosData).length === 0) {
+            const optionSinCursos = document.createElement('option');
+            optionSinCursos.value = "";
+            optionSinCursos.textContent = "No hay cursos - Ve a Configuración";
+            optionSinCursos.disabled = true;
+            selector.appendChild(optionSinCursos);
+        } else {
+            Object.keys(cursosData).forEach(curso => {
+                const estudiantes = cursosData[curso];
+                const cantidadEstudiantes = Array.isArray(estudiantes) ? estudiantes.length : 0;
+                
+                const option = document.createElement('option');
+                option.value = curso;
+                option.textContent = `${curso} (${cantidadEstudiantes} estudiantes)`;
+                selector.appendChild(option);
+            });
+        }
         
         if (valorActual && cursosData[valorActual]) {
             selector.value = valorActual;
         }
     });
+    
+    // Selector específico del contador de palabras
+    const wordCounterCourseSelect = document.getElementById('course-select');
+    if (wordCounterCourseSelect) {
+        const valorActualWC = wordCounterCourseSelect.value;
+        wordCounterCourseSelect.innerHTML = '<option value="">Seleccionar curso</option>';
+        
+        if (Object.keys(cursosData).length === 0) {
+            wordCounterCourseSelect.innerHTML = '<option value="">No hay cursos cargados - Ve a Configuración</option>';
+            wordCounterCourseSelect.disabled = true;
+        } else {
+            wordCounterCourseSelect.disabled = false;
+            Object.keys(cursosData).forEach(curso => {
+                const estudiantes = cursosData[curso];
+                const cantidadEstudiantes = Array.isArray(estudiantes) ? estudiantes.length : 0;
+                
+                const option = document.createElement('option');
+                option.value = curso;
+                option.textContent = `${curso} (${cantidadEstudiantes} estudiantes)`;
+                wordCounterCourseSelect.appendChild(option);
+            });
+            
+            if (valorActualWC && cursosData[valorActualWC]) {
+                wordCounterCourseSelect.value = valorActualWC;
+            }
+        }
+    }
+    
+    // Disparar evento personalizado para notificar a otros módulos
+    window.dispatchEvent(new CustomEvent('selectoresCursosActualizados', {
+        detail: { cursosData: cursosData }
+    }));
 } 

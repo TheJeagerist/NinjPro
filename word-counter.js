@@ -408,8 +408,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     uploadArea.addEventListener('click', function() {
         fileInput.click();
-    });
-
+        });
+        
     // Procesar archivo
     function handleFile(file) {
         const fileName = file.name.toLowerCase();
@@ -475,8 +475,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 // No remover la clase mispronounced si ya la tiene
             } else {
                 span.classList.remove('selected');
-            }
-        });
+                }
+            });
 
         updateStats();
     }

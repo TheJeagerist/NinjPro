@@ -6585,3 +6585,339 @@ body.theme-oscuro .estudiantes-sidebar {
         width: 100%;
     }
 }
+
+/* Estilos para el selector de cursos en multi-panel */
+.curso-selection {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.curso-controls {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.curso-select-multi {
+  flex: 1;
+  min-width: 250px;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  background: var(--input-grade);
+  color: var(--input-text);
+  font-size: 1rem;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.curso-select-multi:focus {
+  outline: none;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1), 0 0 0 2px var(--btn-calc);
+}
+
+.curso-controls button {
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+#btn-cargar-curso-multi {
+  background: var(--btn-add);
+  color: white;
+}
+
+#btn-cargar-curso-multi:hover {
+  background: var(--btn-add-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+#btn-limpiar-todo-multi {
+  background: var(--btn-reset);
+  color: white;
+}
+
+#btn-limpiar-todo-multi:hover {
+  background: var(--btn-reset-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Responsividad para el selector de cursos */
+@media (max-width: 768px) {
+  .curso-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .curso-select-multi {
+    min-width: unset;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  .curso-controls button {
+    width: 100%;
+    min-width: unset;
+  }
+}
+
+/* Estilos para el divisor en el menú lateral */
+.menu-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  margin: 15px 10px;
+  opacity: 0.6;
+}
+
+/* Estilos para la sección de temas en el menú lateral */
+.theme-menu-sidebar {
+  margin-top: 10px;
+}
+
+.theme-menu-title {
+  padding: 8px 15px;
+  color: var(--side-menu-link);
+  font-size: 0.85rem;
+  font-weight: 500;
+  opacity: 0.7;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+.theme-menu-sidebar .theme-btn {
+  width: 100%;
+  height: 45px;
+  border-radius: 12px;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--side-menu-link);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 5px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 15px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-menu-sidebar .theme-btn:hover {
+  background: var(--side-menu-link-hover);
+  transform: translateX(5px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.theme-menu-sidebar .theme-btn.active {
+  background: var(--side-menu-link-active);
+  color: white;
+  transform: translateX(8px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.theme-menu-sidebar .theme-btn .theme-icon {
+  font-size: 1.3rem;
+  min-width: 24px;
+  text-align: center;
+}
+
+/* Estilos cuando el menú está colapsado */
+.side-menu.collapsed .theme-menu-sidebar {
+  margin-top: 15px;
+}
+
+.side-menu.collapsed .theme-menu-title {
+  display: none;
+}
+
+.side-menu.collapsed .theme-btn {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  padding: 0;
+  justify-content: center;
+  margin: 8px auto;
+}
+
+.side-menu.collapsed .theme-btn .menu-label {
+  display: none;
+}
+
+.side-menu.collapsed .theme-btn .theme-icon {
+  font-size: 1.4rem;
+}
+
+.side-menu.collapsed .theme-btn:hover {
+  transform: scale(1.1);
+}
+
+.side-menu.collapsed .theme-btn.active {
+  transform: scale(1.15);
+}
+
+/* Tooltip para botones de tema cuando el menú está colapsado */
+.side-menu.collapsed .theme-btn::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 60px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 1000;
+}
+
+.side-menu.collapsed .theme-btn:hover::before {
+  opacity: 1;
+}
+
+/* Colores específicos para cada botón de tema */
+.theme-btn[data-theme="theme-dark"] {
+  border-left: 3px solid #ae81ff;
+}
+
+.theme-btn[data-theme="theme-light"] {
+  border-left: 3px solid #ffe250;
+}
+
+.theme-btn[data-theme="theme-rosa"] {
+  border-left: 3px solid #e75480;
+}
+
+.theme-btn[data-theme="theme-oscuro"] {
+  border-left: 3px solid #afb6bb;
+}
+
+/* Ajustes específicos por tema */
+body.theme-dark .theme-menu-sidebar .theme-btn {
+  background: rgba(158, 147, 246, 0.1);
+  border: 1px solid rgba(158, 147, 246, 0.2);
+}
+
+body.theme-dark .theme-menu-sidebar .theme-btn:hover {
+  background: rgba(158, 147, 246, 0.2);
+  box-shadow: 0 4px 15px rgba(158, 147, 246, 0.2);
+}
+
+body.theme-dark .theme-menu-sidebar .theme-btn.active {
+  background: linear-gradient(135deg, #6d1cff 0%, #9e93f6 100%);
+  box-shadow: 0 6px 20px rgba(109, 28, 255, 0.3);
+}
+
+body.theme-light .theme-menu-sidebar .theme-btn {
+  background: rgba(79, 188, 255, 0.1);
+  border: 1px solid rgba(79, 188, 255, 0.2);
+}
+
+body.theme-light .theme-menu-sidebar .theme-btn:hover {
+  background: rgba(79, 188, 255, 0.2);
+  box-shadow: 0 4px 15px rgba(79, 188, 255, 0.2);
+}
+
+body.theme-light .theme-menu-sidebar .theme-btn.active {
+  background: linear-gradient(135deg, #2064c8 0%, #4fbcff 100%);
+  box-shadow: 0 6px 20px rgba(32, 100, 200, 0.3);
+}
+
+body.theme-rosa .theme-menu-sidebar .theme-btn {
+  background: rgba(231, 84, 128, 0.1);
+  border: 1px solid rgba(231, 84, 128, 0.2);
+}
+
+body.theme-rosa .theme-menu-sidebar .theme-btn:hover {
+  background: rgba(231, 84, 128, 0.2);
+  box-shadow: 0 4px 15px rgba(231, 84, 128, 0.2);
+}
+
+body.theme-rosa .theme-menu-sidebar .theme-btn.active {
+  background: linear-gradient(135deg, #e75480 0%, #ff8fab 100%);
+  box-shadow: 0 6px 20px rgba(231, 84, 128, 0.3);
+}
+
+body.theme-oscuro .theme-menu-sidebar .theme-btn {
+  background: rgba(122, 162, 255, 0.1);
+  border: 1px solid rgba(122, 162, 255, 0.2);
+}
+
+body.theme-oscuro .theme-menu-sidebar .theme-btn:hover {
+  background: rgba(122, 162, 255, 0.2);
+  box-shadow: 0 4px 15px rgba(122, 162, 255, 0.2);
+}
+
+body.theme-oscuro .theme-menu-sidebar .theme-btn.active {
+  background: linear-gradient(135deg, #7aa2ff 0%, #4d7fff 100%);
+  box-shadow: 0 6px 20px rgba(122, 162, 255, 0.3);
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+  .side-menu .theme-menu-sidebar {
+    display: flex;
+    gap: 5px;
+    margin-top: 0;
+    padding: 0 5px;
+  }
+  
+  .side-menu .theme-menu-title {
+    display: none;
+  }
+  
+  .side-menu .theme-btn {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    padding: 0;
+    margin: 0;
+    font-size: 1rem;
+    flex: 1;
+    justify-content: center;
+  }
+  
+  .side-menu .theme-btn .menu-label {
+    display: none;
+  }
+  
+  .side-menu .theme-btn .theme-icon {
+    font-size: 1.1rem;
+  }
+  
+  .side-menu .theme-btn:hover {
+    transform: scale(1.1);
+  }
+  
+  .side-menu .theme-btn.active {
+    transform: scale(1.15);
+  }
+}
+
+/* Remover estilos del #theme-menu anterior */
+#theme-menu {
+  display: none;
+}

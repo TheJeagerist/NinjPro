@@ -103,6 +103,32 @@
       </span>
       <span class="menu-label">Configuración</span>
     </a>
+    
+    <!-- Divisor de temas -->
+    <div class="menu-divider"></div>
+    
+    <!-- Botones de temas -->
+    <div class="theme-menu-sidebar">
+      <div class="theme-menu-title">
+        <span class="menu-label">Temas</span>
+      </div>
+      <button class="theme-btn" data-theme="theme-dark" data-tooltip="Modo Neón">
+        <span class="theme-icon">🎇</span>
+        <span class="menu-label">Neón</span>
+      </button>
+      <button class="theme-btn" data-theme="theme-light" data-tooltip="Modo Claro">
+        <span class="theme-icon">🌞</span>
+        <span class="menu-label">Claro</span>
+      </button>
+      <button class="theme-btn" data-theme="theme-rosa" data-tooltip="Modo Rosa">
+        <span class="theme-icon">🌸</span>
+        <span class="menu-label">Rosa</span>
+      </button>
+      <button class="theme-btn" data-theme="theme-oscuro" data-tooltip="Modo Oscuro">
+        <span class="theme-icon">🌑</span>
+        <span class="menu-label">Oscuro</span>
+      </button>
+    </div>
   </nav>
 
   
@@ -240,13 +266,6 @@
   <!-- Puedes copiar tal cual como en tu archivo actual, son SVGs grandes -->
 
   <!-- Selector de temas -->
-  <div id="theme-menu">
-    <button class="theme-btn" data-theme="theme-dark" title="Modo Neón">🎇</button>
-    <button class="theme-btn" data-theme="theme-light" title="Modo Claro">🌞</button>
-    <button class="theme-btn" data-theme="theme-rosa" title="Modo Rosa">🌸</button>
-    <button class="theme-btn" data-theme="theme-oscuro" title="Modo Oscuro">🌑</button>
-  </div>
-
   <div class="container" id="calc-panel">
       <h1>Calculadora de Promedio Ponderado</h1>
       
@@ -312,10 +331,14 @@
         </div>
       </div>
     </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="main.js"></script>
+  <script src="script.js"></script>
   <script src="word-counter.js"></script>
   <script src="rubricas.js"></script>
+  <script src="multi-panel-functions.js"></script>
   <div id="escala-panel" style="display:none;max-width:900px;margin:40px auto 0 auto;">
     <div class="container" style="background: var(--card-bg);">
       <h2>Generador de Escala de Notas</h2>
@@ -407,6 +430,17 @@
   <div id="multi-panel" style="display:none;">
     <div class="container">
       <h1>Calculadora de Notas Parciales</h1>
+      
+      <!-- Selector de cursos -->
+      <div class="curso-selection">
+        <div class="curso-controls">
+          <select id="curso-select-multi" class="curso-select-multi">
+            <option value="">Seleccionar Curso</option>
+          </select>
+          <button id="btn-cargar-curso-multi" type="button">📚 Cargar Curso</button>
+          <button id="btn-limpiar-todo-multi" type="button">🗑️ Limpiar Todo</button>
+        </div>
+      </div>
       
       <div class="multi-controls">
         <button class="btn-add-section" onclick="addSection()"> Agregar Estudiante</button>
@@ -610,11 +644,6 @@
       <button id="close-word-counter" class="close">&times;</button>
     </div>
   </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script src="script.js"></script>
-  
- 
 
   <!-- Panel de Rúbricas -->
   <div id="rubricas-panel" class="panel" style="display: none;">

@@ -1578,34 +1578,29 @@ function aplicarPorcentajeComun() {
   const porcentaje = parseInt(document.getElementById('porcentaje-comun').value);
   // Si el valor no es válido, no hacer nada
   if (isNaN(porcentaje) || porcentaje < 1 || porcentaje > 100) {
+    alert('Ingresa un porcentaje válido (1-100)');
     return;
   }
 
   aplicandoPorcentaje = true;
   const sections = document.querySelectorAll('.section-panel');
+  
   sections.forEach(section => {
     const weightInputs = section.querySelectorAll('.weight');
     const cantidadNotas = weightInputs.length;
     
     // Si hay notas, distribuir el porcentaje
     if (cantidadNotas > 0) {
-      // Calcular el porcentaje por nota con más precisión
-      const porcentajePorNota = Math.floor((porcentaje / cantidadNotas) * 10) / 10;
-      let porcentajeAcumulado = 0;
+      // Calcular el porcentaje base por nota
+      const porcentajeBase = Math.floor(porcentaje / cantidadNotas);
+      const resto = porcentaje % cantidadNotas;
       
       weightInputs.forEach((input, index) => {
-        if (index === weightInputs.length - 1) {
-          // La última nota recibe el resto para asegurar que sume exactamente el porcentaje total
-          const porcentajeFinal = porcentaje - porcentajeAcumulado;
-          input.value = Math.round(porcentajeFinal * 10) / 10;
-        } else {
-          input.value = porcentajePorNota;
-          porcentajeAcumulado += porcentajePorNota;
-        }
-      });
-
-      // Disparar evento de input para actualizar cálculos
-      weightInputs.forEach(input => {
+        // Distribuir el porcentaje base + 1 extra a las primeras 'resto' notas
+        const valorAsignado = index < resto ? porcentajeBase + 1 : porcentajeBase;
+        input.value = valorAsignado;
+        
+        // Disparar evento de input para actualizar cálculos
         const event = new Event('input', {
           bubbles: true,
           cancelable: true,

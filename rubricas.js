@@ -3,6 +3,23 @@ document.addEventListener('DOMContentLoaded', function() {
     const cargarRubricaBtn = document.getElementById('cargar-rubrica');
     const nuevaRubricaBtn = document.getElementById('nueva-rubrica');
     const rubricaContent = document.getElementById('rubrica-content');
+    
+    // Referencias para modo evaluación
+    const modoNormalBtn = document.getElementById('modo-normal');
+    const modoEvaluacionBtn = document.getElementById('modo-evaluacion');
+    const evaluacionPanel = document.getElementById('evaluacion-panel');
+    const evalCursoSelect = document.getElementById('eval-curso-select');
+    const evalEstudianteSelect = document.getElementById('eval-estudiante-select');
+    const evalRubricaSelect = document.getElementById('eval-rubrica-select');
+    const iniciarEvaluacionBtn = document.getElementById('iniciar-evaluacion');
+    const guardarEvaluacionBtn = document.getElementById('guardar-evaluacion');
+    const limpiarEvaluacionBtn = document.getElementById('limpiar-evaluacion');
+    const evaluacionResultado = document.getElementById('evaluacion-resultado');
+    
+    // Variables para el modo evaluación
+    let modoActual = 'normal';
+    let rubricaActual = null;
+    let evaluacionEnCurso = null;
 
     // Crear un único input de archivo oculto para reutilizar
     let fileInput = document.createElement('input');
@@ -10,6 +27,423 @@ document.addEventListener('DOMContentLoaded', function() {
     fileInput.style.display = 'none'; // Ocultarlo
     fileInput.accept = '.docx,.xlsx,.xls,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel';
     document.body.appendChild(fileInput); // Añadirlo al DOM para que funcione
+
+    // Event Listeners para modo evaluación
+    if (modoNormalBtn) {
+        modoNormalBtn.addEventListener('click', function() {
+            cambiarModo('normal');
+        });
+    }
+    
+    if (modoEvaluacionBtn) {
+        modoEvaluacionBtn.addEventListener('click', function() {
+            cambiarModo('evaluacion');
+        });
+    }
+    
+    if (evalCursoSelect) {
+        evalCursoSelect.addEventListener('change', function() {
+            cargarEstudiantesCurso(this.value);
+            verificarDatosEvaluacion();
+        });
+    }
+    
+    if (evalEstudianteSelect) {
+        evalEstudianteSelect.addEventListener('change', verificarDatosEvaluacion);
+    }
+    
+    if (evalRubricaSelect) {
+        evalRubricaSelect.addEventListener('change', verificarDatosEvaluacion);
+    }
+    
+    if (iniciarEvaluacionBtn) {
+        iniciarEvaluacionBtn.addEventListener('click', iniciarEvaluacion);
+    }
+    
+    if (guardarEvaluacionBtn) {
+        guardarEvaluacionBtn.addEventListener('click', guardarEvaluacion);
+    }
+    
+    if (limpiarEvaluacionBtn) {
+        limpiarEvaluacionBtn.addEventListener('click', limpiarEvaluacion);
+    }
+    
+    // Función para cambiar modo
+    function cambiarModo(modo) {
+        modoActual = modo;
+        
+        // Actualizar botones
+        modoNormalBtn.classList.toggle('active', modo === 'normal');
+        modoEvaluacionBtn.classList.toggle('active', modo === 'evaluacion');
+        
+        // Mostrar/ocultar paneles
+        if (evaluacionPanel) {
+            evaluacionPanel.style.display = modo === 'evaluacion' ? 'block' : 'none';
+        }
+        
+        if (modo === 'evaluacion') {
+            inicializarModoEvaluacion();
+        } else {
+            // Limpiar evaluación si se sale del modo
+            limpiarEvaluacion();
+        }
+        
+        // Ajustar contenido de rúbrica según el modo
+        if (rubricaActual) {
+            mostrarRubrica(rubricaActual);
+        }
+    }
+    
+    // Función para inicializar modo evaluación
+    function inicializarModoEvaluacion() {
+        cargarCursosEvaluacion();
+        cargarRubricasEvaluacion();
+    }
+    
+    // Listener para actualizar cuando se carguen nuevos cursos
+    window.addEventListener('cursosActualizados', function(event) {
+        if (modoActual === 'evaluacion') {
+            cargarCursosEvaluacion();
+        }
+    });
+    
+    window.addEventListener('selectoresCursosActualizados', function(event) {
+        if (modoActual === 'evaluacion') {
+            cargarCursosEvaluacion();
+        }
+    });
+    
+    // Función para cargar cursos en evaluación
+    function cargarCursosEvaluacion() {
+        if (!evalCursoSelect) return;
+        
+        const cursosData = JSON.parse(localStorage.getItem('cursosData') || '{}');
+        evalCursoSelect.innerHTML = '<option value="">Seleccionar curso...</option>';
+        
+        Object.keys(cursosData).forEach(curso => {
+            const option = document.createElement('option');
+            option.value = curso;
+            option.textContent = curso;
+            evalCursoSelect.appendChild(option);
+        });
+    }
+    
+    // Función para cargar estudiantes del curso
+    function cargarEstudiantesCurso(curso) {
+        if (!evalEstudianteSelect || !curso) {
+            evalEstudianteSelect.innerHTML = '<option value="">Primero selecciona un curso</option>';
+            evalEstudianteSelect.disabled = true;
+            return;
+        }
+        
+        const cursosData = JSON.parse(localStorage.getItem('cursosData') || '{}');
+        const estudiantes = cursosData[curso] || [];
+        
+        evalEstudianteSelect.innerHTML = '<option value="">Seleccionar estudiante...</option>';
+        estudiantes.forEach(estudiante => {
+            const option = document.createElement('option');
+            
+            // Manejar tanto objetos como strings
+            let nombreEstudiante;
+            let valorEstudiante;
+            
+            if (typeof estudiante === 'object' && estudiante !== null) {
+                // Es un objeto, extraer el nombre
+                nombreEstudiante = estudiante.nombre || estudiante.Nombre || `Estudiante ${estudiante.id || ''}` || '[Sin nombre]';
+                valorEstudiante = nombreEstudiante; // Usar el nombre como valor
+            } else {
+                // Es un string
+                nombreEstudiante = estudiante;
+                valorEstudiante = estudiante;
+            }
+            
+            option.value = valorEstudiante;
+            option.textContent = nombreEstudiante;
+            evalEstudianteSelect.appendChild(option);
+        });
+        
+        evalEstudianteSelect.disabled = false;
+        
+        // Debug para verificar los datos
+        console.log('Datos de estudiantes para curso', curso, ':', estudiantes);
+        console.log('Tipo del primer estudiante:', typeof estudiantes[0], estudiantes[0]);
+    }
+    
+    // Función para cargar rúbricas en evaluación
+    function cargarRubricasEvaluacion() {
+        if (!evalRubricaSelect) return;
+        
+        const rubricas = JSON.parse(localStorage.getItem('rubricas_guardadas') || '[]');
+        evalRubricaSelect.innerHTML = '<option value="">Seleccionar rúbrica...</option>';
+        
+        rubricas.forEach(rubrica => {
+            const option = document.createElement('option');
+            option.value = rubrica.id;
+            option.textContent = rubrica.titulo;
+            evalRubricaSelect.appendChild(option);
+        });
+    }
+    
+    // Función para verificar si se pueden habilitar los botones
+    function verificarDatosEvaluacion() {
+        const cursoSeleccionado = evalCursoSelect?.value;
+        const estudianteSeleccionado = evalEstudianteSelect?.value;
+        const rubricaSeleccionada = evalRubricaSelect?.value;
+        
+        const puedeIniciar = cursoSeleccionado && estudianteSeleccionado && rubricaSeleccionada;
+        
+        if (iniciarEvaluacionBtn) {
+            iniciarEvaluacionBtn.disabled = !puedeIniciar;
+        }
+    }
+    
+    // Función para iniciar evaluación
+    function iniciarEvaluacion() {
+        const curso = evalCursoSelect.value;
+        const estudiante = evalEstudianteSelect.value;
+        const rubricaId = evalRubricaSelect.value;
+        
+        if (!curso || !estudiante || !rubricaId) {
+            alert('Por favor selecciona curso, estudiante y rúbrica');
+            return;
+        }
+        
+        // Obtener la rúbrica seleccionada
+        const rubricas = JSON.parse(localStorage.getItem('rubricas_guardadas') || '[]');
+        const rubrica = rubricas.find(r => r.id === rubricaId);
+        
+        if (!rubrica) {
+            alert('Rúbrica no encontrada');
+            return;
+        }
+        
+        // Inicializar evaluación
+        evaluacionEnCurso = {
+            curso: curso,
+            estudiante: estudiante,
+            rubrica: rubrica,
+            respuestas: {},
+            puntajeTotal: 0,
+            puntajeMaximo: 0
+        };
+        
+        // Calcular puntaje máximo
+        evaluacionEnCurso.puntajeMaximo = rubrica.criterios.reduce((total, criterio) => {
+            const maxPuntos = Math.max(...criterio.niveles.map(nivel => nivel.puntos));
+            return total + maxPuntos;
+        }, 0);
+        
+        // Mostrar resultado panel y actualizar info
+        mostrarResultadoEvaluacion();
+        
+        // Mostrar rúbrica en modo evaluación
+        mostrarRubricaEvaluacion(rubrica);
+        
+        // Mostrar botones de evaluación
+        if (guardarEvaluacionBtn) guardarEvaluacionBtn.style.display = 'flex';
+        if (limpiarEvaluacionBtn) limpiarEvaluacionBtn.style.display = 'flex';
+        if (iniciarEvaluacionBtn) iniciarEvaluacionBtn.style.display = 'none';
+    }
+    
+    // Función para mostrar resultado de evaluación
+    function mostrarResultadoEvaluacion() {
+        if (!evaluacionResultado || !evaluacionEnCurso) return;
+        
+        const estudianteEvaluado = document.getElementById('estudiante-evaluado');
+        const puntajeActual = document.getElementById('puntaje-actual');
+        const puntajeMaximo = document.getElementById('puntaje-maximo');
+        const notaFinal = document.getElementById('nota-final');
+        
+        if (estudianteEvaluado) {
+            estudianteEvaluado.textContent = `Evaluando a: ${evaluacionEnCurso.estudiante} (${evaluacionEnCurso.curso})`;
+        }
+        
+        if (puntajeActual) {
+            puntajeActual.textContent = evaluacionEnCurso.puntajeTotal;
+        }
+        
+        if (puntajeMaximo) {
+            puntajeMaximo.textContent = evaluacionEnCurso.puntajeMaximo;
+        }
+        
+        // Calcular nota (escala 1.0 a 7.0)
+        const porcentaje = evaluacionEnCurso.puntajeMaximo > 0 ? 
+            (evaluacionEnCurso.puntajeTotal / evaluacionEnCurso.puntajeMaximo) * 100 : 0;
+        const nota = 1.0 + (porcentaje / 100) * 6.0;
+        
+        if (notaFinal) {
+            notaFinal.textContent = nota.toFixed(1);
+            
+            // Cambiar clase según la nota
+            const notaElement = notaFinal.closest('.nota-final');
+            if (notaElement) {
+                notaElement.className = 'nota-final';
+                if (nota >= 6.0) notaElement.classList.add('excelente');
+                else if (nota >= 5.0) notaElement.classList.add('buena');
+                else if (nota >= 4.0) notaElement.classList.add('regular');
+                else notaElement.classList.add('insuficiente');
+            }
+        }
+        
+        evaluacionResultado.style.display = 'block';
+    }
+    
+    // Función para mostrar rúbrica en modo evaluación
+    function mostrarRubricaEvaluacion(rubrica) {
+        if (!rubricaContent) return;
+        
+        let html = `
+            <div class="rubrica-evaluacion">
+                <div class="rubrica-evaluacion-header">
+                    <h3>${rubrica.titulo}</h3>
+                    <p>${rubrica.descripcion}</p>
+                </div>
+        `;
+        
+        rubrica.criterios.forEach((criterio, criterioIndex) => {
+            html += `
+                <div class="criterio-evaluacion">
+                    <div class="criterio-titulo">${criterio.titulo}</div>
+                    <div class="niveles-botones" data-criterio="${criterioIndex}">
+            `;
+            
+            criterio.niveles.forEach((nivel, nivelIndex) => {
+                const isSelected = evaluacionEnCurso.respuestas[criterioIndex] === nivelIndex;
+                html += `
+                    <button class="nivel-boton ${isSelected ? 'selected' : ''}" 
+                            data-criterio="${criterioIndex}" 
+                            data-nivel="${nivelIndex}"
+                            data-puntos="${nivel.puntos}">
+                        <div class="nivel-nombre">${nivel.nivel}</div>
+                        <div class="nivel-descripcion">${nivel.descripcion}</div>
+                        <div class="nivel-puntaje">${nivel.puntos} pts</div>
+                    </button>
+                `;
+            });
+            
+            html += `
+                    </div>
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+        
+        rubricaContent.innerHTML = html;
+        
+        // Agregar event listeners a los botones
+        const botones = rubricaContent.querySelectorAll('.nivel-boton');
+        botones.forEach(boton => {
+            boton.addEventListener('click', function() {
+                seleccionarNivel(
+                    parseInt(this.dataset.criterio),
+                    parseInt(this.dataset.nivel),
+                    parseInt(this.dataset.puntos)
+                );
+            });
+        });
+    }
+    
+    // Función para seleccionar nivel
+    function seleccionarNivel(criterioIndex, nivelIndex, puntos) {
+        if (!evaluacionEnCurso) return;
+        
+        // Deseleccionar otros botones del mismo criterio
+        const criterioContainer = rubricaContent.querySelector(`[data-criterio="${criterioIndex}"]`);
+        const botones = criterioContainer.querySelectorAll('.nivel-boton');
+        botones.forEach(btn => btn.classList.remove('selected'));
+        
+        // Seleccionar el botón clickeado
+        const botonSeleccionado = criterioContainer.querySelector(`[data-criterio="${criterioIndex}"][data-nivel="${nivelIndex}"]`);
+        botonSeleccionado.classList.add('selected');
+        
+        // Actualizar respuesta
+        const respuestaAnterior = evaluacionEnCurso.respuestas[criterioIndex];
+        evaluacionEnCurso.respuestas[criterioIndex] = nivelIndex;
+        
+        // Recalcular puntaje total
+        evaluacionEnCurso.puntajeTotal = 0;
+        Object.keys(evaluacionEnCurso.respuestas).forEach(criterio => {
+            const nivelSeleccionado = evaluacionEnCurso.respuestas[criterio];
+            const criterioData = evaluacionEnCurso.rubrica.criterios[criterio];
+            if (criterioData && criterioData.niveles[nivelSeleccionado]) {
+                evaluacionEnCurso.puntajeTotal += criterioData.niveles[nivelSeleccionado].puntos;
+            }
+        });
+        
+        // Actualizar visualización del resultado
+        mostrarResultadoEvaluacion();
+    }
+    
+    // Función para guardar evaluación
+    function guardarEvaluacion() {
+        if (!evaluacionEnCurso) {
+            alert('No hay evaluación en curso');
+            return;
+        }
+        
+        // Verificar que se hayan respondido todos los criterios
+        const criteriosRespondidos = Object.keys(evaluacionEnCurso.respuestas).length;
+        const totalCriterios = evaluacionEnCurso.rubrica.criterios.length;
+        
+        if (criteriosRespondidos < totalCriterios) {
+            const confirmar = confirm(`Solo has evaluado ${criteriosRespondidos} de ${totalCriterios} criterios. ¿Deseas guardar de todas formas?`);
+            if (!confirmar) return;
+        }
+        
+        // Crear objeto de evaluación para guardar
+        const evaluacionParaGuardar = {
+            id: generarIdUnico(),
+            fecha: new Date().toISOString(),
+            curso: evaluacionEnCurso.curso,
+            estudiante: evaluacionEnCurso.estudiante,
+            rubrica: {
+                id: evaluacionEnCurso.rubrica.id,
+                titulo: evaluacionEnCurso.rubrica.titulo
+            },
+            respuestas: evaluacionEnCurso.respuestas,
+            puntajeTotal: evaluacionEnCurso.puntajeTotal,
+            puntajeMaximo: evaluacionEnCurso.puntajeMaximo,
+            nota: (1.0 + (evaluacionEnCurso.puntajeTotal / evaluacionEnCurso.puntajeMaximo) * 6.0).toFixed(1)
+        };
+        
+        // Guardar en localStorage
+        let evaluaciones = JSON.parse(localStorage.getItem('evaluaciones_rubricas') || '[]');
+        evaluaciones.push(evaluacionParaGuardar);
+        localStorage.setItem('evaluaciones_rubricas', JSON.stringify(evaluaciones));
+        
+        alert(`Evaluación guardada exitosamente.\nEstudiante: ${evaluacionEnCurso.estudiante}\nPuntaje: ${evaluacionEnCurso.puntajeTotal}/${evaluacionEnCurso.puntajeMaximo}\nNota: ${evaluacionParaGuardar.nota}`);
+        
+        // Limpiar evaluación
+        limpiarEvaluacion();
+    }
+    
+    // Función para limpiar evaluación
+    function limpiarEvaluacion() {
+        evaluacionEnCurso = null;
+        
+        // Limpiar selectores
+        if (evalCursoSelect) evalCursoSelect.value = '';
+        if (evalEstudianteSelect) {
+            evalEstudianteSelect.value = '';
+            evalEstudianteSelect.disabled = true;
+            evalEstudianteSelect.innerHTML = '<option value="">Primero selecciona un curso</option>';
+        }
+        if (evalRubricaSelect) evalRubricaSelect.value = '';
+        
+        // Ocultar paneles
+        if (evaluacionResultado) evaluacionResultado.style.display = 'none';
+        if (guardarEvaluacionBtn) guardarEvaluacionBtn.style.display = 'none';
+        if (limpiarEvaluacionBtn) limpiarEvaluacionBtn.style.display = 'none';
+        if (iniciarEvaluacionBtn) iniciarEvaluacionBtn.style.display = 'flex';
+        
+        // Limpiar contenido de rúbrica
+        if (rubricaContent && modoActual === 'evaluacion') {
+            rubricaContent.innerHTML = '<p style="text-align: center; color: #6c757d; padding: 40px;">Selecciona curso, estudiante y rúbrica para comenzar la evaluación.</p>';
+        }
+        
+        verificarDatosEvaluacion();
+    }
 
     // Asignar el evento onchange una sola vez
     fileInput.onchange = function(e) {
@@ -97,12 +531,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Función para mostrar una rúbrica cargada
     function mostrarRubrica(rubrica = null) {
+        // Almacenar la rúbrica actual
+        rubricaActual = rubrica;
+        
         const container = document.querySelector('.rubrica-content');
         if (!container) {
             console.error('No se encontró el contenedor de la rúbrica');
             return;
         }
 
+        // Si estamos en modo evaluación y hay una evaluación en curso, mostrar la rúbrica de evaluación
+        if (modoActual === 'evaluacion' && evaluacionEnCurso && evaluacionEnCurso.rubrica) {
+            mostrarRubricaEvaluacion(evaluacionEnCurso.rubrica);
+            return;
+        }
+        
+        // Si estamos en modo evaluación pero no hay evaluación en curso, mostrar mensaje
+        if (modoActual === 'evaluacion') {
+            container.innerHTML = '<p style="text-align: center; color: #6c757d; padding: 40px;">Selecciona curso, estudiante y rúbrica para comenzar la evaluación.</p>';
+            return;
+        }
+
+        // Modo normal - mostrar formulario de rúbrica
         container.innerHTML = `
             <form id="nueva-rubrica-form" class="rubrica-form">
                 <div class="form-group">
@@ -569,9 +1019,54 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Función para guardar la rúbrica
     function guardarRubrica() {
-        // Por ahora solo obtiene los datos
-        // Aquí podrías agregar lógica para guardar en localStorage o en un servidor
-        obtenerDatosRubrica();
+        try {
+            const rubrica = obtenerDatosRubrica();
+            if (rubrica && rubrica.criterios.length > 0) {
+                // Asegurar que tenga un ID único
+                if (!rubrica.id) {
+                    rubrica.id = generarIdUnico();
+                }
+                
+                // Agregar fecha de creación si no existe
+                if (!rubrica.fechaCreacion) {
+                    rubrica.fechaCreacion = new Date().toISOString();
+                }
+                
+                // Guardar en localStorage
+                let rubricas = JSON.parse(localStorage.getItem('rubricas_guardadas') || '[]');
+                
+                // Verificar si ya existe una rúbrica con el mismo nombre
+                const indiceExistente = rubricas.findIndex(r => r.titulo === rubrica.titulo);
+                
+                if (indiceExistente !== -1) {
+                    const confirmar = confirm(`Ya existe una rúbrica con el nombre "${rubrica.titulo}". ¿Desea reemplazarla?`);
+                    if (confirmar) {
+                        rubricas[indiceExistente] = rubrica;
+                    } else {
+                        rubrica.titulo = rubrica.titulo + ' (Copia)';
+                        rubrica.id = generarIdUnico(); // Nuevo ID para la copia
+                        rubricas.push(rubrica);
+                    }
+                } else {
+                    rubricas.push(rubrica);
+                }
+                
+                localStorage.setItem('rubricas_guardadas', JSON.stringify(rubricas));
+                
+                // Actualizar lista en configuración si está disponible
+                if (window.RubricaConfig) {
+                    window.RubricaConfig.cargarListaRubricas();
+                    window.RubricaConfig.actualizarSelectorRubricas();
+                }
+                
+                alert('Rúbrica guardada exitosamente: ' + rubrica.titulo);
+            } else {
+                alert('No se puede guardar una rúbrica vacía. Agregue al menos un criterio.');
+            }
+        } catch (error) {
+            console.error('Error al guardar la rúbrica:', error);
+            alert('Error al guardar la rúbrica: ' + error.message);
+        }
     }
 
     // Función para exportar a Excel
@@ -779,14 +1274,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Función para descargar la plantilla de Word
     function descargarPlantillaWord() {
-        // Crear un elemento <a> con la ruta relativa al archivo
-        const link = document.createElement('a');
-        link.href = 'Plantillas/Plantilla Revision de Cuadernos.docx';
-        link.download = 'Plantilla Revision de Cuadernos.docx';
-        
-        // Agregar el enlace al documento, hacer clic y luego removerlo
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        alert('La funcionalidad de plantilla Word estará disponible próximamente.');
+    }
+    
+    // Función para generar ID único
+    function generarIdUnico() {
+        return 'rubrica_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    }
+    
+    // Event listener para cargar rúbrica guardada desde el selector
+    document.addEventListener('cargarRubricaGuardada', function(event) {
+        const rubrica = event.detail;
+        if (rubrica) {
+            mostrarRubrica(rubrica);
+        }
+    });
+    
+    // Hacer la función mostrarRubrica disponible globalmente
+    window.mostrarRubrica = mostrarRubrica;
+    
+    // Al inicializar, actualizar el selector de rúbricas guardadas
+    if (window.RubricaConfig) {
+        window.RubricaConfig.actualizarSelectorRubricas();
     }
 });

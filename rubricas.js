@@ -570,7 +570,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <thead>
                                     <tr id="header-row">
                                         <th>Criterio</th>
-                                        ${rubrica ? generarColumnasNiveles(rubrica.criterios[0].niveles) : '<th>Nivel 1</th>'}
+                                        ${rubrica ? generarColumnasNiveles(rubrica.criterios[0].niveles) : generarNivelVacioEditable()}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -636,7 +636,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 <th>
                     <div class="nivel-header">
                         <div class="nivel-info">
-                            <span class="nivel-titulo">${nivel.nivel}</span>
+                            <input type="text" class="nivel-titulo-input" id="nivel-titulo-${index}" 
+                                   name="nivel-titulo-${index}" value="${nivel.nivel}" 
+                                   placeholder="Nombre del nivel" title="Nombre del nivel">
                             <input type="number" class="nivel-puntos" id="nivel-puntos-${index}" 
                                    name="nivel-puntos-${index}" value="${nivel.puntos}" min="0" max="10" 
                                    title="Puntos para este nivel">
@@ -683,6 +685,26 @@ document.addEventListener('DOMContentLoaded', function() {
                                   placeholder="Descripción del nivel"></textarea>
                     </td>
                 </tr>
+            `;
+        }
+
+        function generarNivelVacioEditable() {
+            return `
+                <th>
+                    <div class="nivel-header">
+                        <div class="nivel-info">
+                            <input type="text" class="nivel-titulo-input" id="nivel-titulo-0" 
+                                   name="nivel-titulo-0" value="Nivel 1" 
+                                   placeholder="Nombre del nivel" title="Nombre del nivel">
+                            <input type="number" class="nivel-puntos" id="nivel-puntos-0" 
+                                   name="nivel-puntos-0" value="1" min="0" max="10" 
+                                   title="Puntos para este nivel">
+                        </div>
+                        <div class="btn-controls">
+                            <button type="button" class="btn-eliminar-columna" data-index="0">×</button>
+                        </div>
+                    </div>
+                </th>
             `;
         }
 
@@ -856,8 +878,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     th.innerHTML = `
                         <div class="nivel-header">
                             <div class="nivel-info">
-                                <span class="nivel-titulo">Nivel ${i}</span>
-                                <input type="number" class="nivel-puntos" id="nivel-puntos-${i-1}" name="nivel-puntos-${i-1}" value="${5-i}" min="0" max="10" title="Puntos para este nivel">
+                                <input type="text" class="nivel-titulo-input" id="nivel-titulo-${i-1}" 
+                                       name="nivel-titulo-${i-1}" value="Nivel ${i}" 
+                                       placeholder="Nombre del nivel" title="Nombre del nivel">
+                                <input type="number" class="nivel-puntos" id="nivel-puntos-${i-1}" 
+                                       name="nivel-puntos-${i-1}" value="${5-i}" min="0" max="10" 
+                                       title="Puntos para este nivel">
                             </div>
                             <div class="btn-controls">
                                 <button type="button" class="btn-eliminar-columna" data-index="${i-1}">×</button>
@@ -894,32 +920,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     desc.name = `nivel-desc-${descIndex}-${filaIndex}`;
                 });
             });
-        } else if (e.target.classList.contains('nivel-titulo')) {
-            const header = e.target.closest('.nivel-header');
-            const titulo = e.target;
-            const textoActual = titulo.textContent;
-            
-            const input = document.createElement('input');
-            input.type = 'text';
-            input.value = textoActual;
-            input.className = 'nivel-titulo-input';
-            
-            input.addEventListener('blur', function() {
-                titulo.textContent = this.value;
-                header.classList.remove('editando');
-            });
-            
-            input.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    this.blur();
-                }
-            });
-            
-            titulo.replaceWith(input);
-            header.classList.add('editando');
-            input.focus();
-            input.select();
         }
     }
 
@@ -932,8 +932,12 @@ document.addEventListener('DOMContentLoaded', function() {
         th.innerHTML = `
             <div class="nivel-header">
                 <div class="nivel-info">
-                    <span class="nivel-titulo">Nivel ${numColumnas}</span>
-                    <input type="number" class="nivel-puntos" id="nivel-puntos-${numColumnas-1}" name="nivel-puntos-${numColumnas-1}" value="${Math.max(1, 5-numColumnas+1)}" min="0" max="10" title="Puntos para este nivel">
+                    <input type="text" class="nivel-titulo-input" id="nivel-titulo-${numColumnas-1}" 
+                           name="nivel-titulo-${numColumnas-1}" value="Nivel ${numColumnas}" 
+                           placeholder="Nombre del nivel" title="Nombre del nivel">
+                    <input type="number" class="nivel-puntos" id="nivel-puntos-${numColumnas-1}" 
+                           name="nivel-puntos-${numColumnas-1}" value="${Math.max(1, 5-numColumnas+1)}" 
+                           min="0" max="10" title="Puntos para este nivel">
                 </div>
                 <div class="btn-controls">
                     <button type="button" class="btn-eliminar-columna" data-index="${numColumnas - 1}">×</button>
@@ -987,10 +991,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const descripcion = document.getElementById('rubrica-descripcion').value;
         
         // Obtener encabezados (niveles)
-        const encabezados = Array.from(tabla.querySelectorAll('th')).slice(1).map(th => ({
-            titulo: th.querySelector('.nivel-titulo').textContent.trim(),
-            puntos: parseInt(th.querySelector('.nivel-puntos').value) || 0
-        }));
+        const encabezados = Array.from(tabla.querySelectorAll('th')).slice(1).map(th => {
+            const tituloInput = th.querySelector('.nivel-titulo-input');
+            const puntosInput = th.querySelector('.nivel-puntos');
+            
+            return {
+                titulo: tituloInput ? tituloInput.value.trim() : 'Nivel',
+                puntos: puntosInput ? (parseInt(puntosInput.value) || 0) : 0
+            };
+        });
         
         // Obtener filas (criterios)
         const filas = tabla.querySelectorAll('tbody tr');

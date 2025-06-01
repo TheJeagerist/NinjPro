@@ -3630,20 +3630,35 @@ body.theme-oscuro .inventario-container h2 {
 }
 
 .nivel-titulo-input {
-    width: calc(100% - 2rem);
-    padding: 0.5rem;
-    border: 2px solid var(--primary-color, #4a90e2);
+    width: 100%;
+    max-width: 120px;
+    padding: 4px 8px;
+    border: 1px solid #dee2e6;
     border-radius: 4px;
-    font-size: 1rem;
+    font-size: 0.9em;
     font-weight: 600;
-    background: var(--input-bg, #ffffff);
-    color: var(--text-primary, #333);
-    margin-right: 2rem;
+    background: white;
+    color: #495057;
+    text-align: center;
+    margin-bottom: 5px;
 }
 
 .nivel-titulo-input:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.nivel-titulo-input:hover {
+    border-color: #adb5bd;
+}
+
+@media (max-width: 768px) {
+    .nivel-titulo-input {
+        max-width: 100px;
+        font-size: 0.8em;
+        padding: 3px 6px;
+    }
 }
 
 /* Tema oscuro */

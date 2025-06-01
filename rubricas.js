@@ -1231,17 +1231,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Función para descargar la plantilla de Excel
     function descargarPlantillaExcel() {
-        // Crear el encabezado
-        const headers = ['Criterio', 'Excelente', 'Bueno', 'Regular', 'Deficiente'];
-        const puntajes = ['Puntaje', '4', '3', '2', '1'];
+        // Crear el encabezado - agregando "FIN" al final
+        const headers = ['Criterio', 'Excelente', 'Bueno', 'Regular', 'Deficiente', 'FIN'];
+        const puntajes = ['Puntaje', '4', '3', '2', '1', ''];
         
-        // Crear datos de ejemplo
+        // Crear datos de ejemplo - agregando columna vacía para "FIN"
         const data = [
             headers,
             puntajes,
-            ['Presentación', 'Muy organizado y claro', 'Organizado', 'Poco organizado', 'Desorganizado'],
-            ['Contenido', 'Contenido completo', 'Contenido casi completo', 'Contenido incompleto', 'Contenido muy incompleto'],
-            ['Ortografía', 'Sin errores', '1-2 errores', '3-4 errores', '5 o más errores']
+            ['Presentación', 'Muy organizado y claro', 'Organizado', 'Poco organizado', 'Desorganizado', ''],
+            ['Contenido', 'Contenido completo', 'Contenido casi completo', 'Contenido incompleto', 'Contenido muy incompleto', ''],
+            ['Ortografía', 'Sin errores', '1-2 errores', '3-4 errores', '5 o más errores', '']
         ];
         
         // Crear la hoja de trabajo
@@ -1264,13 +1264,14 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        // Ajustar ancho de columnas
+        // Ajustar ancho de columnas - agregando ancho para columna "FIN"
         ws['!cols'] = [
             { wch: 30 }, // Criterio
             { wch: 40 }, // Excelente
             { wch: 40 }, // Bueno
             { wch: 40 }, // Regular
-            { wch: 40 }  // Deficiente
+            { wch: 40 }, // Deficiente
+            { wch: 15 }  // FIN
         ];
         
         // Crear el libro y agregar la hoja

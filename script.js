@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
         'calendario-panel': document.getElementById('calendario-panel'),
         'word-counter-panel': document.getElementById('word-counter-panel'),
         'rubricas-panel': document.getElementById('rubricas-panel'),
-        'config-panel': document.getElementById('config-panel')
+        'config': document.getElementById('config')
     };
 
     // Obtener todos los botones del menú
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
         'menu-calendario': 'calendario-panel',
         'menu-word-counter': 'word-counter-panel',
         'menu-rubricas': 'rubricas-panel',
-        'menu-config': 'config-panel'
+        'menu-config': 'config'
     };
 
     // Función para ocultar todos los paneles
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Inicializar la configuración
     const configBtn = document.getElementById('menu-config');
-    const configPanel = document.getElementById('config-panel');
+    const configPanel = document.getElementById('config');
     const btnCargarExcel = document.getElementById('btn-cargar-excel-config');
     const btnDescargarPlantilla = document.getElementById('btn-descargar-plantilla-config');
 
@@ -315,7 +315,7 @@ function mostrarEstudiantesCurso(curso) {
     const sidebarTitulo = document.getElementById('estudiantes-sidebar-titulo');
     const sidebarCount = document.getElementById('estudiantes-sidebar-count');
     const sidebarLista = document.getElementById('estudiantes-sidebar-lista');
-    const configPanel = document.getElementById('config-panel');
+    const configPanel = document.getElementById('config');
     
     console.log('Elementos encontrados:', {
         estudiantesSidebar: !!estudiantesSidebar,
@@ -380,7 +380,7 @@ function mostrarEstudiantesCurso(curso) {
 // Función para cerrar el panel lateral de estudiantes
 function cerrarEstudiantesSidebar() {
     const estudiantesSidebar = document.getElementById('estudiantes-sidebar');
-    const configPanel = document.getElementById('config-panel');
+    const configPanel = document.getElementById('config');
     
     if (estudiantesSidebar) {
         estudiantesSidebar.classList.remove('visible');

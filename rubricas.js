@@ -175,9 +175,44 @@ document.addEventListener('DOMContentLoaded', function() {
         
         evalEstudianteSelect.disabled = false;
         
+        // Marcar estudiantes que ya tienen evaluación guardada
+        actualizarEstilosEstudiantesEvaluados();
+        
         // Debug para verificar los datos
         console.log('Datos de estudiantes para curso', curso, ':', estudiantes);
         console.log('Tipo del primer estudiante:', typeof estudiantes[0], estudiantes[0]);
+    }
+    
+    // Función para actualizar los estilos de estudiantes que ya tienen evaluación
+    function actualizarEstilosEstudiantesEvaluados() {
+        if (!evalEstudianteSelect || !evalCursoSelect || !evalRubricaSelect) return;
+        
+        const curso = evalCursoSelect.value;
+        const rubricaId = evalRubricaSelect.value;
+        
+        // Si no hay curso y rúbrica seleccionados, no podemos verificar
+        if (!curso || !rubricaId) return;
+        
+        const evaluaciones = JSON.parse(localStorage.getItem('evaluaciones_rubricas') || '[]');
+        
+        // Recorrer todas las opciones de estudiantes
+        Array.from(evalEstudianteSelect.options).forEach(option => {
+            if (option.value && option.value !== '') {
+                // Verificar si este estudiante ya fue evaluado con esta rúbrica en este curso
+                const yaEvaluado = evaluaciones.some(eval => 
+                    eval.curso === curso && 
+                    eval.estudiante === option.value && 
+                    eval.rubrica.id === rubricaId
+                );
+                
+                // Agregar o quitar la clase según corresponda
+                if (yaEvaluado) {
+                    option.classList.add('estudiante-evaluado');
+                } else {
+                    option.classList.remove('estudiante-evaluado');
+                }
+            }
+        });
     }
     
     // Función para cargar rúbricas en evaluación
@@ -211,6 +246,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (exportarCursoPdfBtn) {
             exportarCursoPdfBtn.disabled = !puedeExportar;
         }
+        
+        // Actualizar estilos de estudiantes evaluados cuando cambie la rúbrica
+        actualizarEstilosEstudiantesEvaluados();
     }
     
     // Función para iniciar evaluación
@@ -427,6 +465,9 @@ document.addEventListener('DOMContentLoaded', function() {
         let evaluaciones = JSON.parse(localStorage.getItem('evaluaciones_rubricas') || '[]');
         evaluaciones.push(evaluacionParaGuardar);
         localStorage.setItem('evaluaciones_rubricas', JSON.stringify(evaluaciones));
+        
+        // Actualizar estilos de estudiantes evaluados
+        actualizarEstilosEstudiantesEvaluados();
         
         alert(`Evaluación guardada exitosamente.\nEstudiante: ${evaluacionEnCurso.estudiante}\nPuntaje: ${evaluacionEnCurso.puntajeTotal}/${evaluacionEnCurso.puntajeMaximo}\nNota: ${evaluacionParaGuardar.nota}`);
         

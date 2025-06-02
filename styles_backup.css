@@ -170,7 +170,7 @@ body.theme-oscuro {
   --add-ramo-btn-bg: #216451;
   --add-ramo-btn-text: #fff;
   --add-ramo-btn-hover: #114e27;
-  --select-bg: #3a8bcf;
+  --select-bg: #13324c;
   --select-text: #e7ecf5;
   --select-hover: #1c4870;
     --side-menu-bg: #222d46e0;
@@ -2712,7 +2712,7 @@ body.theme-dark .dia.tiene-eventos:hover {
   padding: 8px 12px;
   border: 1px solid var(--border-color);
   border-radius: var(--radius);
-  background: var(--accent-color);
+  background: var(--input-bg);
   color: var(--text-light);
   font-size: 0.9rem;
   cursor: pointer;
@@ -2987,20 +2987,20 @@ body.theme-dark .close:hover {
 
 /* Estilos del título por tema */
 body.theme-dark #month-year {
-  color: var(--text-light);
+  color: #9e93f6;
   text-shadow: 0 0 12px rgba(158, 147, 246, 0.5);
 }
 
 body.theme-light #month-year {
-  color: var(--text-light);
+  color: #2064c8;
 }
 
 body.theme-rosa #month-year {
-  color: var(--text-light);
+  color: #e75480;
 }
 
 body.theme-oscuro #month-year {
-  color: var(--text-light);
+  color: #7aa2ff;
   text-shadow: 0 0 8px rgba(122, 162, 255, 0.3);
 }
 
@@ -5509,7 +5509,7 @@ body.theme-light .rubrica-form {
 .cursos-list h4 {
     margin: 0 0 1rem 0;
     font-size: 1.1rem;
-    color: var(--text-light, #333);
+    color: var(--text-color, #333);
     font-weight: 500;
     text-align: center;
 }
@@ -5887,7 +5887,7 @@ body.theme-light .rubrica-form {
 }
 
 .student-info strong {
-    color: var(--text-light);
+    color: var(--btn-calc);
     font-weight: 600;
 }
 
@@ -6050,7 +6050,7 @@ body.theme-oscuro .students-panel {
 }
 
 .estudiantes-count {
-    color: var(--text-secondary, --text-light);
+    color: var(--text-secondary, #666);
     font-size: 0.9rem;
     font-weight: 500;
 }
@@ -6145,7 +6145,7 @@ body.theme-oscuro .students-panel {
 }
 
 .curso-info span {
-    color: var(--text-light); 
+    color: var(--text-primary);
     font-weight: 500;
 }
 
@@ -6380,7 +6380,7 @@ body.theme-oscuro .students-panel {
 
 /* Mejorar el estilo del título de la sección */
 .cursos-list h4 {
-    color: var(--text-light);
+    color: var(--text-primary);
     margin-bottom: 15px;
     font-size: 1.2rem;
     font-weight: 600;
@@ -6952,7 +6952,7 @@ body.theme-oscuro .theme-menu-sidebar .theme-btn.active {
 .config-section h3 {
     margin-top: 0;
     margin-bottom: 15px;
-    color: var(--text-light);
+    color: #333;
     font-size: 1.2em;
     border-bottom: 2px solid #007bff;
     padding-bottom: 8px;
@@ -6964,7 +6964,7 @@ body.theme-oscuro .theme-menu-sidebar .theme-btn.active {
 
 .rubricas-list h4 {
     margin-bottom: 10px;
-    color: var(--text-light);
+    color: #555;
     font-size: 1em;
 }
 
@@ -8048,14 +8048,14 @@ body.side-menu-collapsed #rubricas-panel {
 .side-menu.collapsed .menu-title {
     font-size: 0.7rem;
     padding: 15px 5px 10px 5px;
-    display: none !important;
-    
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
     letter-spacing: 1px;
 }
 
 /* Ajustes por tema */
 body.theme-dark .menu-title {
-    background: linear-gradient(135deg, #f59e0b, #d97706);
+    background: linear-gradient(135deg, #ae81ff, #7c3aed);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -8148,8 +8148,8 @@ body.theme-oscuro .menu-title {
 
 .side-menu.collapsed .menu-title {
     font-size: 0.7rem;
-    display: none !important;
-    
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
     letter-spacing: 1px;
     margin-bottom: 10px;
 }
@@ -8181,14 +8181,14 @@ body.theme-oscuro .menu-title {
 
 /* Ajustes por tema para el título */
 body.theme-dark .menu-title {
-    background: linear-gradient(135deg, #f59e0b, #d97706);
+    background: linear-gradient(135deg, #ae81ff, #7c3aed);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
 body.theme-light .menu-title {
-    background: linear-gradient(135deg, #ffc96d, #cf9b5f);
+    background: linear-gradient(135deg, #f59e0b, #d97706);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -8202,7 +8202,7 @@ body.theme-rosa .menu-title {
 }
 
 body.theme-oscuro .menu-title {
-    background: linear-gradient(135deg, #aba9bf, #a3eeff);
+    background: linear-gradient(135deg, #64748b, #94a3b8);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -8223,19 +8223,8 @@ body.theme-oscuro .menu-title {
         height: 32px;
         padding: 6px;
     }
-    }
-
-    .instrucciones {
-      font-size: 0.9em;
-      color: var(--text-light);             /* Color que antes estaba en el div inline */
-      margin-top: 15px;
-      padding: 10px;
-      background: rgba(0, 0, 0, 0.05);
-      border-radius: 5px;
-    }
-    
-    .instrucciones p {
-      margin: 5px 0;                /* Margen que antes estaba en cada <p> */
-    }
-    
-
+}
+/ *   O c u l t a r   t e x t o   P R O F E N I N J A   c u a n d o   e l   m e n u   e s t a   c o l a p s a d o   * /  
+ . s i d e - m e n u . c o l l a p s e d   . m e n u - t i t l e   {   d i s p l a y :   n o n e   ! i m p o r t a n t ;   }  
+ . s i d e - m e n u . c o l l a p s e d   . m e n u - h e a d e r   {   j u s t i f y - c o n t e n t :   c e n t e r   ! i m p o r t a n t ;   p a d d i n g :   1 0 p x   5 p x   ! i m p o r t a n t ;   }  
+ 

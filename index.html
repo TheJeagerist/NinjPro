@@ -24,11 +24,27 @@
 
   <!-- Menú lateral -->
   <nav class="side-menu" id="side-menu">
-    <button id="collapse-menu-btn">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="15 18 9 12 15 6"></polyline>
-      </svg>
-    </button>
+    <!-- Contenedor para título y botón de colapsar -->
+    <div class="menu-header">
+      <h1 class="menu-title">PROFENINJA</h1>
+      <button id="collapse-menu-btn" data-tooltip="Contraer menú">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12,19 5,12 12,5"></polyline>
+        </svg>
+      </button>
+    </div>
+    
+    <a href="#config" id="menu-config" data-tooltip="Inicio" class="menu-config">
+      <span class="icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 9v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9"></path>
+          <path d="M9 22V12h6v10M2 10.6L12 2l10 8.6"></path>
+        </svg>
+      </span>
+      <span class="menu-label">Inicio</span>
+    </a>
+    
     <a href="#" id="menu-calculadora" class="active" data-tooltip="Calculadora">
       <span class="icon">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -94,15 +110,6 @@
         </svg>
       </span>
       <span class="menu-label">Rúbricas</span>
-    </a>
-    <a href="#config" id="menu-config" data-tooltip="Configuración" class="menu-config">
-      <span class="icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="3"></circle>
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-        </svg>
-      </span>
-      <span class="menu-label">Configuración</span>
     </a>
     
     <!-- Divisor de temas -->
@@ -634,11 +641,11 @@
           <p>Palabras seleccionadas: <span id="word-count">0</span></p>
           <p>Palabras mal pronunciadas: <span id="mispronounced-count" class="error-count">0</span></p>
           <p>Porcentaje de errores: <span id="error-percentage">0%</span></p>
-          <div style="font-size: 0.9em; color: #666; margin-top: 15px; padding: 10px; background: rgba(0,0,0,0.05); border-radius: 5px;">
-            <p style="margin: 5px 0;"><strong>💡 Instrucciones:</strong></p>
-            <p style="margin: 5px 0;">• <strong>Click izquierdo</strong> en una palabra: Selecciona desde la primera palabra hasta esa palabra</p>
-            <p style="margin: 5px 0;">• <strong>Click con rueda del mouse</strong>: Marca la palabra como mal pronunciada (rojo)</p>
-            <p style="margin: 5px 0;">• <strong>Barra espaciadora</strong>: Iniciar/pausar cronómetro</p>
+          <div class="instrucciones">
+            <p><strong>💡 Instrucciones:</strong></p>
+            <p>• <strong>Click izquierdo</strong> en una palabra: Selecciona desde la primera palabra hasta esa palabra</p>
+            <p>• <strong>Click con rueda del mouse</strong>: Marca la palabra como mal pronunciada (rojo)</p>
+            <p>• <strong>Barra espaciadora</strong>: Iniciar/pausar cronómetro</p>
           </div>
         </div>
       </div>
@@ -790,86 +797,91 @@
     </div>
   </div>
 
-  <!-- Panel de Configuración -->
-  <div id="config-panel" class="config-panel">
+  <!-- Panel de Inicio -->
+  <div id="config" class="panel" style="display:none;">
     <div class="container">
-        <h2>Configuración</h2>
-        
-        <div class="config-section">
-            <h3>Gestión de Cursos</h3>
-            
-            <div class="config-controls">
-                <button id="btn-cargar-excel-config" class="btn-primary" type="button">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <line x1="12" y1="18" x2="12" y2="12"></line>
-                        <line x1="9" y1="15" x2="15" y2="15"></line>
-                    </svg>
-                    Cargar Lista de Estudiantes
-                </button>
-                
-                <button id="btn-descargar-plantilla-config" class="btn-secondary" type="button">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                    Descargar Plantilla Excel
-                </button>
-            </div>
+      <div class="config-header"><h2>Inicio</h2><button id="btn-ayuda-config" class="btn-ayuda" title="Ver instrucciones de uso"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9 9h0a3 3 0 0 1 6 0c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></button></div>
+      
+      <!-- Contenedor horizontal para las secciones -->
+      <div class="config-sections-container">
+          <!-- Sección de Gestión de Cursos - Izquierda -->
+          <div class="config-section">
+              <h3>Gestión de Cursos</h3>
+              
+              <div class="config-controls">
+                  <button id="btn-cargar-excel-config" class="btn-primary" type="button">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                          <polyline points="14 2 14 8 20 8"></polyline>
+                          <line x1="12" y1="18" x2="12" y2="12"></line>
+                          <line x1="9" y1="15" x2="15" y2="15"></line>
+                      </svg>
+                      Cargar Lista de Estudiantes
+                  </button>
+                  
+                  <button id="btn-descargar-plantilla-config" class="btn-secondary" type="button">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                          <polyline points="7 10 12 15 17 10"></polyline>
+                          <line x1="12" y1="15" x2="12" y2="3"></line>
+                      </svg>
+                      Descargar Plantilla Excel
+                  </button>
+              </div>
 
-            <div class="cursos-list">
-                <h4>Cursos Cargados</h4>
-                <div id="lista-cursos" class="lista-cursos">
-                    <!-- Los cursos se cargarán dinámicamente aquí -->
-                </div>
-                
-                <!-- Panel para mostrar estudiantes del curso seleccionado -->
-                <div id="estudiantes-panel" class="estudiantes-panel" style="display: none;">
-                    <h4 id="curso-seleccionado-titulo">Estudiantes del curso</h4>
-                    <div class="estudiantes-header">
-                        <span class="estudiantes-count" id="estudiantes-count">0 estudiantes</span>
-                        <button id="cerrar-estudiantes" class="btn-cerrar">✕</button>
-                    </div>
-                    <div id="lista-estudiantes" class="lista-estudiantes">
-                        <!-- Los estudiantes se mostrarán aquí -->
-                    </div>
-                </div>
-            </div>
-        </div>
+              <div class="cursos-list">
+                  <h4>Cursos Cargados</h4>
+                  <div id="lista-cursos" class="lista-cursos">
+                      <!-- Los cursos se cargarán dinámicamente aquí -->
+                  </div>
+                  
+                  <!-- Panel para mostrar estudiantes del curso seleccionado -->
+                  <div id="estudiantes-panel" class="estudiantes-panel" style="display: none;">
+                      <h4 id="curso-seleccionado-titulo">Estudiantes del curso</h4>
+                      <div class="estudiantes-header">
+                          <span class="estudiantes-count" id="estudiantes-count">0 estudiantes</span>
+                          <button id="cerrar-estudiantes" class="btn-cerrar">✕</button>
+                      </div>
+                      <div id="lista-estudiantes" class="lista-estudiantes">
+                          <!-- Los estudiantes se mostrarán aquí -->
+                      </div>
+                  </div>
+              </div>
+          </div>
 
-        <div class="config-section">
-            <h3>Gestión de Rúbricas</h3>
-            
-            <div class="config-controls">
-                <button id="btn-cargar-rubrica-config" class="btn-primary" type="button">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <line x1="12" y1="18" x2="12" y2="12"></line>
-                        <line x1="9" y1="15" x2="15" y2="15"></line>
-                    </svg>
-                    Cargar Rúbrica desde Archivo
-                </button>
-                
-                <button id="btn-descargar-plantilla-rubrica" class="btn-secondary" type="button">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                    Descargar Plantilla Rúbrica
-                </button>
-            </div>
+          <!-- Sección de Gestión de Rúbricas - Derecha -->
+          <div class="config-section">
+              <h3>Gestión de Rúbricas</h3>
+              
+              <div class="config-controls">
+                  <button id="btn-cargar-rubrica-config" class="btn-primary" type="button">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                          <polyline points="14 2 14 8 20 8"></polyline>
+                          <line x1="12" y1="18" x2="12" y2="12"></line>
+                          <line x1="9" y1="15" x2="15" y2="15"></line>
+                      </svg>
+                      Cargar Rúbrica desde Archivo
+                  </button>
+                  
+                  <button id="btn-descargar-plantilla-rubrica" class="btn-secondary" type="button">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                          <polyline points="7 10 12 15 17 10"></polyline>
+                          <line x1="12" y1="15" x2="12" y2="3"></line>
+                      </svg>
+                      Descargar Plantilla Rúbrica
+                  </button>
+              </div>
 
-            <div class="rubricas-list">
-                <h4>Rúbricas Guardadas</h4>
-                <div id="lista-rubricas" class="lista-rubricas">
-                    <!-- Las rúbricas se cargarán dinámicamente aquí -->
-                </div>
-            </div>
-        </div>
+              <div class="rubricas-list">
+                  <h4>Rúbricas Guardadas</h4>
+                  <div id="lista-rubricas" class="lista-rubricas">
+                      <!-- Las rúbricas se cargarán dinámicamente aquí -->
+                  </div>
+              </div>
+          </div>
+      </div>
     </div>
   </div>
 

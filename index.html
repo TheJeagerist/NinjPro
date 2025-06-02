@@ -651,6 +651,32 @@
   <div id="rubricas-panel" class="panel" style="display: none;">
     <div class="container">
       <h2>Rúbricas Escolares</h2>
+      
+      <!-- Tabs para modo normal y modo rúbrica - Posición fija -->
+      <div class="rubricas-tabs-container">
+        <div class="rubricas-tabs">
+          <button id="tab-normal" class="tab-button active" data-tab="normal">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <line x1="10" y1="9" x2="8" y2="9"></line>
+            </svg>
+            Modo Edición
+          </button>
+          <button id="tab-evaluacion" class="tab-button" data-tab="evaluacion">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 12l2 2 4-4"></path>
+              <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3"></path>
+              <path d="M3 12c1 0-3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3"></path>
+              <path d="M3 12v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-9"></path>
+            </svg>
+            Modo Evaluación
+          </button>
+        </div>
+      </div>
+      
       <div class="rubricas-controls">
         <div class="rubricas-selector">
           <label for="rubricas-guardadas-select">Usar Rúbrica Guardada:</label>
@@ -665,27 +691,7 @@
             Cargar
           </button>
         </div>
-        <div class="rubricas-mode-toggle">
-          <button id="modo-normal" class="btn-mode active">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-              <polyline points="14 2 14 8 20 8"></polyline>
-              <line x1="16" y1="13" x2="8" y2="13"></line>
-              <line x1="16" y1="17" x2="8" y2="17"></line>
-              <line x1="10" y1="9" x2="8" y2="9"></line>
-            </svg>
-            Modo Normal
-          </button>
-          <button id="modo-evaluacion" class="btn-mode">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M9 12l2 2 4-4"></path>
-              <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3"></path>
-              <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3"></path>
-              <path d="M3 12v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-9"></path>
-            </svg>
-            Modo Evaluación
-          </button>
-        </div>
+        
         <div class="rubricas-actions">
           <button id="cargar-rubrica" class="btn-primary">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

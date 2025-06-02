@@ -5,8 +5,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const rubricaContent = document.getElementById('rubrica-content');
     
     // Referencias para modo evaluación
-    const modoNormalBtn = document.getElementById('modo-normal');
-    const modoEvaluacionBtn = document.getElementById('modo-evaluacion');
+    const modoNormalBtn = document.getElementById('tab-normal');
+    const modoEvaluacionBtn = document.getElementById('tab-evaluacion');
     const evaluacionPanel = document.getElementById('evaluacion-panel');
     const evalCursoSelect = document.getElementById('eval-curso-select');
     const evalEstudianteSelect = document.getElementById('eval-estudiante-select');

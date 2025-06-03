@@ -272,20 +272,19 @@ container.addEventListener('input', function(e) {
 
 const sideMenu = document.getElementById('side-menu');
 const collapseBtn = document.getElementById('collapse-menu-btn');
-
-// Solo configurar el menú lateral si los elementos existen
-if (sideMenu && collapseBtn) {
 collapseBtn.addEventListener('click', () => {
   sideMenu.classList.toggle('collapsed');
   localStorage.setItem('menu-collapsed', sideMenu.classList.contains('collapsed') ? '1' : '0');
 });
-  
 if (localStorage.getItem('menu-collapsed') === '1') {
   sideMenu.classList.add('collapsed');
 }
 
 // Función para contraer el menú lateral cuando se hace clic fuera
 document.addEventListener('click', function(event) {
+  const sideMenu = document.getElementById('side-menu');
+  const collapseBtn = document.getElementById('collapse-menu-btn');
+  
   // Si el menú está expandido y el clic no fue dentro del menú ni en el botón de colapsar
   if (!sideMenu.classList.contains('collapsed') && 
       !sideMenu.contains(event.target) && 
@@ -294,7 +293,6 @@ document.addEventListener('click', function(event) {
     localStorage.setItem('menu-collapsed', '1');
   }
 });
-}
 
 // Variables globales para elementos del DOM
 let calcPanel, escalaPanel, menuCalculadora, menuEscala;
@@ -320,13 +318,15 @@ function initializePanels() {
     calcPanel: document.getElementById('calc-panel'),
     escalaPanel: document.getElementById('escala-panel'),
     multiPanel: document.getElementById('multi-panel'),
+    menuCalculadora: document.getElementById('menu-calculadora'),
+    menuEscala: document.getElementById('menu-escala'),
+    menuMulti: document.getElementById('menu-multi'),
     sectionsContainer: document.getElementById('sections-container')
   };
 
-  // Solo verificar que existan los paneles principales
-  const requiredPanels = [elements.calcPanel, elements.escalaPanel, elements.multiPanel];
-  if (!requiredPanels.every(el => el)) {
-    console.warn('No se encontraron todos los paneles principales');
+  // Verificar que todos los elementos necesarios existan
+  if (!Object.values(elements).every(el => el)) {
+    console.warn('No se encontraron todos los elementos necesarios');
     return;
   }
 
@@ -336,27 +336,31 @@ function initializePanels() {
     elements.calcPanel.style.display = "none";
     elements.escalaPanel.style.display = "block";
     elements.multiPanel.style.display = "none";
+    elements.menuEscala.classList.add('active');
+    elements.menuCalculadora.classList.remove('active');
+    elements.menuMulti.classList.remove('active');
     generarTablaEscala();
   } else if (hash === '#multi') {
     elements.calcPanel.style.display = "none";
     elements.escalaPanel.style.display = "none";
     elements.multiPanel.style.display = "block";
-    if (elements.sectionsContainer && elements.sectionsContainer.children.length === 0) {
+    elements.menuMulti.classList.add('active');
+    elements.menuCalculadora.classList.remove('active');
+    elements.menuEscala.classList.remove('active');
+    if (elements.sectionsContainer.children.length === 0) {
       addSection();
     }
-  } else if (hash === '#calculator') {
+  } else {
     elements.calcPanel.style.display = "block";
     elements.escalaPanel.style.display = "none";
     elements.multiPanel.style.display = "none";
-  } else {
-    // Sin hash específico, ocultar todos los paneles (mostrar solo dashboard)
-    elements.calcPanel.style.display = "none";
-    elements.escalaPanel.style.display = "none";
-    elements.multiPanel.style.display = "none";
-  }
+    elements.menuCalculadora.classList.add('active');
+    elements.menuEscala.classList.remove('active');
+    elements.menuMulti.classList.remove('active');
+}
 
-  // Agregar event listeners para el manejo de inputs en la calculadora múltiple solo si existe sectionsContainer
-  if (elements.sectionsContainer && !elements.sectionsContainer.dataset.hasInputListener) {
+  // Agregar event listeners para el manejo de inputs en la calculadora múltiple
+  if (!elements.sectionsContainer.dataset.hasInputListener) {
     elements.sectionsContainer.addEventListener('input', function(e) {
       const target = e.target;
       if (target.classList.contains('grade')) {
@@ -394,38 +398,74 @@ function initializePanels() {
 
 // Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
-  // Inicializar elementos principales
+  // Inicializar elementos
   const elements = {
+    menuMulti: document.getElementById('menu-multi'),
     calcPanel: document.getElementById('calc-panel'),
     escalaPanel: document.getElementById('escala-panel'),
     multiPanel: document.getElementById('multi-panel'),
+    menuCalculadora: document.getElementById('menu-calculadora'),
+    menuEscala: document.getElementById('menu-escala'),
     sectionsContainer: document.getElementById('sections-container')
   };
   
-  // Solo verificar que los paneles principales existan
-  const requiredPanels = [elements.calcPanel, elements.escalaPanel, elements.multiPanel];
-  if (!requiredPanels.every(el => el)) {
-    console.warn('No se encontraron todos los paneles principales');
-    // No retornar, continuar con otras inicializaciones
+  // Verificar que los elementos necesarios existan
+  if (!Object.values(elements).every(el => el)) {
+    console.warn('No se encontraron todos los elementos necesarios');
+    return;
+  }
+
+  // Configurar event listeners para los menús
+  if (elements.menuCalculadora) {
+    elements.menuCalculadora.addEventListener('click', function(e) {
+    e.preventDefault();
+    hideAllPanels();
+    updateActiveMenuItem('menu-calculadora');
+      elements.calcPanel.style.display = 'block';
+  });
+  }
+
+  if (elements.menuEscala) {
+    elements.menuEscala.addEventListener('click', function(e) {
+    e.preventDefault();
+    hideAllPanels();
+    updateActiveMenuItem('menu-escala');
+      elements.escalaPanel.style.display = 'block';
+    generarTablaEscala();
+  });
+  }
+
+  if (elements.menuMulti) {
+    elements.menuMulti.addEventListener('click', function(e) {
+    e.preventDefault();
+      window.location.hash = 'multi';
+      elements.calcPanel.style.display = "none";
+      elements.escalaPanel.style.display = "none";
+      elements.multiPanel.style.display = "block";
+      this.classList.add('active');
+      elements.menuCalculadora.classList.remove('active');
+      elements.menuEscala.classList.remove('active');
+      
+      if (elements.sectionsContainer && elements.sectionsContainer.children.length === 0) {
+        addSection();
+      }
+    });
   }
 
   // Inicializar filas y plantillas
   initRows();
   loadTemplates();
   
-  // Inicializar el calendario si existe
-  if (typeof initCalendario === 'function') {
+  // Inicializar el calendario
   initCalendario();
-  }
 
-  // No mostrar ningún panel por defecto, solo el dashboard
+  // Mostrar el panel de calculadora por defecto
+  elements.calcPanel.style.display = 'block';
+  updateActiveMenuItem('menu-calculadora');
 
   // Configurar event listener para cambios de hash
   window.addEventListener('hashchange', initializePanels);
-  // Solo inicializar paneles si hay hash
-  if (window.location.hash) {
   initializePanels();
-  }
 
   // Gestión de cursos y estudiantes
   let cursosData = {};
@@ -1566,8 +1606,8 @@ function aplicarPorcentajeComun() {
           porcentajeAcumulado += porcentajePorNota;
         }
       });
-        
-        // Disparar evento de input para actualizar cálculos
+
+      // Disparar evento de input para actualizar cálculos
       weightInputs.forEach(input => {
         const event = new Event('input', {
           bubbles: true,
@@ -1951,7 +1991,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else { // exigencia
               this.value = '60';
             }
-  } else {
+          } else {
             // Si hay un valor, validarlo
             let valor = parseFloat(this.value);
             if (!isNaN(valor)) {
@@ -1963,8 +2003,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
           }
           generarTablaEscala();
-            return;
-          }
+          return;
+        }
 
         // Para el resto de los campos, mantener la validación existente
         if (this.value !== '') {
@@ -2009,9 +2049,462 @@ document.addEventListener('DOMContentLoaded', function() {
   generarTablaEscala();
 });
 
-// Función para compatibilidad con llamadas del menú lateral (ahora solo registra en consola)
-function updateActiveMenuItem(menuId) {
-  // Esta función mantiene compatibilidad con código existente
-  // En el nuevo dashboard no es necesaria, pero evita errores
-  console.log('Menu item activado:', menuId);
+// Variable global para el modo actual
+let modoTablaActual = 'normal';
+let submodoPaesActual = null;
+
+// Configuración predeterminada para cada modo
+const configuracionesModo = {
+  normal: {
+    puntajeMax: 100,
+    exigencia: 60,
+    notaMin: 1.0,
+    notaMax: 7.0,
+    notaAprob: 4.0
+  },
+  simce: {
+    puntajeMax: 400,
+    exigencia: 60,
+    notaMin: 1.0,
+    notaMax: 7.0,
+    notaAprob: 4.0
+  },
+  paes: {
+    'competencia-lectora': {
+      puntajeMax: 1000,
+      exigencia: 60,
+      notaMin: 1.0,
+      notaMax: 7.0,
+      notaAprob: 4.0
+    },
+    'm1': {
+      puntajeMax: 1000,
+      exigencia: 60,
+      notaMin: 1.0,
+      notaMax: 7.0,
+      notaAprob: 4.0
+    },
+    'm2': {
+      puntajeMax: 1000,
+      exigencia: 60,
+      notaMin: 1.0,
+      notaMax: 7.0,
+      notaAprob: 4.0
+    },
+    'ciencias': {
+      puntajeMax: 1000,
+      exigencia: 60,
+      notaMin: 1.0,
+      notaMax: 7.0,
+      notaAprob: 4.0
+    },
+    'historia': {
+      puntajeMax: 1000,
+      exigencia: 60,
+      notaMin: 1.0,
+      notaMax: 7.0,
+      notaAprob: 4.0
+    }
+  }
+};
+
+// Agregar el mapeo de nombres de modos PAES
+const modosPaesNombres = {
+  'competencia-lectora': 'Competencia Lectora',
+  'm1': 'M1 Matemáticas',
+  'm2': 'M2 Matemáticas',
+  'ciencias': 'Ciencias',
+  'historia': 'Historia'
+};
+
+// Función para manejar el menú desplegable de PAES
+function togglePaesDropdown(event) {
+  const dropdown = document.querySelector('.paes-dropdown');
+  const button = document.querySelector('.tabla-mode-btn.has-dropdown');
+  
+  if (event.type === 'click' && event.target.closest('.tabla-mode-btn.has-dropdown')) {
+    dropdown.classList.toggle('show');
+    button.classList.toggle('active');
+  } else if (event.type === 'click' && !event.target.closest('.paes-dropdown') && !event.target.closest('.tabla-mode-btn.has-dropdown')) {
+    dropdown.classList.remove('show');
+    button.classList.remove('active');
+  }
 }
+
+// Modificar la función cambiarModoTabla
+function cambiarModoTabla(modo, submodo = null) {
+  modoTablaActual = modo;
+  submodoPaesActual = submodo;
+  
+  // Actualizar estado visual de los botones
+  document.querySelectorAll('.tabla-mode-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.mode === modo);
+  });
+
+  // Actualizar el subtítulo del modo PAES
+  const modoActualElement = document.getElementById('modo-actual');
+  const modoPaesTexto = document.getElementById('modo-paes-texto');
+  
+  if (modo === 'paes' && submodo) {
+    modoPaesTexto.textContent = modosPaesNombres[submodo] || '';
+    modoActualElement.classList.remove('hidden');
+    modoActualElement.classList.add('visible');
+  } else {
+    modoActualElement.classList.remove('visible');
+    modoActualElement.classList.add('hidden');
+  }
+
+  // Si es modo PAES, actualizar estado del ítem seleccionado
+  if (modo === 'paes' && submodo) {
+    document.querySelectorAll('.paes-dropdown-item').forEach(item => {
+      item.classList.toggle('active', item.dataset.paesMode === submodo);
+    });
+  }
+  
+  // Valores por defecto
+  const defaultConfig = {
+    puntajeMax: 100,
+    exigencia: 60,
+    notaMin: 1.0,
+    notaMax: 7.0,
+    notaAprob: 4.0
+  };
+
+  // Obtener la configuración del modo seleccionado
+  let config = { ...defaultConfig };
+  
+  try {
+    if (modo === 'paes' && submodo && configuracionesModo?.paes?.[submodo]) {
+      const paesConfig = configuracionesModo.paes[submodo];
+      config = {
+        puntajeMax: Number(paesConfig?.puntajeMax) || defaultConfig.puntajeMax,
+        exigencia: Number(paesConfig?.exigencia) || defaultConfig.exigencia,
+        notaMin: Number(paesConfig?.notaMin) || defaultConfig.notaMin,
+        notaMax: Number(paesConfig?.notaMax) || defaultConfig.notaMax,
+        notaAprob: Number(paesConfig?.notaAprob) || defaultConfig.notaAprob
+      };
+    } else if (configuracionesModo?.[modo]) {
+      const modoConfig = configuracionesModo[modo];
+      config = {
+        puntajeMax: Number(modoConfig?.puntajeMax) || defaultConfig.puntajeMax,
+        exigencia: Number(modoConfig?.exigencia) || defaultConfig.exigencia,
+        notaMin: Number(modoConfig?.notaMin) || defaultConfig.notaMin,
+        notaMax: Number(modoConfig?.notaMax) || defaultConfig.notaMax,
+        notaAprob: Number(modoConfig?.notaAprob) || defaultConfig.notaAprob
+      };
+    }
+  } catch (error) {
+    console.warn('Error al cargar la configuración:', error);
+    // Mantener los valores por defecto si hay error
+  }
+
+  // Asegurarse de que todos los valores sean números válidos
+  config.puntajeMax = Math.max(1, Number(config.puntajeMax) || defaultConfig.puntajeMax);
+  config.exigencia = Math.min(100, Math.max(1, Number(config.exigencia) || defaultConfig.exigencia));
+  config.notaMin = Math.max(1, Math.min(7, Number(config.notaMin) || defaultConfig.notaMin));
+  config.notaMax = Math.max(config.notaMin + 0.1, Math.min(7, Number(config.notaMax) || defaultConfig.notaMax));
+  config.notaAprob = Math.max(config.notaMin, Math.min(config.notaMax, Number(config.notaAprob) || defaultConfig.notaAprob));
+
+  // Aplicar la configuración a los inputs con validación
+  const elementos = {
+    puntajeMax: document.getElementById('puntajeMax'),
+    exigencia: document.getElementById('exigencia'),
+    notaMin: document.getElementById('notaMin'),
+    notaMax: document.getElementById('notaMax'),
+    notaAprob: document.getElementById('notaAprob')
+  };
+
+  // Actualizar los valores solo si los elementos existen
+  if (elementos.puntajeMax) elementos.puntajeMax.value = config.puntajeMax;
+  if (elementos.exigencia) elementos.exigencia.value = config.exigencia;
+  if (elementos.notaMin) elementos.notaMin.value = config.notaMin.toFixed(1);
+  if (elementos.notaMax) elementos.notaMax.value = config.notaMax.toFixed(1);
+  if (elementos.notaAprob) elementos.notaAprob.value = config.notaAprob.toFixed(1);
+  
+  // Regenerar la tabla con la nueva configuración
+  generarTablaEscala();
+}
+
+// Agregar event listeners
+document.addEventListener('DOMContentLoaded', function() {
+  // Event listeners para los botones de modo
+  document.querySelectorAll('.tabla-mode-btn').forEach(btn => {
+    if (!btn.classList.contains('has-dropdown')) {
+      btn.addEventListener('click', () => {
+        cambiarModoTabla(btn.dataset.mode);
+      });
+    }
+  });
+
+  // Event listeners para los items del dropdown de PAES
+  document.querySelectorAll('.paes-dropdown-item').forEach(item => {
+    item.addEventListener('click', () => {
+      cambiarModoTabla('paes', item.dataset.paesMode);
+      document.querySelector('.paes-dropdown').classList.remove('show');
+      document.querySelector('.tabla-mode-btn.has-dropdown').classList.remove('active');
+    });
+  });
+
+  // Cerrar dropdown al hacer click fuera
+  document.addEventListener('click', togglePaesDropdown);
+});
+
+// Conversor de puntaje a nota
+document.addEventListener('DOMContentLoaded', function() {
+  const puntajeInput = document.getElementById('puntaje-input');
+  const notaResult = document.getElementById('nota-result');
+
+  if (!puntajeInput || !notaResult) return;
+
+  function obtenerConfiguracionModo() {
+    const modo = modoTablaActual;
+    let config;
+
+    if (modo === 'paes' && submodoPaesActual) {
+      config = configuracionesModo.paes[submodoPaesActual];
+    } else {
+      config = configuracionesModo[modo];
+    }
+
+    // Si no hay configuración específica, usar valores por defecto
+    return {
+      puntajeMax: config?.puntajeMax || 100,
+      exigencia: config?.exigencia || 60,
+      notaMin: config?.notaMin || 1.0,
+      notaMax: config?.notaMax || 7.0,
+      notaAprob: config?.notaAprob || 4.0
+    };
+  }
+
+  function convertirPuntajeANota(puntaje) {
+    // Obtener configuración según el modo actual
+    const config = obtenerConfiguracionModo();
+    
+    // Obtener valores actuales de los inputs (si están modificados por el usuario)
+    const puntajeMax = document.getElementById('puntajeMax').value ? parseFloat(document.getElementById('puntajeMax').value) : 100;
+    const exigencia = (document.getElementById('exigencia').value ? parseFloat(document.getElementById('exigencia').value) : 60) / 100;
+    
+    // Para las notas, verificar si hay valores y si son de doble dígito
+    let notaMin = document.getElementById('notaMin').value ? parseFloat(document.getElementById('notaMin').value) : null;
+    let notaMax = document.getElementById('notaMax').value ? parseFloat(document.getElementById('notaMax').value) : null;
+    let notaAprob = document.getElementById('notaAprob').value ? parseFloat(document.getElementById('notaAprob').value) : null;
+
+    // Si alguna nota está vacía, usar valores por defecto
+    if (notaMin === null || notaMax === null || notaAprob === null) {
+      return 'Completa las notas';
+    }
+
+    // Ajustar notas si son de doble dígito
+    if (notaMin >= 10) notaMin = notaMin / 10;
+    if (notaMax >= 10) notaMax = notaMax / 10;
+    if (notaAprob >= 10) notaAprob = notaAprob / 10;
+
+    // Validar rangos de notas
+    notaMin = Math.max(1, Math.min(7, notaMin));
+    notaMax = Math.max(notaMin + 0.1, Math.min(7, notaMax));
+    notaAprob = Math.max(notaMin, Math.min(notaMax, notaAprob));
+    
+    if (isNaN(puntaje) || puntaje > puntajeMax || puntaje < 0) {
+      return 'Inválido';
+    }
+    
+    const puntajeAprobacion = puntajeMax * exigencia;
+    let nota;
+    
+    if (puntaje >= puntajeAprobacion) {
+        window.sectionCounter = 0;
+    }
+    
+    // Limpiar resultados
+    const resultValue = document.getElementById('multi-result-value');
+    const resultStatus = document.getElementById('multi-result-status');
+    const resultPanel = document.getElementById('multi-result-panel');
+    
+    if (resultValue) resultValue.textContent = '0.00';
+    if (resultStatus) resultStatus.textContent = '-';
+    if (resultPanel) resultPanel.className = 'result-panel';
+}
+
+// Función para cargar curso desde Excel (mejorada)
+async function cargarExcelMulti() {
+    const fileInput = document.getElementById('input-excel-multi');
+    
+    if (!fileInput.files[0]) {
+        alert('Por favor selecciona un archivo Excel');
+        return;
+    }
+    
+    try {
+        const estudiantes = await leerExcelEstudiantesMulti(fileInput.files[0]);
+        
+        // Confirmar si ya hay secciones
+        const sectionsContainer = document.getElementById('sections-container');
+        if (sectionsContainer.children.length > 0) {
+            if (!confirm(`Ya hay ${sectionsContainer.children.length} secciones creadas. ¿Deseas limpiar todo y cargar los estudiantes del archivo Excel?`)) {
+                return;
+            }
+            limpiarSecciones();
+        }
+        
+        // Crear una sección por cada estudiante
+        estudiantes.forEach(estudiante => {
+            const nombreEstudiante = estudiante.nombre || estudiante;
+            const curso = estudiante.curso || 'Sin curso';
+            addSectionWithName(`${nombreEstudiante} (${curso})`);
+        });
+        
+        // Mostrar mensaje de éxito
+        const mensaje = `✅ Archivo Excel cargado exitosamente. Se crearon ${estudiantes.length} secciones.`;
+        
+        // Crear notificación temporal
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--btn-add);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            z-index: 10000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            font-weight: 500;
+            max-width: 350px;
+            animation: slideInRight 0.3s ease;
+        `;
+        notification.textContent = mensaje;
+        
+        document.body.appendChild(notification);
+        
+        // Remover notificación después de 3 segundos
+        setTimeout(() => {
+            notification.style.animation = 'slideOutRight 0.3s ease';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }, 3000);
+        
+        // Limpiar el input de archivo
+        fileInput.value = '';
+        
+    } catch (error) {
+        console.error('Error al cargar archivo Excel:', error);
+        alert('Error al cargar el archivo Excel: ' + error.message);
+    }
+}
+
+// Función para leer Excel específica para multi-panel
+async function leerExcelEstudiantesMulti(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        
+        reader.onload = function(event) {
+            try {
+                const data = new Uint8Array(event.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                
+                if (jsonData.length < 2) {
+                    throw new Error('El archivo debe tener al menos una fila de encabezados y una fila de datos');
+                }
+                
+                const headers = jsonData[0];
+                const nombreCol = headers.findIndex(h => h && h.toLowerCase().includes('nombre'));
+                const cursoCol = headers.findIndex(h => h && h.toLowerCase().includes('curso'));
+                
+                if (nombreCol === -1) {
+                    throw new Error('No se encontró una columna de "Nombre" en el archivo');
+                }
+                
+                const estudiantes = [];
+                for (let i = 1; i < jsonData.length; i++) {
+                    const row = jsonData[i];
+                    if (row[nombreCol] && row[nombreCol].toString().trim()) {
+                        const estudiante = {
+                            nombre: row[nombreCol].toString().trim(),
+                            curso: cursoCol !== -1 && row[cursoCol] ? row[cursoCol].toString().trim() : 'Sin curso'
+                        };
+                        estudiantes.push(estudiante);
+                    }
+                }
+                
+                if (estudiantes.length === 0) {
+                    throw new Error('No se encontraron estudiantes válidos en el archivo');
+                }
+                
+                resolve(estudiantes);
+            } catch (error) {
+                console.error('Error al procesar Excel:', error);
+                reject(error);
+            }
+        };
+        
+        reader.onerror = function(error) {
+            console.error('Error al leer el archivo:', error);
+            reject(new Error('Error al leer el archivo'));
+        };
+        
+        reader.readAsArrayBuffer(file);
+    });
+}
+
+// Event listeners para los nuevos controles
+document.addEventListener('DOMContentLoaded', function() {
+    // Actualizar selectores de curso cuando se carga la página
+    actualizarSelectoresCurso();
+    
+    // Event listener para cargar Excel multi
+    const btnCargarExcelMulti = document.getElementById('btn-cargar-excel-multi');
+    if (btnCargarExcelMulti) {
+        btnCargarExcelMulti.addEventListener('click', function() {
+            document.getElementById('input-excel-multi').click();
+        });
+    }
+    
+    const inputExcelMulti = document.getElementById('input-excel-multi');
+    if (inputExcelMulti) {
+        inputExcelMulti.addEventListener('change', cargarExcelMulti);
+    }
+    
+    // Actualizar selector cuando se vuelve al panel multi
+    const menuMulti = document.getElementById('menu-multi');
+    if (menuMulti) {
+        menuMulti.addEventListener('click', function() {
+            setTimeout(() => {
+                actualizarSelectoresCurso();
+            }, 100);
+        });
+    }
+});
+
+// Agregar animaciones CSS necesarias
+const styleSheet = document.createElement('style');
+styleSheet.textContent = `
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+}
+`;
+document.head.appendChild(styleSheet);
+

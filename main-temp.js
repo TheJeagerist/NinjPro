@@ -275,25 +275,25 @@ const collapseBtn = document.getElementById('collapse-menu-btn');
 
 // Solo configurar el menú lateral si los elementos existen
 if (sideMenu && collapseBtn) {
-collapseBtn.addEventListener('click', () => {
-  sideMenu.classList.toggle('collapsed');
-  localStorage.setItem('menu-collapsed', sideMenu.classList.contains('collapsed') ? '1' : '0');
-});
+  collapseBtn.addEventListener('click', () => {
+    sideMenu.classList.toggle('collapsed');
+    localStorage.setItem('menu-collapsed', sideMenu.classList.contains('collapsed') ? '1' : '0');
+  });
   
-if (localStorage.getItem('menu-collapsed') === '1') {
-  sideMenu.classList.add('collapsed');
-}
-
-// Función para contraer el menú lateral cuando se hace clic fuera
-document.addEventListener('click', function(event) {
-  // Si el menú está expandido y el clic no fue dentro del menú ni en el botón de colapsar
-  if (!sideMenu.classList.contains('collapsed') && 
-      !sideMenu.contains(event.target) && 
-      !collapseBtn.contains(event.target)) {
+  if (localStorage.getItem('menu-collapsed') === '1') {
     sideMenu.classList.add('collapsed');
-    localStorage.setItem('menu-collapsed', '1');
   }
-});
+
+  // Función para contraer el menú lateral cuando se hace clic fuera
+  document.addEventListener('click', function(event) {
+    // Si el menú está expandido y el clic no fue dentro del menú ni en el botón de colapsar
+    if (!sideMenu.classList.contains('collapsed') && 
+        !sideMenu.contains(event.target) && 
+        !collapseBtn.contains(event.target)) {
+      sideMenu.classList.add('collapsed');
+      localStorage.setItem('menu-collapsed', '1');
+    }
+  });
 }
 
 // Variables globales para elementos del DOM
@@ -320,13 +320,15 @@ function initializePanels() {
     calcPanel: document.getElementById('calc-panel'),
     escalaPanel: document.getElementById('escala-panel'),
     multiPanel: document.getElementById('multi-panel'),
+    menuCalculadora: document.getElementById('menu-calculadora'),
+    menuEscala: document.getElementById('menu-escala'),
+    menuMulti: document.getElementById('menu-multi'),
     sectionsContainer: document.getElementById('sections-container')
   };
 
-  // Solo verificar que existan los paneles principales
-  const requiredPanels = [elements.calcPanel, elements.escalaPanel, elements.multiPanel];
-  if (!requiredPanels.every(el => el)) {
-    console.warn('No se encontraron todos los paneles principales');
+  // Verificar que todos los elementos necesarios existan
+  if (!Object.values(elements).every(el => el)) {
+    console.warn('No se encontraron todos los elementos necesarios');
     return;
   }
 
@@ -336,27 +338,31 @@ function initializePanels() {
     elements.calcPanel.style.display = "none";
     elements.escalaPanel.style.display = "block";
     elements.multiPanel.style.display = "none";
+    elements.menuEscala.classList.add('active');
+    elements.menuCalculadora.classList.remove('active');
+    elements.menuMulti.classList.remove('active');
     generarTablaEscala();
   } else if (hash === '#multi') {
     elements.calcPanel.style.display = "none";
     elements.escalaPanel.style.display = "none";
     elements.multiPanel.style.display = "block";
-    if (elements.sectionsContainer && elements.sectionsContainer.children.length === 0) {
+    elements.menuMulti.classList.add('active');
+    elements.menuCalculadora.classList.remove('active');
+    elements.menuEscala.classList.remove('active');
+    if (elements.sectionsContainer.children.length === 0) {
       addSection();
     }
-  } else if (hash === '#calculator') {
+  } else {
     elements.calcPanel.style.display = "block";
     elements.escalaPanel.style.display = "none";
     elements.multiPanel.style.display = "none";
-  } else {
-    // Sin hash específico, ocultar todos los paneles (mostrar solo dashboard)
-    elements.calcPanel.style.display = "none";
-    elements.escalaPanel.style.display = "none";
-    elements.multiPanel.style.display = "none";
-  }
+    elements.menuCalculadora.classList.add('active');
+    elements.menuEscala.classList.remove('active');
+    elements.menuMulti.classList.remove('active');
+}
 
-  // Agregar event listeners para el manejo de inputs en la calculadora múltiple solo si existe sectionsContainer
-  if (elements.sectionsContainer && !elements.sectionsContainer.dataset.hasInputListener) {
+  // Agregar event listeners para el manejo de inputs en la calculadora múltiple
+  if (!elements.sectionsContainer.dataset.hasInputListener) {
     elements.sectionsContainer.addEventListener('input', function(e) {
       const target = e.target;
       if (target.classList.contains('grade')) {
@@ -394,38 +400,74 @@ function initializePanels() {
 
 // Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
-  // Inicializar elementos principales
+  // Inicializar elementos
   const elements = {
+    menuMulti: document.getElementById('menu-multi'),
     calcPanel: document.getElementById('calc-panel'),
     escalaPanel: document.getElementById('escala-panel'),
     multiPanel: document.getElementById('multi-panel'),
+    menuCalculadora: document.getElementById('menu-calculadora'),
+    menuEscala: document.getElementById('menu-escala'),
     sectionsContainer: document.getElementById('sections-container')
   };
   
-  // Solo verificar que los paneles principales existan
-  const requiredPanels = [elements.calcPanel, elements.escalaPanel, elements.multiPanel];
-  if (!requiredPanels.every(el => el)) {
-    console.warn('No se encontraron todos los paneles principales');
-    // No retornar, continuar con otras inicializaciones
+  // Verificar que los elementos necesarios existan
+  if (!Object.values(elements).every(el => el)) {
+    console.warn('No se encontraron todos los elementos necesarios');
+    return;
+  }
+
+  // Configurar event listeners para los menús
+  if (elements.menuCalculadora) {
+    elements.menuCalculadora.addEventListener('click', function(e) {
+    e.preventDefault();
+    hideAllPanels();
+    updateActiveMenuItem('menu-calculadora');
+      elements.calcPanel.style.display = 'block';
+  });
+  }
+
+  if (elements.menuEscala) {
+    elements.menuEscala.addEventListener('click', function(e) {
+    e.preventDefault();
+    hideAllPanels();
+    updateActiveMenuItem('menu-escala');
+      elements.escalaPanel.style.display = 'block';
+    generarTablaEscala();
+  });
+  }
+
+  if (elements.menuMulti) {
+    elements.menuMulti.addEventListener('click', function(e) {
+    e.preventDefault();
+      window.location.hash = 'multi';
+      elements.calcPanel.style.display = "none";
+      elements.escalaPanel.style.display = "none";
+      elements.multiPanel.style.display = "block";
+      this.classList.add('active');
+      elements.menuCalculadora.classList.remove('active');
+      elements.menuEscala.classList.remove('active');
+      
+      if (elements.sectionsContainer && elements.sectionsContainer.children.length === 0) {
+        addSection();
+      }
+    });
   }
 
   // Inicializar filas y plantillas
   initRows();
   loadTemplates();
   
-  // Inicializar el calendario si existe
-  if (typeof initCalendario === 'function') {
+  // Inicializar el calendario
   initCalendario();
-  }
 
-  // No mostrar ningún panel por defecto, solo el dashboard
+  // Mostrar el panel de calculadora por defecto
+  elements.calcPanel.style.display = 'block';
+  updateActiveMenuItem('menu-calculadora');
 
   // Configurar event listener para cambios de hash
   window.addEventListener('hashchange', initializePanels);
-  // Solo inicializar paneles si hay hash
-  if (window.location.hash) {
   initializePanels();
-  }
 
   // Gestión de cursos y estudiantes
   let cursosData = {};
@@ -1566,8 +1608,8 @@ function aplicarPorcentajeComun() {
           porcentajeAcumulado += porcentajePorNota;
         }
       });
-        
-        // Disparar evento de input para actualizar cálculos
+
+      // Disparar evento de input para actualizar cálculos
       weightInputs.forEach(input => {
         const event = new Event('input', {
           bubbles: true,
@@ -1951,7 +1993,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else { // exigencia
               this.value = '60';
             }
-  } else {
+          } else {
             // Si hay un valor, validarlo
             let valor = parseFloat(this.value);
             if (!isNaN(valor)) {
@@ -1963,8 +2005,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
           }
           generarTablaEscala();
-            return;
-          }
+          return;
+        }
 
         // Para el resto de los campos, mantener la validación existente
         if (this.value !== '') {
@@ -2008,10 +2050,3 @@ document.addEventListener('DOMContentLoaded', function() {
   // Generar tabla inicial
   generarTablaEscala();
 });
-
-// Función para compatibilidad con llamadas del menú lateral (ahora solo registra en consola)
-function updateActiveMenuItem(menuId) {
-  // Esta función mantiene compatibilidad con código existente
-  // En el nuevo dashboard no es necesaria, pero evita errores
-  console.log('Menu item activado:', menuId);
-}

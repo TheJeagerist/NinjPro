@@ -1,16 +1,212 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head> 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Calculadora de Promedio Ponderado</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="dashboard-styles.css">
+  <link rel="stylesheet" href="timeline-styles.css">
   <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
-  <!-- Botón de menú móvil -->
+  <!-- Dashboard Principal -->
+  <div id="dashboard-main" class="dashboard-main">
+    <!-- Header del Dashboard -->
+    <header class="dashboard-header">
+      <div class="header-content">
+        <h1 class="dashboard-title">PROFENINJA</h1>
+        <p class="dashboard-subtitle">Silencio en el aula. Profe Ninja en acción</p>
+      </div>
+      <!-- Barra de búsqueda -->
+      <div class="search-container">
+        <input type="text" id="search-tools" class="search-input" placeholder="Buscar herramientas...">
+        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="M21 21l-4.35-4.35"></path>
+    </svg>
+    </div>
+      <!-- Filtros de categoría -->
+      <div class="category-filters">
+        <button class="filter-btn active" data-category="all">Todas</button>
+        <button class="filter-btn" data-category="calculadora">Calculadora</button>
+        <button class="filter-btn" data-category="herramientas">Herramientas</button>
+        <button class="filter-btn" data-category="configuracion">Configuración</button>
+      </div>
+    </header>
+    
+    <!-- Grid de Herramientas -->
+    <main class="tools-grid">
+      <!-- Calculadora Principal -->
+      <div class="tool-card" data-tool="calculadora" data-category="calculadora">
+        <div class="tool-icon calculadora-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+          <line x1="8" y1="6" x2="16" y2="6"></line>
+          <line x1="8" y1="10" x2="16" y2="10"></line>
+          <line x1="8" y1="14" x2="16" y2="14"></line>
+          <line x1="8" y1="18" x2="16" y2="18"></line>
+        </svg>
+        </div>
+        <h3 class="tool-title">Calculadora</h3>
+        <p class="tool-description">Calculadora de promedio ponderado</p>
+        <div class="tool-tags">
+          <span class="tag calculadora-tag">Calculadora</span>
+        </div>
+      </div>
+
+      <!-- Escala de Notas -->
+      <div class="tool-card" data-tool="escala" data-category="calculadora">
+        <div class="tool-icon escala-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
+          <line x1="12" y1="10" x2="12" y2="16"></line>
+          <line x1="9" y1="13" x2="15" y2="13"></line>
+        </svg>
+        </div>
+        <h3 class="tool-title">Escala de Notas</h3>
+        <p class="tool-description">Conversión de escala de calificaciones</p>
+        <div class="tool-tags">
+          <span class="tag calculadora-tag">Calculadora</span>
+        </div>
+      </div>
+
+      <!-- Múltiples Promedios -->
+      <div class="tool-card" data-tool="multi" data-category="calculadora">
+        <div class="tool-icon multi-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7"></rect>
+          <rect x="14" y="3" width="7" height="7"></rect>
+          <rect x="14" y="14" width="7" height="7"></rect>
+          <rect x="3" y="14" width="7" height="7"></rect>
+        </svg>
+        </div>
+        <h3 class="tool-title">Múltiples Promedios</h3>
+        <p class="tool-description">Gestión de múltiples cursos</p>
+        <div class="tool-tags">
+          <span class="tag calculadora-tag">Calculadora</span>
+        </div>
+      </div>
+
+      <!-- Calendario -->
+      <div class="tool-card" data-tool="calendario" data-category="herramientas">
+        <div class="tool-icon calendario-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        </div>
+        <h3 class="tool-title">Calendario</h3>
+        <p class="tool-description">Organización temporal y fechas</p>
+        <div class="tool-tags">
+          <span class="tag herramientas-tag">Herramientas</span>
+        </div>
+      </div>
+
+      <!-- Contador de Palabras -->
+      <div class="tool-card" data-tool="word-counter" data-category="herramientas">
+        <div class="tool-icon word-counter-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 7V4h16v3"></path>
+          <path d="M9 20h6"></path>
+          <path d="M12 4v16"></path>
+        </svg>
+        </div>
+        <h3 class="tool-title">Contador de Palabras</h3>
+        <p class="tool-description">Análisis de texto y documentos</p>
+        <div class="tool-tags">
+          <span class="tag herramientas-tag">Herramientas</span>
+        </div>
+      </div>
+
+      <!-- Rúbricas -->
+      <div class="tool-card" data-tool="rubricas" data-category="herramientas">
+        <div class="tool-icon rubricas-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <line x1="10" y1="9" x2="8" y2="9"></line>
+        </svg>
+        </div>
+        <h3 class="tool-title">Rúbricas</h3>
+        <p class="tool-description">Creación y gestión de rúbricas</p>
+        <div class="tool-tags">
+          <span class="tag herramientas-tag">Herramientas</span>
+        </div>
+      </div>
+
+      <!-- Líneas de Tiempo -->
+      <div class="tool-card" data-tool="timeline" data-category="herramientas">
+        <div class="tool-icon timeline-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 12h16m-8-8v16M8 16l4-4 4 4"/>
+            <circle cx="12" cy="8" r="2"/>
+            <circle cx="8" cy="16" r="2"/>
+            <circle cx="16" cy="16" r="2"/>
+          </svg>
+        </div>
+        <h3 class="tool-title">Líneas de Tiempo</h3>
+        <p class="tool-description">Crea y edita líneas de tiempo interactivas</p>
+        <div class="tool-tags">
+          <span class="tag herramientas-tag">Herramientas</span>
+        </div>
+      </div>
+    
+      <!-- Gestión de Estudiantes -->
+      <div class="tool-card" data-tool="config" data-category="configuracion">
+        <div class="tool-icon config-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+        </div>
+        <h3 class="tool-title">Gestión de Estudiantes</h3>
+        <p class="tool-description">Administrar cursos y listas de estudiantes</p>
+        <div class="tool-tags">
+          <span class="tag configuracion-tag">Configuración</span>
+        </div>
+      </div>
+
+      <!-- Tema Visual -->
+      <div class="tool-card theme-card" data-tool="themes" data-category="configuracion">
+        <div class="tool-icon themes-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+      </div>
+        <h3 class="tool-title">Temas Visuales</h3>
+        <p class="tool-description">Personalización de apariencia</p>
+        <div class="tool-tags">
+          <span class="tag configuracion-tag">Configuración</span>
+    </div>
+        <!-- Mini selector de temas dentro de la tarjeta -->
+        <div class="mini-theme-selector">
+          <button class="mini-theme-btn" data-theme="theme-dark" title="Neón">🎇</button>
+          <button class="mini-theme-btn" data-theme="theme-light" title="Claro">🌞</button>
+          <button class="mini-theme-btn" data-theme="theme-rosa" title="Rosa">🌸</button>
+          <button class="mini-theme-btn" data-theme="theme-oscuro" title="Oscuro">🌑</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Botón de menú móvil (para pantallas pequeñas) -->
   <button id="mobile-menu-btn" class="mobile-menu-btn">
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -21,125 +217,6 @@
 
   <!-- Overlay para el menú móvil -->
   <div id="mobile-menu-overlay" class="mobile-menu-overlay"></div>
-
-  <!-- Menú lateral -->
-  <nav class="side-menu" id="side-menu">
-    <!-- Contenedor para título y botón de colapsar -->
-    <div class="menu-header">
-      <h1 class="menu-title">PROFENINJA</h1>
-      <button id="collapse-menu-btn" data-tooltip="Contraer menú">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="19" y1="12" x2="5" y2="12"></line>
-          <polyline points="12,19 5,12 12,5"></polyline>
-        </svg>
-      </button>
-    </div>
-    
-    <a href="#config" id="menu-config" data-tooltip="Inicio" class="menu-config">
-      <span class="icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20 9v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9"></path>
-          <path d="M9 22V12h6v10M2 10.6L12 2l10 8.6"></path>
-        </svg>
-      </span>
-      <span class="menu-label">Inicio</span>
-    </a>
-    
-    <a href="#" id="menu-calculadora" class="active" data-tooltip="Calculadora">
-      <span class="icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
-          <line x1="8" y1="6" x2="16" y2="6"></line>
-          <line x1="8" y1="10" x2="16" y2="10"></line>
-          <line x1="8" y1="14" x2="16" y2="14"></line>
-          <line x1="8" y1="18" x2="16" y2="18"></line>
-        </svg>
-      </span>
-      <span class="menu-label">Calculadora</span>
-    </a>
-    <a href="#escala" id="menu-escala" data-tooltip="Escala de Notas">
-      <span class="icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
-          <line x1="12" y1="10" x2="12" y2="16"></line>
-          <line x1="9" y1="13" x2="15" y2="13"></line>
-        </svg>
-      </span>
-      <span class="menu-label">Escala de Notas</span>
-    </a>
-    <a href="#multi" id="menu-multi" data-tooltip="Múltiples Promedios">
-      <span class="icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="3" width="7" height="7"></rect>
-          <rect x="14" y="3" width="7" height="7"></rect>
-          <rect x="14" y="14" width="7" height="7"></rect>
-          <rect x="3" y="14" width="7" height="7"></rect>
-        </svg>
-      </span>
-      <span class="menu-label">Múltiples Promedios</span>
-    </a>
-    <a href="#calendario" id="menu-calendario" data-tooltip="Calendario">
-      <span class="icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-          <line x1="16" y1="2" x2="16" y2="6"></line>
-          <line x1="8" y1="2" x2="8" y2="6"></line>
-          <line x1="3" y1="10" x2="21" y2="10"></line>
-        </svg>
-      </span>
-      <span class="menu-label">Calendario</span>
-    </a>
-    <a href="#word-counter" id="menu-word-counter" data-tooltip="Contador de Palabras">
-      <span class="icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 7V4h16v3"></path>
-          <path d="M9 20h6"></path>
-          <path d="M12 4v16"></path>
-        </svg>
-      </span>
-      <span class="menu-label">Contador de Palabras</span>
-    </a>
-    <a href="#rubricas" id="menu-rubricas" data-tooltip="Rúbricas">
-      <span class="icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-          <polyline points="14 2 14 8 20 8"></polyline>
-          <line x1="16" y1="13" x2="8" y2="13"></line>
-          <line x1="16" y1="17" x2="8" y2="17"></line>
-          <line x1="10" y1="9" x2="8" y2="9"></line>
-        </svg>
-      </span>
-      <span class="menu-label">Rúbricas</span>
-    </a>
-    
-    <!-- Divisor de temas -->
-    <div class="menu-divider"></div>
-    
-    <!-- Botones de temas -->
-    <div class="theme-menu-sidebar">
-      <div class="theme-menu-title">
-        <span class="menu-label">Temas</span>
-      </div>
-      <button class="theme-btn" data-theme="theme-dark" data-tooltip="Modo Neón">
-        <span class="theme-icon">🎇</span>
-        <span class="menu-label">Neón</span>
-      </button>
-      <button class="theme-btn" data-theme="theme-light" data-tooltip="Modo Claro">
-        <span class="theme-icon">🌞</span>
-        <span class="menu-label">Claro</span>
-      </button>
-      <button class="theme-btn" data-theme="theme-rosa" data-tooltip="Modo Rosa">
-        <span class="theme-icon">🌸</span>
-        <span class="menu-label">Rosa</span>
-      </button>
-      <button class="theme-btn" data-theme="theme-oscuro" data-tooltip="Modo Oscuro">
-        <span class="theme-icon">🌑</span>
-        <span class="menu-label">Oscuro</span>
-      </button>
-    </div>
-  </nav>
-
-  
 
   <!-- Fondos animados (BGs) -->
    <div id="bg-wrap" style="position:fixed;z-index:0;top:0;left:0;width:100vw;height:100vh;pointer-events:none;opacity:0;transition:opacity 0.6s;">
@@ -797,10 +874,201 @@
     </div>
   </div>
 
+  <!-- Panel de Temas Visuales -->
+  <div id="themes-panel" class="panel" style="display:none;">
+    <div class="container">
+      <h2>Configuración de Temas Visuales</h2>
+      
+      <!-- Contenedor principal -->
+      <div class="themes-container">
+        
+        <!-- Sección de Temas Predefinidos -->
+        <div class="themes-section">
+          <h3>Temas Predefinidos</h3>
+          <div class="predefined-themes">
+            <div class="theme-option" data-theme="theme-dark">
+              <div class="theme-preview dark-preview">
+                <div class="preview-header"></div>
+                <div class="preview-content">
+                  <div class="preview-card"></div>
+                  <div class="preview-card"></div>
+                </div>
+              </div>
+              <h4>Neón</h4>
+              <p>Tema oscuro con efectos neón vibrantes</p>
+              <button class="apply-theme-btn">Aplicar</button>
+            </div>
+            
+            <div class="theme-option" data-theme="theme-light">
+              <div class="theme-preview light-preview">
+                <div class="preview-header"></div>
+                <div class="preview-content">
+                  <div class="preview-card"></div>
+                  <div class="preview-card"></div>
+                </div>
+              </div>
+              <h4>Claro</h4>
+              <p>Tema claro con colores suaves y cálidos</p>
+              <button class="apply-theme-btn">Aplicar</button>
+            </div>
+            
+            <div class="theme-option" data-theme="theme-rosa">
+              <div class="theme-preview rosa-preview">
+                <div class="preview-header"></div>
+                <div class="preview-content">
+                  <div class="preview-card"></div>
+                  <div class="preview-card"></div>
+                </div>
+              </div>
+              <h4>Rosa</h4>
+              <p>Tema rosa elegante y femenino</p>
+              <button class="apply-theme-btn">Aplicar</button>
+            </div>
+            
+            <div class="theme-option" data-theme="theme-oscuro">
+              <div class="theme-preview oscuro-preview">
+                <div class="preview-header"></div>
+                <div class="preview-content">
+                  <div class="preview-card"></div>
+                  <div class="preview-card"></div>
+                </div>
+              </div>
+              <h4>Oscuro</h4>
+              <p>Tema oscuro profesional y elegante</p>
+              <button class="apply-theme-btn">Aplicar</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección del Editor de Fondos -->
+        <div class="background-editor-section">
+          <h3>Editor de Fondos Personalizados</h3>
+          
+          <!-- Controles del Editor -->
+          <div class="editor-controls">
+            <div class="color-controls">
+              <div class="control-group">
+                <label for="bg-color-1">Color Principal:</label>
+                <input type="color" id="bg-color-1" value="#1a1e2e">
+                <span class="color-value" id="color-1-value">#1a1e2e</span>
+              </div>
+              
+              <div class="control-group">
+                <label for="bg-color-2">Color Secundario:</label>
+                <input type="color" id="bg-color-2" value="#232636">
+                <span class="color-value" id="color-2-value">#232636</span>
+              </div>
+              
+              <div class="control-group">
+                <label for="bg-color-3">Color de Acento:</label>
+                <input type="color" id="bg-color-3" value="#667eea">
+                <span class="color-value" id="color-3-value">#667eea</span>
+              </div>
+              
+              <div class="control-group">
+                <label for="text-color">Color de Texto:</label>
+                <input type="color" id="text-color" value="#ffffff">
+                <span class="color-value" id="text-color-value">#ffffff</span>
+              </div>
+            </div>
+            
+            <!-- Controles de Tipo de Fondo -->
+            <div class="background-type-controls">
+              <h4>Tipo de Fondo</h4>
+              <div class="radio-group">
+                <label class="radio-option">
+                  <input type="radio" name="bg-type" value="solid" checked>
+                  <span>Color Sólido</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="bg-type" value="gradient">
+                  <span>Degradado</span>
+                </label>
+                <label class="radio-option">
+                  <input type="radio" name="bg-type" value="animated">
+                  <span>Animado</span>
+                </label>
+              </div>
+            </div>
+            
+            <!-- Controles de Degradado -->
+            <div class="gradient-controls" style="display: none;">
+              <div class="control-group">
+                <label for="gradient-angle">Ángulo del Degradado:</label>
+                <input type="range" id="gradient-angle" min="0" max="360" value="135">
+                <span class="range-value" id="gradient-angle-value">135°</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Vista Previa del Fondo -->
+          <div class="background-preview">
+            <h4>Vista Previa</h4>
+            <div class="preview-container" id="background-preview">
+              <div class="preview-dashboard">
+                <div class="preview-header">
+                  <h5>PROFENINJA</h5>
+                  <p>Vista previa del fondo personalizado</p>
+                </div>
+                <div class="preview-cards">
+                  <div class="preview-tool-card">
+                    <div class="preview-icon"></div>
+                    <h6>Calculadora</h6>
+                    <p>Herramienta de ejemplo</p>
+                  </div>
+                  <div class="preview-tool-card">
+                    <div class="preview-icon"></div>
+                    <h6>Calendario</h6>
+                    <p>Herramienta de ejemplo</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Acciones del Editor -->
+          <div class="editor-actions">
+            <button id="apply-custom-bg" class="btn-primary">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              Aplicar Fondo
+            </button>
+            
+            <button id="save-custom-theme" class="btn-secondary">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                <polyline points="7 3 7 8 15 8"></polyline>
+              </svg>
+              Guardar Tema
+            </button>
+            
+            <button id="reset-to-default" class="btn-danger">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+              Restaurar Predeterminado
+            </button>
+          </div>
+          
+          <!-- Paletas Guardadas -->
+          <div class="saved-palettes">
+            <h4>Paletas Guardadas</h4>
+            <div id="saved-palettes-list" class="palettes-list">
+              <!-- Las paletas guardadas aparecerán aquí -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Panel de Inicio -->
   <div id="config" class="panel" style="display:none;">
     <div class="container">
-      <div class="config-header"><h2>Inicio</h2><button id="btn-ayuda-config" class="btn-ayuda" title="Ver instrucciones de uso"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9 9h0a3 3 0 0 1 6 0c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></button></div>
+      <h2>Inicio</h2>
       
       <!-- Contenedor horizontal para las secciones -->
       <div class="config-sections-container">
@@ -900,6 +1168,150 @@
         </div>
     </div>
   </div>
+  <script src="themes-editor.js"></script>
+  <script src="timeline.js"></script>
+  <script src="dashboard.js"></script>
+
+  <!-- Panel de Líneas de Tiempo -->
+  <div id="timeline-panel" class="panel" style="display:none;">
+    <div class="timeline-container">
+      <!-- Header de la aplicación -->
+      <div class="timeline-header">
+        <h1 class="timeline-title">📅 Líneas de Tiempo Interactivas</h1>
+        <div class="timeline-controls">
+          <button id="new-timeline-btn" class="btn-primary">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 5v14m-7-7h14"/>
+            </svg>
+            Nueva Línea de Tiempo
+          </button>
+          <button id="save-timeline-btn" class="btn-secondary">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+              <polyline points="17 21 17 13 7 13 7 21"/>
+              <polyline points="7 3 7 8 15 8"/>
+            </svg>
+            Guardar
+          </button>
+          <button id="load-timeline-btn" class="btn-secondary">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 1-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+            Cargar
+          </button>
+        </div>
+      </div>
+
+      <!-- Indicador de año actual -->
+      <div class="year-indicator">
+        <div class="year-display">
+          <span id="current-year">2024</span>
+        </div>
+        <div class="year-navigation">
+          <button id="prev-decade" class="year-nav-btn">⟨⟨</button>
+          <button id="prev-year" class="year-nav-btn">⟨</button>
+          <button id="next-year" class="year-nav-btn">⟩</button>
+          <button id="next-decade" class="year-nav-btn">⟩⟩</button>
+        </div>
+      </div>
+
+      <!-- Área principal de la línea de tiempo -->
+      <div class="timeline-main">
+        <div class="timeline-viewport" id="timeline-viewport">
+          <div class="timeline-content" id="timeline-content">
+            <!-- Línea de tiempo horizontal -->
+            <div class="timeline-line" id="timeline-line">
+              <!-- Los eventos se generarán dinámicamente aquí -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navegador rápido inferior -->
+      <div class="timeline-navigator">
+        <div class="navigator-header">
+          <h3>Navegación Rápida</h3>
+          <button id="add-event-btn" class="btn-add-event">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 5v14m-7-7h14"/>
+            </svg>
+            Añadir Evento
+          </button>
+        </div>
+        <div class="navigator-timeline" id="navigator-timeline">
+          <!-- Miniatura de la línea de tiempo para navegación -->
+        </div>
+      </div>
+
+      <!-- Panel lateral para información de eventos -->
+      <div class="event-info-panel" id="event-info-panel" style="display: none;">
+        <div class="event-form">
+          <h3 id="event-form-title">Nuevo Evento</h3>
+          <form id="event-form">
+            <div class="form-group">
+              <label for="event-title">Título del Evento:</label>
+              <input type="text" id="event-title" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="event-date">Fecha:</label>
+              <input type="date" id="event-date" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="event-description">Descripción:</label>
+              <textarea id="event-description" rows="3"></textarea>
+            </div>
+            
+            <div class="form-group">
+              <label for="event-category">Categoría:</label>
+              <select id="event-category">
+                <option value="politico">Político</option>
+                <option value="social">Social</option>
+                <option value="cultural">Cultural</option>
+                <option value="cientifico">Científico</option>
+                <option value="economico">Económico</option>
+                <option value="militar">Militar</option>
+                <option value="otro">Otro</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="event-importance">Importancia:</label>
+              <select id="event-importance">
+                <option value="baja">Baja</option>
+                <option value="media">Media</option>
+                <option value="alta">Alta</option>
+                <option value="critica">Crítica</option>
+              </select>
+            </div>
+            
+            <div class="form-actions">
+              <button type="submit" class="btn-primary">Guardar Evento</button>
+              <button type="button" id="cancel-event-btn" class="btn-secondary">Cancelar</button>
+              <button type="button" id="delete-event-btn" class="btn-danger" style="display: none;">Eliminar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Modal para cargar/guardar líneas de tiempo -->
+      <div class="timeline-modal" id="timeline-modal" style="display: none;">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 id="modal-title">Gestionar Líneas de Tiempo</h3>
+            <button class="modal-close" id="modal-close">&times;</button>
+          </div>
+          <div class="modal-body" id="modal-body">
+            <!-- Contenido dinámico del modal -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel de Temas Visuales -->
 </body>
 </html>
 

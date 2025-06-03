@@ -6,6 +6,10 @@ if (typeof aplicandoCantidadNotas === 'undefined') {
     window.aplicandoCantidadNotas = false;
 }
 
+if (typeof aplicandoPorcentaje === 'undefined') {
+    window.aplicandoPorcentaje = false;
+}
+
 // Función de verificación inmediata
 (function verificacionInmediata() {
     console.log('🔧 Verificando elementos del multi-panel...');
@@ -970,6 +974,9 @@ function aplicarPorcentajeComun() {
         return;
     }
     
+    // Activar variable de control para evitar alertas de validación
+    window.aplicandoPorcentaje = true;
+    
     let estudiantesActualizados = 0;
     
     sections.forEach((section, index) => {
@@ -987,21 +994,15 @@ function aplicarPorcentajeComun() {
             
             console.log(`  - Notas encontradas: ${cantidadNotas}`);
             
-            // Calcular el porcentaje por nota con distribución inteligente
-            const porcentajeBase = Math.floor((porcentaje / cantidadNotas) * 100) / 100; // 2 decimales
-            let porcentajeAcumulado = 0;
+            // Distribución simple y exacta
+            const parteEntera = Math.floor(porcentaje / cantidadNotas);
+            const resto = porcentaje % cantidadNotas;
             
             weightInputs.forEach((input, noteIndex) => {
-                if (noteIndex === weightInputs.length - 1) {
-                    // La última nota recibe el resto para asegurar que sume exactamente el porcentaje total
-                    const porcentajeFinal = Math.round((porcentaje - porcentajeAcumulado) * 100) / 100;
-                    input.value = porcentajeFinal;
-                    console.log(`    Nota ${noteIndex + 1} (final): ${porcentajeFinal}%`);
-                } else {
-                    input.value = porcentajeBase;
-                    porcentajeAcumulado += porcentajeBase;
-                    console.log(`    Nota ${noteIndex + 1}: ${porcentajeBase}%`);
-                }
+                // Las primeras 'resto' notas reciben 1 punto adicional
+                const valor = parteEntera + (noteIndex < resto ? 1 : 0);
+                input.value = valor;
+                console.log(`    Nota ${noteIndex + 1}: ${valor}%`);
                 
                 // Disparar evento de input para actualizar cálculos en tiempo real
                 const event = new Event('input', {
@@ -1031,10 +1032,23 @@ function aplicarPorcentajeComun() {
         if (typeof calculateMultipleAverages === 'function') {
             setTimeout(() => {
                 calculateMultipleAverages();
+                // Desactivar variable de control DESPUÉS de calcular promedios
+                setTimeout(() => {
+                    window.aplicandoPorcentaje = false;
+                }, 50); // Pequeño delay adicional para asegurar que termine calculateMultipleAverages
             }, 100);
+        } else {
+            // Desactivar variable de control si no se puede calcular promedios
+            setTimeout(() => {
+                window.aplicandoPorcentaje = false;
+            }, 50);
         }
     } else {
         mostrarNotificacion('❌ No se pudieron aplicar los porcentajes a los estudiantes', 'error');
+        // Desactivar variable de control en caso de error
+        setTimeout(() => {
+            window.aplicandoPorcentaje = false;
+        }, 50);
     }
 }
 

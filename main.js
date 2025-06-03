@@ -1535,7 +1535,7 @@ function updateSectionAverage(section) {
 }
 
 // Variable global para controlar si se está aplicando porcentaje
-let aplicandoPorcentaje = false;
+window.aplicandoPorcentaje = false;
 
 // Variable global para controlar si se está aplicando cantidad de notas
 window.aplicandoCantidadNotas = false;
@@ -1547,7 +1547,7 @@ function aplicarPorcentajeComun() {
     return;
   }
 
-  aplicandoPorcentaje = true;
+  window.aplicandoPorcentaje = true;
   const sections = document.querySelectorAll('.section-panel');
   sections.forEach(section => {
     const weightInputs = section.querySelectorAll('.weight');
@@ -1555,19 +1555,13 @@ function aplicarPorcentajeComun() {
     
     // Si hay notas, distribuir el porcentaje
     if (cantidadNotas > 0) {
-      // Calcular el porcentaje por nota con más precisión
-      const porcentajePorNota = Math.floor((porcentaje / cantidadNotas) * 10) / 10;
-      let porcentajeAcumulado = 0;
+      // Distribución simple y exacta
+      const parteEntera = Math.floor(porcentaje / cantidadNotas);
+      const resto = porcentaje % cantidadNotas;
       
       weightInputs.forEach((input, index) => {
-        if (index === weightInputs.length - 1) {
-          // La última nota recibe el resto para asegurar que sume exactamente el porcentaje total
-          const porcentajeFinal = porcentaje - porcentajeAcumulado;
-          input.value = Math.round(porcentajeFinal * 10) / 10;
-        } else {
-          input.value = porcentajePorNota;
-          porcentajeAcumulado += porcentajePorNota;
-        }
+        // Las primeras 'resto' notas reciben 1 punto adicional
+        input.value = parteEntera + (index < resto ? 1 : 0);
       });
         
         // Disparar evento de input para actualizar cálculos
@@ -1581,9 +1575,14 @@ function aplicarPorcentajeComun() {
     }
   });
 
-  // Actualizar los promedios
-  calculateMultipleAverages();
-  aplicandoPorcentaje = false;
+  // Actualizar los promedios con delay para evitar alertas
+  setTimeout(() => {
+    calculateMultipleAverages();
+    // Desactivar variable de control DESPUÉS de calcular promedios
+    setTimeout(() => {
+      window.aplicandoPorcentaje = false;
+    }, 50);
+  }, 100);
 }
 
 function calculateMultipleAverages() {
@@ -1594,7 +1593,7 @@ function calculateMultipleAverages() {
   
   sections.forEach(section => {
     const { average, total } = updateSectionAverage(section);
-    if (total !== 100 && !aplicandoPorcentaje && !window.aplicandoCantidadNotas) {
+    if (total !== 100 && !window.aplicandoPorcentaje && !window.aplicandoCantidadNotas) {
       allValid = false;
       alert(`La suma de las ponderaciones en la ${section.querySelector('.section-title').textContent} debe ser 100%.`);
       return;

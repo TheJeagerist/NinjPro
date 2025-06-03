@@ -9,6 +9,7 @@ class TimelineApp {
         this.savedTimelines = [];
         this.currentTimeline = null;
         this.editingEventId = null;
+        this.eventFiles = {}; // Almacenar archivos por evento
         
         // Elementos del DOM
         this.panel = document.getElementById('timeline-panel');
@@ -25,7 +26,9 @@ class TimelineApp {
         this.setupEventListeners();
         this.updateStats();
         this.loadSavedTimelines();
+        this.loadEventFiles(); // Cargar archivos guardados
         this.renderEvents();
+        this.createPresentationModal(); // Crear modal para presentaciones
     }
     
     // ================================
@@ -277,6 +280,14 @@ class TimelineApp {
         const eventElements = container.querySelectorAll('.timeline-event');
         eventElements.forEach((element, index) => {
             element.style.animationDelay = `${index * 0.1}s`;
+            
+            // Agregar event listener para mostrar panel de archivos
+            element.addEventListener('click', (e) => {
+                // Solo si no se hizo click en los botones de acción
+                if (!e.target.closest('.event-actions')) {
+                    this.toggleFilesPanel(element, event.id);
+                }
+            });
         });
     }
     
@@ -284,9 +295,10 @@ class TimelineApp {
         const displayYear = Math.abs(event.year);
         const eraText = event.era === 'ac' ? 'a.C.' : 'd.C.';
         const dateFormatted = this.formatDate(event.date);
+        const hasFiles = this.eventFiles[event.id] && this.eventFiles[event.id].length > 0;
         
         return `
-            <div class="timeline-event" data-category="${event.category}" data-event-id="${event.id}">
+            <div class="timeline-event ${hasFiles ? 'event-has-files' : ''}" data-category="${event.category}" data-event-id="${event.id}">
                 <div class="event-header">
                     <h3 class="event-title">${event.title}</h3>
                     <span class="event-date">${dateFormatted}</span>
@@ -295,6 +307,16 @@ class TimelineApp {
                 <span class="event-category ${event.category}">${this.getCategoryDisplayName(event.category)}</span>
                 
                 <p class="event-description">${event.description}</p>
+                
+                ${hasFiles ? `
+                    <div class="files-indicator">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        ${this.eventFiles[event.id].length} archivo(s) adjunto(s)
+                    </div>
+                ` : ''}
                 
                 <div class="event-meta">
                     <div class="event-location">
@@ -320,6 +342,35 @@ class TimelineApp {
                                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
                             </svg>
                         </button>
+                    </div>
+                </div>
+                
+                <!-- Panel de archivos (inicialmente oculto) -->
+                <div class="event-files-panel" id="files-panel-${event.id}">
+                    <div class="files-panel-header">
+                        <h4 class="files-panel-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                            </svg>
+                            Archivos de Presentación
+                        </h4>
+                        <button class="close-files-panel" onclick="timelineApp.closeFilesPanel('${event.id}')">✕</button>
+                    </div>
+                    
+                    <div class="file-upload-area" onclick="timelineApp.triggerFileUpload('${event.id}')">
+                        <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <div class="upload-text">Haz clic para cargar archivos PowerPoint</div>
+                        <div class="upload-hint">Soporta archivos .pptx (máximo 50MB)</div>
+                        <input type="file" id="file-input-${event.id}" class="file-input-hidden" accept=".pptx,.ppt" multiple>
+                    </div>
+                    
+                    <div class="attached-files-list" id="files-list-${event.id}">
+                        <!-- Los archivos se mostrarán aquí -->
                     </div>
                 </div>
             </div>
@@ -630,6 +681,387 @@ class TimelineApp {
             }
         } catch (error) {
             console.error('Error al cargar desde localStorage:', error);
+        }
+    }
+
+    // ================================
+    // GESTIÓN DE ARCHIVOS POWERPOINT
+    // ================================
+    
+    toggleFilesPanel(eventElement, eventId) {
+        const allPanels = document.querySelectorAll('.event-files-panel.visible');
+        allPanels.forEach(panel => {
+            panel.classList.remove('visible');
+            panel.closest('.timeline-event').classList.remove('expanded');
+        });
+        
+        const panel = eventElement.querySelector('.event-files-panel');
+        const isVisible = panel.classList.contains('visible');
+        
+        if (!isVisible) {
+            panel.classList.add('visible');
+            eventElement.classList.add('expanded');
+            this.renderFilesList(eventId);
+            this.setupFileUpload(eventId);
+        }
+    }
+    
+    closeFilesPanel(eventId) {
+        const panel = document.getElementById(`files-panel-${eventId}`);
+        const eventElement = panel.closest('.timeline-event');
+        
+        panel.classList.remove('visible');
+        eventElement.classList.remove('expanded');
+    }
+    
+    setupFileUpload(eventId) {
+        const fileInput = document.getElementById(`file-input-${eventId}`);
+        const uploadArea = fileInput.parentElement;
+        
+        // Event listeners para drag & drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            const files = Array.from(e.dataTransfer.files);
+            this.handleFileUpload(eventId, files);
+        });
+        
+        // Event listener para input file
+        fileInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            this.handleFileUpload(eventId, files);
+        });
+    }
+    
+    triggerFileUpload(eventId) {
+        const fileInput = document.getElementById(`file-input-${eventId}`);
+        fileInput.click();
+    }
+    
+    handleFileUpload(eventId, files) {
+        const validFiles = files.filter(file => {
+            const isValidType = file.type.includes('presentation') || 
+                               file.name.toLowerCase().endsWith('.pptx') || 
+                               file.name.toLowerCase().endsWith('.ppt');
+            const isValidSize = file.size <= 50 * 1024 * 1024; // 50MB
+            
+            if (!isValidType) {
+                this.showNotification(`${file.name} no es un archivo PowerPoint válido`, 'error');
+                return false;
+            }
+            
+            if (!isValidSize) {
+                this.showNotification(`${file.name} excede el tamaño máximo de 50MB`, 'error');
+                return false;
+            }
+            
+            return true;
+        });
+        
+        if (validFiles.length === 0) return;
+        
+        validFiles.forEach(file => {
+            this.processAndSaveFile(eventId, file);
+        });
+    }
+    
+    processAndSaveFile(eventId, file) {
+        const reader = new FileReader();
+        
+        reader.onload = (e) => {
+            const fileData = {
+                id: this.generateId(),
+                name: file.name,
+                size: file.size,
+                type: file.type,
+                data: e.target.result, // Base64 data
+                uploadDate: new Date().toISOString()
+            };
+            
+            // Inicializar array si no existe
+            if (!this.eventFiles[eventId]) {
+                this.eventFiles[eventId] = [];
+            }
+            
+            this.eventFiles[eventId].push(fileData);
+            this.saveEventFiles();
+            this.renderFilesList(eventId);
+            this.updateEventFileIndicator(eventId);
+            
+            this.showNotification(`${file.name} subido exitosamente`, 'success');
+        };
+        
+        reader.onerror = () => {
+            this.showNotification(`Error al cargar ${file.name}`, 'error');
+        };
+        
+        reader.readAsDataURL(file);
+    }
+    
+    renderFilesList(eventId) {
+        const filesList = document.getElementById(`files-list-${eventId}`);
+        const files = this.eventFiles[eventId] || [];
+        
+        if (files.length === 0) {
+            filesList.innerHTML = `
+                <div class="no-files-message">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                    <p>No hay archivos adjuntos</p>
+                </div>
+            `;
+            return;
+        }
+        
+        const filesHTML = `
+            <div class="attached-files-header">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                </svg>
+                Archivos Adjuntos (${files.length})
+            </div>
+            ${files.map(file => this.createFileItemHTML(eventId, file)).join('')}
+        `;
+        
+        filesList.innerHTML = filesHTML;
+    }
+    
+    createFileItemHTML(eventId, file) {
+        const sizeFormatted = this.formatFileSize(file.size);
+        const dateFormatted = new Date(file.uploadDate).toLocaleDateString('es-ES');
+        
+        return `
+            <div class="file-item" data-file-id="${file.id}">
+                <div class="file-info">
+                    <div class="file-icon">PPT</div>
+                    <div class="file-details">
+                        <h5 class="file-name">${file.name}</h5>
+                        <div class="file-meta">
+                            <span class="file-size">${sizeFormatted}</span>
+                            <span class="file-date">${dateFormatted}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="file-actions">
+                    <button class="file-action-btn view-btn" onclick="timelineApp.viewPresentation('${eventId}', '${file.id}')" title="Ver presentación">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                    
+                    <button class="file-action-btn download-btn" onclick="timelineApp.downloadFile('${eventId}', '${file.id}')" title="Descargar archivo">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                    </button>
+                    
+                    <button class="file-action-btn delete-btn" onclick="timelineApp.deleteFile('${eventId}', '${file.id}')" title="Eliminar archivo">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+    
+    updateEventFileIndicator(eventId) {
+        const eventElement = document.querySelector(`[data-event-id="${eventId}"]`);
+        const hasFiles = this.eventFiles[eventId] && this.eventFiles[eventId].length > 0;
+        
+        if (hasFiles) {
+            eventElement.classList.add('event-has-files');
+            
+            // Actualizar o crear indicador
+            let indicator = eventElement.querySelector('.files-indicator');
+            if (!indicator) {
+                indicator = document.createElement('div');
+                indicator.className = 'files-indicator';
+                eventElement.querySelector('.event-description').insertAdjacentElement('afterend', indicator);
+            }
+            
+            indicator.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+                ${this.eventFiles[eventId].length} archivo(s) adjunto(s)
+            `;
+        } else {
+            eventElement.classList.remove('event-has-files');
+            const indicator = eventElement.querySelector('.files-indicator');
+            if (indicator) {
+                indicator.remove();
+            }
+        }
+    }
+    
+    viewPresentation(eventId, fileId) {
+        const file = this.eventFiles[eventId]?.find(f => f.id === fileId);
+        if (!file) return;
+        
+        this.showPresentationModal(file);
+    }
+    
+    downloadFile(eventId, fileId) {
+        const file = this.eventFiles[eventId]?.find(f => f.id === fileId);
+        if (!file) return;
+        
+        const link = document.createElement('a');
+        link.href = file.data;
+        link.download = file.name;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        this.showNotification(`Descargando ${file.name}`, 'success');
+    }
+    
+    deleteFile(eventId, fileId) {
+        const file = this.eventFiles[eventId]?.find(f => f.id === fileId);
+        if (!file) return;
+        
+        if (confirm(`¿Eliminar el archivo "${file.name}"?`)) {
+            this.eventFiles[eventId] = this.eventFiles[eventId].filter(f => f.id !== fileId);
+            
+            if (this.eventFiles[eventId].length === 0) {
+                delete this.eventFiles[eventId];
+            }
+            
+            this.saveEventFiles();
+            this.renderFilesList(eventId);
+            this.updateEventFileIndicator(eventId);
+            
+            this.showNotification('Archivo eliminado', 'success');
+        }
+    }
+    
+    // ================================
+    // MODAL DE PRESENTACIONES
+    // ================================
+    
+    createPresentationModal() {
+        const modalHTML = `
+            <div id="presentation-modal" class="presentation-modal">
+                <div class="presentation-content">
+                    <div class="presentation-header">
+                        <h3 class="presentation-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                <line x1="8" y1="21" x2="16" y2="21"></line>
+                                <line x1="12" y1="17" x2="12" y2="21"></line>
+                            </svg>
+                            <span id="presentation-file-name">Presentación</span>
+                        </h3>
+                        
+                        <div class="presentation-controls">
+                            <button class="presentation-control-btn close-presentation" onclick="timelineApp.closePresentationModal()">✕</button>
+                        </div>
+                    </div>
+                    
+                    <div class="presentation-viewer" id="presentation-viewer">
+                        <div class="presentation-preview">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                <line x1="8" y1="21" x2="16" y2="21"></line>
+                                <line x1="12" y1="17" x2="12" y2="21"></line>
+                            </svg>
+                            <h3>Vista previa de presentación PowerPoint</h3>
+                            <p>Para una experiencia completa, descarga el archivo y ábrelo en PowerPoint.</p>
+                            <a id="download-presentation-link" class="download-link" href="#" download>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                Descargar Presentación
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        
+        // Event listener para cerrar modal al hacer clic fuera
+        const modal = document.getElementById('presentation-modal');
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                this.closePresentationModal();
+            }
+        });
+    }
+    
+    showPresentationModal(file) {
+        const modal = document.getElementById('presentation-modal');
+        const fileName = document.getElementById('presentation-file-name');
+        const downloadLink = document.getElementById('download-presentation-link');
+        
+        fileName.textContent = file.name;
+        downloadLink.href = file.data;
+        downloadLink.download = file.name;
+        
+        modal.classList.add('visible');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    closePresentationModal() {
+        const modal = document.getElementById('presentation-modal');
+        modal.classList.remove('visible');
+        document.body.style.overflow = '';
+    }
+    
+    // ================================
+    // UTILIDADES PARA ARCHIVOS
+    // ================================
+    
+    formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+    
+    saveEventFiles() {
+        try {
+            localStorage.setItem('timeline_event_files', JSON.stringify(this.eventFiles));
+        } catch (error) {
+            console.error('Error al guardar archivos:', error);
+            this.showNotification('Error al guardar archivos. Espacio de almacenamiento insuficiente.', 'error');
+        }
+    }
+    
+    loadEventFiles() {
+        try {
+            const saved = localStorage.getItem('timeline_event_files');
+            if (saved) {
+                this.eventFiles = JSON.parse(saved);
+            }
+        } catch (error) {
+            console.error('Error al cargar archivos:', error);
+            this.eventFiles = {};
         }
     }
 }

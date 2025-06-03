@@ -1345,6 +1345,48 @@
       </form>
     </div>
   </div>
+
+  <!-- Modal para visualizar presentaciones PowerPoint -->
+  <div id="presentation-modal" class="presentation-modal">
+    <div class="presentation-content">
+      <div class="presentation-header">
+        <h3 class="presentation-title">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+          </svg>
+          <span id="presentation-file-name">Presentación PowerPoint</span>
+        </h3>
+        
+        <div class="presentation-controls">
+          <button class="presentation-control-btn close-presentation" onclick="timelineApp.closePresentationModal()" title="Cerrar">✕</button>
+        </div>
+      </div>
+      
+      <div class="presentation-viewer" id="presentation-viewer">
+        <div class="presentation-preview">
+          <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+            <polygon points="10,8 10,16 16,12"></polygon>
+          </svg>
+          <h3>Vista previa de presentación PowerPoint</h3>
+          <p>Esta presentación contiene diapositivas relacionadas con el evento histórico.</p>
+          <p><strong>Para una experiencia completa:</strong> Descarga el archivo y ábrelo en Microsoft PowerPoint, LibreOffice Impress, o Google Slides.</p>
+          <a id="download-presentation-link" class="download-link" href="#" download>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Descargar Presentación
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
 

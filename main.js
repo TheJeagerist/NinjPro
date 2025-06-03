@@ -707,8 +707,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
           }
           generarTablaEscala();
-          return;
-        }
+            return;
+          }
 
         // Para el resto de los campos, mantener la validación existente
         if (this.value !== '') {
@@ -1537,6 +1537,9 @@ function updateSectionAverage(section) {
 // Variable global para controlar si se está aplicando porcentaje
 let aplicandoPorcentaje = false;
 
+// Variable global para controlar si se está aplicando cantidad de notas
+window.aplicandoCantidadNotas = false;
+
 function aplicarPorcentajeComun() {
   const porcentaje = parseInt(document.getElementById('porcentaje-comun').value);
   // Si el valor no es válido, no hacer nada
@@ -1591,7 +1594,7 @@ function calculateMultipleAverages() {
   
   sections.forEach(section => {
     const { average, total } = updateSectionAverage(section);
-    if (total !== 100 && !aplicandoPorcentaje) {
+    if (total !== 100 && !aplicandoPorcentaje && !window.aplicandoCantidadNotas) {
       allValid = false;
       alert(`La suma de las ponderaciones en la ${section.querySelector('.section-title').textContent} debe ser 100%.`);
       return;

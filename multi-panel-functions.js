@@ -1,5 +1,11 @@
 console.log('🚀 multi-panel-functions.js cargado correctamente');
 
+// Variables globales para controlar alertas de validación
+// Esta variable debe coincidir con la definida en main.js
+if (typeof aplicandoCantidadNotas === 'undefined') {
+    window.aplicandoCantidadNotas = false;
+}
+
 // Función de verificación inmediata
 (function verificacionInmediata() {
     console.log('🔧 Verificando elementos del multi-panel...');
@@ -807,4 +813,320 @@ window.ayudaMultiPanel = function() {
 
 console.log('🔧 === FUNCIONES DE PRUEBA CARGADAS ===');
 console.log('💡 Ejecuta ayudaMultiPanel() para ver todas las funciones disponibles');
-console.log('🔥 Ejecuta pruebaCompleta() para una prueba automática completa'); 
+console.log('🔥 Ejecuta pruebaCompleta() para una prueba automática completa');
+
+// ================================
+// FUNCIONES PARA CONTROLES DE NOTAS Y PORCENTAJES
+// ================================
+
+/**
+ * Aplica la cantidad específica de notas a todos los estudiantes
+ */
+function aplicarCantidadNotas() {
+    console.log('🔢 === APLICANDO CANTIDAD DE NOTAS ===');
+    
+    const cantidadInput = document.getElementById('cantidad-notas');
+    if (!cantidadInput) {
+        console.error('❌ No se encontró el input cantidad-notas');
+        mostrarNotificacion('Error: No se encontró el campo de cantidad de notas', 'error');
+        return;
+    }
+    
+    const cantidad = parseInt(cantidadInput.value);
+    console.log('Cantidad de notas solicitada:', cantidad);
+    
+    // Validar la cantidad
+    if (isNaN(cantidad) || cantidad < 1 || cantidad > 20) {
+        console.error('❌ Cantidad inválida:', cantidad);
+        mostrarNotificacion('Por favor ingresa una cantidad válida entre 1 y 20 notas', 'error');
+        return;
+    }
+    
+    const sections = document.querySelectorAll('.section-panel');
+    console.log('Secciones encontradas:', sections.length);
+    
+    if (sections.length === 0) {
+        console.error('❌ No hay estudiantes cargados');
+        mostrarNotificacion('No hay estudiantes cargados. Primero carga un curso.', 'error');
+        return;
+    }
+    
+    // Activar variable de control para evitar alertas de validación
+    window.aplicandoCantidadNotas = true;
+    
+    let estudiantesActualizados = 0;
+    
+    sections.forEach((section, index) => {
+        try {
+            const estudianteNombre = section.querySelector('.section-title').textContent;
+            console.log(`Actualizando estudiante ${index + 1}: ${estudianteNombre}`);
+            
+            const rowsContainer = section.querySelector('.section-rows-container');
+            if (!rowsContainer) {
+                console.warn(`⚠️ No se encontró contenedor de filas para ${estudianteNombre}`);
+                return;
+            }
+            
+            // Obtener las filas actuales y sus valores
+            const existingRows = Array.from(rowsContainer.querySelectorAll('.section-row'));
+            const existingData = existingRows.map(row => ({
+                grade: row.querySelector('.grade')?.value || '',
+                weight: row.querySelector('.weight')?.value || ''
+            }));
+            
+            console.log(`  - Filas existentes: ${existingRows.length}`);
+            console.log(`  - Nueva cantidad: ${cantidad}`);
+            
+            // Limpiar el contenedor
+            rowsContainer.innerHTML = '';
+            
+            // Crear la nueva cantidad de filas
+            for (let i = 0; i < cantidad; i++) {
+                const row = document.createElement('div');
+                row.className = 'section-row';
+                
+                // Si había datos previos y están dentro del rango, preservarlos
+                const existingGrade = (i < existingData.length) ? existingData[i].grade : '';
+                const existingWeight = (i < existingData.length) ? existingData[i].weight : '';
+                
+                row.innerHTML = `
+                    <input type="number" class="grade" step="0.1" min="1" max="7" placeholder="Nota" value="${existingGrade}">
+                    <input type="number" class="weight" min="1" max="100" placeholder="Ponderación" value="${existingWeight}">
+                    <div class="percent">%</div>
+                `;
+                
+                rowsContainer.appendChild(row);
+            }
+            
+            console.log(`  ✅ ${estudianteNombre}: ${cantidad} notas aplicadas`);
+            estudiantesActualizados++;
+            
+        } catch (error) {
+            console.error(`❌ Error procesando estudiante ${index + 1}:`, error);
+        }
+    });
+    
+    console.log(`✅ Proceso completado. Estudiantes actualizados: ${estudiantesActualizados}`);
+    
+    if (estudiantesActualizados > 0) {
+        mostrarNotificacion(
+            `✅ ${cantidad} notas aplicadas a ${estudiantesActualizados} estudiante(s)`, 
+            'success'
+        );
+        
+        // Actualizar los promedios si existe la función
+        if (typeof calculateMultipleAverages === 'function') {
+            setTimeout(() => {
+                calculateMultipleAverages();
+                // Desactivar variable de control DESPUÉS de calcular promedios
+                setTimeout(() => {
+                    window.aplicandoCantidadNotas = false;
+                }, 50); // Pequeño delay adicional para asegurar que termine calculateMultipleAverages
+            }, 100);
+        } else {
+            // Desactivar variable de control si no se puede calcular promedios
+            setTimeout(() => {
+                window.aplicandoCantidadNotas = false;
+            }, 50); // Pequeño delay adicional para asegurar que termine calculateMultipleAverages
+        }
+    } else {
+        mostrarNotificacion('❌ No se pudieron actualizar las notas de los estudiantes', 'error');
+        // Desactivar variable de control en caso de error
+        setTimeout(() => {
+            window.aplicandoCantidadNotas = false;
+        }, 50); // Pequeño delay adicional para asegurar que termine calculateMultipleAverages
+    }
+}
+
+/**
+ * Aplica el porcentaje común distribuido entre todas las notas de todos los estudiantes
+ */
+function aplicarPorcentajeComun() {
+    console.log('📊 === APLICANDO PORCENTAJE COMÚN ===');
+    
+    const porcentajeInput = document.getElementById('porcentaje-comun');
+    if (!porcentajeInput) {
+        console.error('❌ No se encontró el input porcentaje-comun');
+        mostrarNotificacion('Error: No se encontró el campo de porcentaje común', 'error');
+        return;
+    }
+    
+    const porcentaje = parseInt(porcentajeInput.value);
+    console.log('Porcentaje común solicitado:', porcentaje);
+    
+    // Validar el porcentaje
+    if (isNaN(porcentaje) || porcentaje < 1 || porcentaje > 100) {
+        console.error('❌ Porcentaje inválido:', porcentaje);
+        mostrarNotificacion('Por favor ingresa un porcentaje válido entre 1 y 100', 'error');
+        return;
+    }
+    
+    const sections = document.querySelectorAll('.section-panel');
+    console.log('Secciones encontradas:', sections.length);
+    
+    if (sections.length === 0) {
+        console.error('❌ No hay estudiantes cargados');
+        mostrarNotificacion('No hay estudiantes cargados. Primero carga un curso.', 'error');
+        return;
+    }
+    
+    let estudiantesActualizados = 0;
+    
+    sections.forEach((section, index) => {
+        try {
+            const estudianteNombre = section.querySelector('.section-title').textContent;
+            console.log(`Aplicando porcentaje a estudiante ${index + 1}: ${estudianteNombre}`);
+            
+            const weightInputs = section.querySelectorAll('.weight');
+            const cantidadNotas = weightInputs.length;
+            
+            if (cantidadNotas === 0) {
+                console.warn(`⚠️ ${estudianteNombre}: No tiene notas para aplicar porcentaje`);
+                return;
+            }
+            
+            console.log(`  - Notas encontradas: ${cantidadNotas}`);
+            
+            // Calcular el porcentaje por nota con distribución inteligente
+            const porcentajeBase = Math.floor((porcentaje / cantidadNotas) * 100) / 100; // 2 decimales
+            let porcentajeAcumulado = 0;
+            
+            weightInputs.forEach((input, noteIndex) => {
+                if (noteIndex === weightInputs.length - 1) {
+                    // La última nota recibe el resto para asegurar que sume exactamente el porcentaje total
+                    const porcentajeFinal = Math.round((porcentaje - porcentajeAcumulado) * 100) / 100;
+                    input.value = porcentajeFinal;
+                    console.log(`    Nota ${noteIndex + 1} (final): ${porcentajeFinal}%`);
+                } else {
+                    input.value = porcentajeBase;
+                    porcentajeAcumulado += porcentajeBase;
+                    console.log(`    Nota ${noteIndex + 1}: ${porcentajeBase}%`);
+                }
+                
+                // Disparar evento de input para actualizar cálculos en tiempo real
+                const event = new Event('input', {
+                    bubbles: true,
+                    cancelable: true,
+                });
+                input.dispatchEvent(event);
+            });
+            
+            console.log(`  ✅ ${estudianteNombre}: Porcentajes aplicados (total: ${porcentaje}%)`);
+            estudiantesActualizados++;
+            
+        } catch (error) {
+            console.error(`❌ Error procesando estudiante ${index + 1}:`, error);
+        }
+    });
+    
+    console.log(`✅ Proceso completado. Estudiantes actualizados: ${estudiantesActualizados}`);
+    
+    if (estudiantesActualizados > 0) {
+        mostrarNotificacion(
+            `✅ Porcentaje ${porcentaje}% aplicado a ${estudiantesActualizados} estudiante(s)`, 
+            'success'
+        );
+        
+        // Actualizar los promedios si existe la función
+        if (typeof calculateMultipleAverages === 'function') {
+            setTimeout(() => {
+                calculateMultipleAverages();
+            }, 100);
+        }
+    } else {
+        mostrarNotificacion('❌ No se pudieron aplicar los porcentajes a los estudiantes', 'error');
+    }
+}
+
+/**
+ * Función de utilidad para validar y aplicar valores a todos los estudiantes
+ */
+function aplicarValorATodosLosEstudiantes(tipo, valor, callback) {
+    console.log(`🔧 Aplicando ${tipo}: ${valor} a todos los estudiantes`);
+    
+    const sections = document.querySelectorAll('.section-panel');
+    
+    if (sections.length === 0) {
+        mostrarNotificacion('No hay estudiantes cargados', 'error');
+        return false;
+    }
+    
+    let exito = 0;
+    
+    sections.forEach((section, index) => {
+        try {
+            if (callback(section, valor, index)) {
+                exito++;
+            }
+        } catch (error) {
+            console.error(`Error en estudiante ${index + 1}:`, error);
+        }
+    });
+    
+    const mensaje = `${tipo} aplicado a ${exito}/${sections.length} estudiante(s)`;
+    mostrarNotificacion(mensaje, exito > 0 ? 'success' : 'error');
+    
+    return exito > 0;
+}
+
+/**
+ * Función para resetear todas las notas y porcentajes
+ */
+function resetearTodosLosEstudiantes() {
+    console.log('🔄 === RESETEANDO TODOS LOS ESTUDIANTES ===');
+    
+    const sections = document.querySelectorAll('.section-panel');
+    
+    if (sections.length === 0) {
+        mostrarNotificacion('No hay estudiantes para resetear', 'error');
+        return;
+    }
+    
+    if (!confirm(`¿Estás seguro de que quieres resetear todas las notas de ${sections.length} estudiante(s)?`)) {
+        return;
+    }
+    
+    let estudiantesReseteados = 0;
+    
+    sections.forEach((section, index) => {
+        try {
+            const estudianteNombre = section.querySelector('.section-title').textContent;
+            const inputs = section.querySelectorAll('.grade, .weight');
+            
+            inputs.forEach(input => {
+                input.value = '';
+            });
+            
+            // Actualizar el resultado del estudiante
+            const resultValue = section.querySelector('.section-result-value');
+            const resultStatus = section.querySelector('.section-result-status');
+            
+            if (resultValue) resultValue.textContent = '0.00';
+            if (resultStatus) resultStatus.textContent = '-';
+            
+            console.log(`✅ ${estudianteNombre}: Reseteado`);
+            estudiantesReseteados++;
+            
+        } catch (error) {
+            console.error(`❌ Error reseteando estudiante ${index + 1}:`, error);
+        }
+    });
+    
+    console.log(`✅ ${estudiantesReseteados} estudiantes reseteados`);
+    mostrarNotificacion(`✅ ${estudiantesReseteados} estudiante(s) reseteado(s)`, 'success');
+    
+    // Actualizar promedios
+    if (typeof calculateMultipleAverages === 'function') {
+        setTimeout(() => {
+            calculateMultipleAverages();
+        }, 100);
+    }
+}
+
+// Hacer las funciones disponibles globalmente
+window.aplicarCantidadNotas = aplicarCantidadNotas;
+window.aplicarPorcentajeComun = aplicarPorcentajeComun;
+window.resetearTodosLosEstudiantes = resetearTodosLosEstudiantes;
+
+console.log('✅ === FUNCIONES DE CONTROL DE NOTAS CARGADAS ===');
+console.log('📝 Funciones disponibles: aplicarCantidadNotas(), aplicarPorcentajeComun(), resetearTodosLosEstudiantes()'); 

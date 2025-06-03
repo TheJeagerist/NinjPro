@@ -1633,7 +1633,7 @@ function calculateMultipleAverages() {
     const { average, total } = updateSectionAverage(section);
     if (total !== 100 && !aplicandoPorcentaje) {
       allValid = false;
-      alert(`La suma de las ponderaciones en la ${section.querySelector('.section-title').textContent} debe ser 100%.`);
+      
       return;
     }
     if (!isNaN(average)) {

@@ -119,6 +119,11 @@ function navigateToTool(tool) {
                 updateActiveMenuItem('menu-calendario');
                 window.location.hash = 'calendario';
                 break;
+            case 'timeline':
+                showPanel('timeline-panel');
+                updateActiveMenuItem('menu-timeline');
+                window.location.hash = 'timeline';
+                break;
             case 'word-counter':
                 showPanel('word-counter-panel');
                 updateActiveMenuItem('menu-word-counter');
@@ -128,15 +133,6 @@ function navigateToTool(tool) {
                 showPanel('rubricas-panel');
                 updateActiveMenuItem('menu-rubricas');
                 window.location.hash = 'rubricas';
-                break;
-            case 'timeline':
-                showPanel('timeline-panel');
-                updateActiveMenuItem('menu-timeline');
-                window.location.hash = 'timeline';
-                // Inicializar la aplicación de timeline
-                if (typeof initTimeline === 'function') {
-                    initTimeline();
-                }
                 break;
             case 'config':
                 showPanel('config');
@@ -170,8 +166,8 @@ function showPanel(panelId) {
 function hideAllPanels() {
     const panels = [
         'calc-panel', 'escala-panel', 'multi-panel', 
-        'calendario-panel', 'word-counter-panel', 'rubricas-panel',
-        'config', 'themes-panel', 'timeline-panel'
+        'calendario-panel', 'timeline-panel', 'word-counter-panel', 'rubricas-panel',
+        'config', 'themes-panel'
     ];
     
     panels.forEach(panelId => {

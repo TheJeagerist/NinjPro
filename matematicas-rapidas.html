@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matemáticas Rápidas - ProfeNinja</title>
+    <link rel="stylesheet" href="matematicas-rapidas.css">
+    <link rel="stylesheet" href="animated-backgrounds.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <button class="back-btn" onclick="window.location.href='index.html'">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Volver
+            </button>
+            <h1 class="title">🧠 Matemáticas Rápidas</h1>
+            <div class="theme-selector">
+                <button class="theme-btn" data-theme="theme-dark" title="Oscuro">🌙</button>
+                <button class="theme-btn" data-theme="theme-light" title="Claro">🌞</button>
+                <button class="theme-btn" data-theme="theme-rosa" title="Rosa">🌸</button>
+                <button class="theme-btn" data-theme="theme-oscuro" title="Oscuro Profundo">🌑</button>
+                <button class="theme-btn" data-theme="theme-neon" title="Neón">🎇</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-container">
+        <!-- Game Setup Panel -->
+        <div class="setup-panel" id="setup-panel">
+            <div class="setup-card">
+                <h2>⚙️ Configuración del Juego</h2>
+                
+                <div class="config-group">
+                    <label for="num-count">Cantidad de números:</label>
+                    <div class="input-group">
+                        <input type="range" id="num-count" min="3" max="15" value="5" class="slider">
+                        <span class="value-display" id="num-count-display">5</span>
+                    </div>
+                </div>
+
+                <div class="config-group">
+                    <label for="interval">Intervalo entre números (segundos):</label>
+                    <div class="input-group">
+                        <input type="range" id="interval" min="1" max="10" value="3" class="slider">
+                        <span class="value-display" id="interval-display">3</span>
+                    </div>
+                </div>
+
+                <div class="config-group">
+                    <label for="number-range">Rango de números:</label>
+                    <div class="range-inputs">
+                        <input type="number" id="min-number" value="1" min="-100" max="100" placeholder="Mín">
+                        <span>-</span>
+                        <input type="number" id="max-number" value="50" min="-100" max="100" placeholder="Máx">
+                    </div>
+                </div>
+
+                <div class="config-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="include-negatives" class="checkbox">
+                        <span class="checkmark"></span>
+                        Incluir números negativos
+                    </label>
+                </div>
+
+                <button class="start-btn" id="start-btn">🚀 Comenzar Juego</button>
+            </div>
+        </div>
+
+        <!-- Game Panel -->
+        <div class="game-panel" id="game-panel" style="display: none;">
+            <div class="game-info">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <div class="game-stats">
+                    <span class="stat">Número: <span id="current-number">1</span>/<span id="total-numbers">5</span></span>
+                    <span class="stat">Tiempo restante: <span id="countdown">3</span>s</span>
+                </div>
+            </div>
+
+            <div class="number-display">
+                <div class="current-number" id="display-number">0</div>
+                <div class="instruction">Suma mentalmente este número</div>
+            </div>
+
+            <div class="game-controls">
+                <button class="pause-btn" id="pause-btn">⏸️ Pausar</button>
+                <button class="stop-btn" id="stop-btn">⏹️ Detener</button>
+            </div>
+        </div>
+
+        <!-- Results Panel -->
+        <div class="results-panel" id="results-panel" style="display: none;">
+            <div class="results-card">
+                <h2>📊 Resultados</h2>
+                
+                <div class="numbers-shown">
+                    <h3>Números mostrados:</h3>
+                    <div class="numbers-list" id="numbers-list"></div>
+                </div>
+
+                <div class="calculation-display">
+                    <div class="calculation" id="calculation-display"></div>
+                </div>
+
+                <div class="answer-section">
+                    <div class="your-answer">
+                        <label for="user-answer">Tu respuesta:</label>
+                        <input type="number" id="user-answer" placeholder="Ingresa tu suma">
+                    </div>
+                    
+                    <button class="reveal-btn" id="reveal-btn">🎯 Revelar Respuesta</button>
+                </div>
+
+                <div class="result-display" id="result-display" style="display: none;">
+                    <div class="correct-answer">
+                        <span>Respuesta correcta: <strong id="correct-answer">0</strong></span>
+                    </div>
+                    <div class="result-status" id="result-status"></div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="play-again-btn" id="play-again-btn">🔄 Jugar de Nuevo</button>
+                    <button class="new-config-btn" id="new-config-btn">⚙️ Nueva Configuración</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pause Overlay -->
+        <div class="pause-overlay" id="pause-overlay" style="display: none;">
+            <div class="pause-card">
+                <h2>⏸️ Juego Pausado</h2>
+                <p>El juego está pausado. Presiona continuar cuando estés listo.</p>
+                <button class="resume-btn" id="resume-btn">▶️ Continuar</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© 2024 ProfeNinja - Matemáticas Rápidas</p>
+    </footer>
+
+    <!-- Fondos animados -->
+    <div id="bg-wrap" class="bg-wrap"></div>
+    <div id="bg-wrap-dark" class="bg-wrap-dark"></div>
+    <div id="bg-wrap-rosa" class="bg-wrap-rosa"></div>
+    <div id="bg-wrap-oscuro" class="bg-wrap-oscuro"></div>
+    <div id="bg-wrap-neon" class="bg-wrap-neon"></div>
+
+    <script src="theme-manager.js"></script>
+    <script src="animated-backgrounds.js"></script>
+    <script src="matematicas-rapidas.js"></script>
+</body>
+</html> 

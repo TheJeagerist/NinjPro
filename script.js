@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', function() {
         'escala-panel': document.getElementById('escala-panel'),
         'multi-panel': document.getElementById('multi-panel'),
         'calendario-panel': document.getElementById('calendario-panel'),
-        'word-counter-panel': document.getElementById('word-counter-panel'),
         'rubricas-panel': document.getElementById('rubricas-panel'),
         'config': document.getElementById('config')
     };
@@ -16,7 +15,6 @@ document.addEventListener('DOMContentLoaded', function() {
         'menu-escala': document.getElementById('menu-escala'),
         'menu-multi': document.getElementById('menu-multi'),
         'menu-calendario': document.getElementById('menu-calendario'),
-        'menu-word-counter': document.getElementById('menu-word-counter'),
         'menu-rubricas': document.getElementById('menu-rubricas'),
         'menu-config': document.getElementById('menu-config')
     };
@@ -27,7 +25,6 @@ document.addEventListener('DOMContentLoaded', function() {
         'menu-escala': 'escala-panel',
         'menu-multi': 'multi-panel',
         'menu-calendario': 'calendario-panel',
-        'menu-word-counter': 'word-counter-panel',
         'menu-rubricas': 'rubricas-panel',
         'menu-config': 'config'
     };
@@ -67,6 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const panelId = buttonToPanelMap[buttonId];
                 if (panels[panelId]) {
                     panels[panelId].style.display = 'block';
+                    panels[panelId].classList.add('visible');
                 }
                 
                 // Agregar clase active al botón actual
@@ -125,6 +123,7 @@ document.addEventListener('DOMContentLoaded', function() {
     hideAllPanels();
     if (panels['calc-panel']) {
         panels['calc-panel'].style.display = 'block';
+        panels['calc-panel'].classList.add('visible');
     }
     if (menuButtons['menu-calculadora']) {
         menuButtons['menu-calculadora'].classList.add('active');

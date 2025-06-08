@@ -2,12 +2,25 @@
    DASHBOARD GRID STYLES
    ================================ */
 
+/* Asegurar scroll vertical en toda la página */
+html {
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+body {
+  overflow-y: auto !important;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
 /* Dashboard Principal */
 .dashboard-main {
   min-height: 100vh;
   background: transparent;
   padding: 2rem;
   overflow-x: hidden;
+  overflow-y: visible;
   position: relative;
   z-index: 100;
   opacity: 1;
@@ -37,16 +50,172 @@
   margin-right: auto;
   position: relative;
   z-index: 110;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Contenedor principal del launcher */
+.launcher-container {
+  overflow-y: visible;
+  min-height: auto;
+}
+
+/* Grid de aplicaciones del launcher */
+.launcher-apps-grid {
+  overflow-y: visible;
+  min-height: auto;
+}
+
+/* Controles de usuario globales - Siempre visibles */
+.global-user-controls {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+}
+
+/* Controles de usuario en esquina superior derecha (legacy) */
+.user-controls {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 120;
+}
+
+.user-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.user-btn:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  border-color: rgba(102, 126, 234, 0.3);
+}
+
+.user-icon {
+  font-size: 1.2rem;
+}
+
+.user-text {
+  font-weight: 500;
 }
 
 .header-content {
   margin-bottom: 2rem;
 }
 
+/* Contenedor del título con botón de créditos */
+.header-with-credits {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  position: relative;
+}
+
+/* Botón de créditos con efecto glowing rainbow */
+.button-85 {
+  padding: 0.6em 2em;
+  border: none;
+  outline: none;
+  color: rgb(255, 255, 255);
+  background: #111;
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+  border-radius: 10px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button-85:before {
+  content: "";
+  background: linear-gradient(
+    45deg,
+    #ff0000,
+    #ff7300,
+    #fffb00,
+    #48ff00,
+    #00ffd5,
+    #002bff,
+    #7a00ff,
+    #ff00c8,
+    #ff0000
+  );
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  background-size: 400%;
+  z-index: -1;
+  filter: blur(5px);
+  -webkit-filter: blur(5px);
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  animation: glowing-button-85 20s linear infinite;
+  transition: opacity 0.3s ease-in-out;
+  border-radius: 10px;
+}
+
+@keyframes glowing-button-85 {
+  0% {
+    background-position: 0 0;
+  }
+  50% { 
+    background-position: 400% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+.button-85:after {
+  z-index: -1;
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #222;
+  left: 0;
+  top: 0;
+  border-radius: 10px;
+}
+
+/* Ajustes específicos para el botón de créditos */
+.dashboard-header .credits-btn-header {
+  width: 50px;
+  height: 50px;
+  padding: 0;
+  font-size: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 120;
+}
+
+/* Estilos antiguos del botón de créditos eliminados - Ahora usa button-85 */
+
+/* Variaciones por tema eliminadas - El botón button-85 mantiene su diseño único */
+
 .dashboard-title {
   font-size: 3.5rem;
   font-weight: 700;
-  background: linear-gradient(135deg, #fff 0%, #a8edea 100%);
+  background: linear-gradient(135deg, #ffbb00 0%, #ffc400 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -55,12 +224,66 @@
   letter-spacing: -0.02em;
 }
 
+/* Estilos del título PROFENINJA para cada tema */
+body.theme-dark .dashboard-title {
+  background: linear-gradient(135deg, #ae81ff 0%, #667eea 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 4px 20px rgba(174, 129, 255, 0.4);
+}
+
+body.theme-light .dashboard-title {
+  background: linear-gradient(135deg, #c55700 0%, #ff9900 50%, #874400 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 4px 20px rgba(255, 154, 158, 0.4);
+}
+
+body.theme-rosa .dashboard-title {
+  background: linear-gradient(135deg, #000000 0%, #000000 50%, #000000 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 4px 20px rgba(255, 110, 199, 0.5);
+}
+
+body.theme-oscuro .dashboard-title {
+  background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 4px 20px rgba(144, 164, 174, 0.4);
+}
+
 .dashboard-subtitle {
   font-size: 1.2rem;
   color: #ffffff;
   margin-bottom: 0;
   font-weight: 300;
   letter-spacing: 0.5px;
+}
+
+/* Estilos del subtítulo para cada tema */
+body.theme-dark .dashboard-subtitle {
+  color: rgba(174, 129, 255, 0.9);
+  text-shadow: 0 2px 10px rgba(174, 129, 255, 0.3);
+}
+
+body.theme-light .dashboard-subtitle {
+  color: rgba(255, 107, 53, 0.9);
+  text-shadow: 0 2px 10px rgba(255, 107, 53, 0.3);
+}
+
+body.theme-rosa .dashboard-subtitle {
+  color: rgba(233, 30, 99, 0.9);
+  text-shadow: 0 2px 10px rgba(233, 30, 99, 0.3);
+}
+
+body.theme-oscuro .dashboard-subtitle {
+  color: rgba(144, 164, 174, 0.9);
+  text-shadow: 0 2px 10px rgba(144, 164, 174, 0.3);
 }
 
 /* Barra de búsqueda */
@@ -103,6 +326,67 @@
   pointer-events: none;
 }
 
+/* Selector de temas en header */
+.header-theme-selector {
+  display: flex;
+  justify-content: center;
+  gap: 0.8rem;
+  margin: 1rem 0;
+  padding: 0.8rem;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 1rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.header-theme-btn {
+  width: 45px;
+  height: 45px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+.header-theme-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.header-theme-btn:hover {
+  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.header-theme-btn:hover::before {
+  transform: translateX(100%);
+}
+
+.header-theme-btn.active {
+  background: #667eea;
+  color: white;
+  transform: scale(1.15);
+  box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4);
+  border-color: #667eea;
+}
+
 /* Filtros de categoría */
 .category-filters {
   display: flex;
@@ -138,121 +422,487 @@
 /* Grid de Herramientas */
 .tools-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 0.8rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.2rem;
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1rem;
   position: relative;
   z-index: 110;
+  justify-items: center;
 }
 
-/* Tarjetas de herramientas */
+/* Tarjetas de herramientas - Nuevo diseño moderno */
 .tool-card {
-  background: #ffffff;
-  border-radius: 12px;
-  padding: 1rem;
-  border: 1px solid #eeeeee;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
   position: relative;
+  z-index: 555;
+  max-width: 11.9rem;
+  min-height: 11.9rem;
+  width: 100%;
+  display: grid;
+  place-content: center;
+  place-items: center;
+  text-align: center;
+  position: relative;
+  box-shadow: 0.063em 0.75em 1.563em rgb(0 0 0 / 78%);
+  border-radius: 1.5rem;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
-  min-height: 120px;
-  display: flex;
-  flex-direction: column;
 }
 
 .tool-card::before {
-  content: '';
+  position: absolute;
+  content: "";
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 2.25rem;
+  z-index: -1;
+  border: 0.155rem solid transparent;
+  -webkit-mask: linear-gradient(#fff 0 0) padding-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+  mask-composite: exclude;
+}
+
+.tool-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+/* Estructura de las tarjetas */
+.card-header {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, #4a90e2, #667eea);
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-.tool-card:hover::before {
-  opacity: 1;
-}
-
-.tool-card:hover {
-  transform: translateY(-8px) scale(1.05);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
-  border-color: #cccccc;
-}
-
-/* Iconos de herramientas */
-.tool-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
+  width: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  padding: 0.45em 0.3em 0em 0.9em;
+}
+
+.card-header .date {
+  display: none;
+}
+
+.card-header svg {
+  color: #fff;
+  width: 1.5rem;
+  cursor: pointer;
+}
+
+.card-body {
+  position: absolute;
+  width: 100%;
+  display: block;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 0.7em 1.25em 0.5em 1.5em;
+}
+
+.card-body h3 {
+  color: #fff;
+  font-size: 1.04rem;
+  margin-top: 0.45em;
+  margin-bottom: 0.15em;
+  text-transform: capitalize;
+  font-weight: 600;
+}
+
+.card-body p {
+  color: #ddd;
+  font-size: 0.75rem;
+  letter-spacing: 0.031rem;
   margin-bottom: 0.6rem;
-  transition: transform 0.3s ease;
 }
 
-.tool-card:hover .tool-icon {
-  transform: scale(1.15);
+.progress {
+  display: none;
 }
 
-/* Iconos específicos por categoría */
-.calculadora-icon {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+.card-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  border-top: 0.063rem solid #292929;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.45em 0.75em 0.3em 0.9em;
+  background: #151419;
+  border-bottom-left-radius: 1.5rem;
+  border-bottom-right-radius: 1.5rem;
 }
 
-.escala-icon {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  color: white;
+.card-footer ul {
+  display: none;
 }
 
-.multi-icon {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  color: white;
+.btn-countdown {
+  background: #222127;
+  color: #fff;
+  border-radius: 1.2em;
+  padding: 0.37rem 0.9rem;
+  text-decoration: none;
+  font-size: 0.67rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
 
-.calendario-icon {
-  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-  color: white;
+.btn-countdown:hover {
+  background: #333;
 }
 
-.timeline-icon {
-  background: linear-gradient(135deg, #667eea 0%, #43e97b 100%);
-  color: white;
+/* Estilos de colores para las tarjetas */
+.green {
+  background: radial-gradient(
+    ellipse at right top,
+    #107667ed 0%,
+    #151419 47%,
+    #151419 100%
+  );
 }
 
-.word-counter-icon {
-  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-  color: white;
+.green::before {
+  background: linear-gradient(
+      45deg,
+      #232228,
+      #232228,
+      #232228,
+      #232228,
+      #01c3a8
+    )
+    border-box;
 }
 
-.rubricas-icon {
-  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-  color: #333;
+.green .btn-add {
+  background: #01c3a8;
 }
 
-.config-icon {
-  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-  color: #333;
+.green .btn-countdown:hover {
+  background: #01c3a8;
 }
 
-.themes-icon {
-  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-  color: #333;
+.blue {
+  background: radial-gradient(
+    ellipse at right top,
+    #00458f8f 0%,
+    #151419 45%,
+    #151419 100%
+  );
 }
 
-.herramientas-icon {
-  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-  color: white;
+.blue::before {
+  background: linear-gradient(
+      45deg,
+      #232228,
+      #232228,
+      #232228,
+      #232228,
+      #1890ff
+    )
+    border-box;
 }
 
-/* Contenido de las tarjetas */
+.blue .btn-add {
+  background: #1890ff;
+}
+
+.blue .btn-countdown:hover {
+  background: #1890ff;
+}
+
+.orange {
+  background: radial-gradient(
+    ellipse at right top,
+    #ffb74194 0%,
+    #151419 47%,
+    #151419 100%
+  );
+}
+
+.orange::before {
+  background: linear-gradient(
+      45deg,
+      #232228,
+      #232228,
+      #232228,
+      #232228,
+      #ffb741
+    )
+    border-box;
+}
+
+.orange .btn-add {
+  background: #ffb741;
+}
+
+.orange .btn-countdown:hover {
+  background: #ffb741;
+}
+
+.red {
+  background: radial-gradient(
+    ellipse at right top,
+    #a63d2a82 0%,
+    #151419 47%,
+    #151419 100%
+  );
+}
+
+.red::before {
+  background: linear-gradient(
+      45deg,
+      #232228,
+      #232228,
+      #232228,
+      #232228,
+      #a63d2a
+    )
+    border-box;
+}
+
+.red .btn-add {
+  background: #a63d2a;
+}
+
+.red .btn-countdown:hover {
+  background: #a63d2a;
+}
+
+/* ========================================= */
+/* GRADIENTES ADAPTATIVOS POR TEMA */
+/* ========================================= */
+
+/* TEMA DARK - Fondo oscuro con gradientes vibrantes */
+body.theme-dark .green {
+  background: radial-gradient(
+    ellipse at right top,
+    #a63d2a00 0%,
+    #1a1a2e00 47%,
+    #16213e00 100%
+  ) !important;
+}
+
+body.theme-dark .blue {
+  background: radial-gradient(
+    ellipse at right top,
+    #00458f8f 0%,
+    #1a1a2e 45%,
+    #16213e 100%
+  ) !important;
+}
+
+body.theme-dark .orange {
+  background: radial-gradient(
+    ellipse at right top,
+    #ffb74194 0%,
+    #1a1a2e 47%,
+    #16213e 100%
+  ) !important;
+}
+
+body.theme-dark .red {
+  background: radial-gradient(
+    ellipse at right top,
+    #a63d2a00 0%,
+    #1a1a2e00 47%,
+    #16213e00 100%
+  ) !important;
+}
+
+/* TEMA LIGHT - Fondo claro con gradientes suaves */
+body.theme-light .green {
+  background: radial-gradient(
+    ellipse at right top,
+    #a63d2a00 0%,
+    #1a1a2e00 47%,
+    #16213e00 100%
+  ) !important;
+}
+
+body.theme-light .blue {
+  background: radial-gradient(
+    ellipse at right top,
+    #a63d2a00 0%,
+    #1a1a2e00 47%,
+    #16213e00 100%
+  ) !important;
+}
+
+body.theme-light .orange {
+  background: radial-gradient(
+    ellipse at right top,
+    #a63d2a00 0%,
+    #1a1a2e00 47%,
+    #16213e00 100%
+  ) !important;
+}
+
+body.theme-light .red {
+  background: radial-gradient(
+    ellipse at right top,
+    #a63d2a00 0%,
+    #f0f8ff00 47%,
+    #e6f3ff00 100%
+  ) !important;
+}
+
+/* TEMA ROSA - Fondo rosado con gradientes románticos */
+body.theme-rosa .green {
+  background: radial-gradient(
+    ellipse at right top,
+    #107667ed 0%,
+    #fdf2f8 47%,
+    #fce7f3 100%
+  ) !important;
+}
+
+body.theme-rosa .blue {
+  background: radial-gradient(
+    ellipse at right top,
+    #00458f8f 0%,
+    #fdf2f8 45%,
+    #fce7f3 100%
+  ) !important;
+}
+
+body.theme-rosa .orange {
+  background: radial-gradient(
+    ellipse at right top,
+    #ffb74194 0%,
+    #fdf2f8 47%,
+    #fce7f3 100%
+  ) !important;
+}
+
+body.theme-rosa .red {
+  background: radial-gradient(
+    ellipse at right top,
+    #a63d2a00 0%,
+    #1a1a2e00 47%,
+    #16213e00 100%
+  ) !important;
+}
+
+/* TEMA OSCURO - Fondo muy oscuro con gradientes intensos */
+body.theme-oscuro .green {
+  background: radial-gradient(
+    ellipse at right top,
+    #107667ed 0%,
+    #0f0f23 47%,
+    #1a1a2e 100%
+  ) !important;
+}
+
+body.theme-oscuro .blue {
+  background: radial-gradient(
+    ellipse at right top,
+    #00458f8f 0%,
+    #0f0f23 45%,
+    #1a1a2e 100%
+  ) !important;
+}
+
+body.theme-oscuro .orange {
+  background: radial-gradient(
+    ellipse at right top,
+    #ffb74194 0%,
+    #0f0f23 47%,
+    #1a1a2e 100%
+  ) !important;
+}
+
+body.theme-oscuro .red {
+  background: radial-gradient(
+    ellipse at right top,
+    #a63d2a00 0%,
+    #1a1a2e00 47%,
+    #16213e00 100%
+  ) !important;
+}
+
+/* TEMA NEON - Fondo negro con gradientes neón */
+body.theme-neon .green {
+  background: radial-gradient(
+    ellipse at right top,
+    #107667ed 0%,
+    #000000 47%,
+    #111111 100%
+  ) !important;
+}
+
+body.theme-neon .blue {
+  background: radial-gradient(
+    ellipse at right top,
+    #00458f8f 0%,
+    #000000 45%,
+    #111111 100%
+  ) !important;
+}
+
+body.theme-neon .orange {
+  background: radial-gradient(
+    ellipse at right top,
+    #ffb74194 0%,
+    #000000 47%,
+    #111111 100%
+  ) !important;
+}
+
+body.theme-neon .red {
+  background: radial-gradient(
+    ellipse at right top,
+    #a63d2a00 0%,
+    #1a1a2e00 47%,
+    #16213e00 100%
+  ) !important;
+}
+
+/* TEMA CUSTOM - Fondo adaptativo */
+body.theme-custom .green {
+  background: radial-gradient(
+    ellipse at right top,
+    #107667ed 0%,
+    var(--bg-primary, #151419) 47%,
+    var(--bg-secondary, #151419) 100%
+  ) !important;
+}
+
+body.theme-custom .blue {
+  background: radial-gradient(
+    ellipse at right top,
+    #00458f8f 0%,
+    var(--bg-primary, #151419) 45%,
+    var(--bg-secondary, #151419) 100%
+  ) !important;
+}
+
+body.theme-custom .orange {
+  background: radial-gradient(
+    ellipse at right top,
+    #ffb74194 0%,
+    var(--bg-primary, #151419) 47%,
+    var(--bg-secondary, #151419) 100%
+  ) !important;
+}
+
+body.theme-custom .red {
+  background: radial-gradient(
+    ellipse at right top,
+    #a63d2a82 0%,
+    var(--bg-primary, #151419) 47%,
+    var(--bg-secondary, #151419) 100%
+  ) !important;
+}
+
+/* Contenido de las tarjetas - Estilos legacy mantenidos para compatibilidad */
 .tool-title {
   font-size: 1.1rem;
   font-weight: 600;
@@ -306,29 +956,38 @@
 
 /* Mini selector de temas */
 .mini-theme-selector {
+  position: absolute;
+  bottom: 3rem;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
-  gap: 0.3rem;
-  margin-top: 0.5rem;
+  gap: 0.22rem;
   justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.37rem;
+  border-radius: 0.75rem;
+  backdrop-filter: blur(10px);
 }
 
 .mini-theme-btn {
-  width: 28px;
-  height: 28px;
-  border: 1px solid #dddddd;
+  width: 21px;
+  height: 21px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
-  background: #f8f9fa;
+  background: rgba(255, 255, 255, 0.1);
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #fff;
 }
 
 .mini-theme-btn:hover {
   transform: scale(1.1);
-  background: #e9ecef;
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 .mini-theme-btn.active {
@@ -362,13 +1021,29 @@
 /* Responsive Design */
 @media (max-width: 1024px) {
   .tools-grid {
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 0.6rem;
+    grid-template-columns: repeat(auto-fit, minmax(164px, 1fr));
+    gap: 1.04rem;
   }
   
   .tool-card {
-    padding: 0.8rem;
-    min-height: 110px;
+    min-height: 10.4rem;
+    max-width: 10.4rem;
+  }
+
+  .card-body h3 {
+    font-size: 0.97rem;
+  }
+
+  .card-body p {
+    font-size: 0.67rem;
+  }
+
+  .card-header svg {
+    width: 1.34rem;
+  }
+
+  .card-footer ul {
+    display: none;
   }
 }
 
@@ -386,28 +1061,39 @@
   }
   
   .tools-grid {
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 0.6rem;
+    grid-template-columns: repeat(auto-fit, minmax(149px, 1fr));
+    gap: 0.89rem;
     padding: 0;
   }
   
   .tool-card {
-    padding: 0.8rem;
-    min-height: 100px;
+    min-height: 9.7rem;
+    max-width: 9.7rem;
   }
-  
-  .tool-icon {
-    width: 32px;
-    height: 32px;
-    margin-bottom: 0.5rem;
+
+  .card-body h3 {
+    font-size: 0.89rem;
   }
-  
-  .tool-title {
-    font-size: 1rem;
+
+  .card-body p {
+    font-size: 0.6rem;
   }
-  
-  .tool-description {
-    font-size: 0.75rem;
+
+  .card-header .date {
+    display: none;
+  }
+
+  .card-header svg {
+    width: 1.19rem;
+  }
+
+  .btn-countdown {
+    padding: 0.3rem 0.75rem;
+    font-size: 0.6rem;
+  }
+
+  .card-footer ul {
+    display: none;
   }
   
   .category-filters {
@@ -418,44 +1104,76 @@
     padding: 8px 16px;
     font-size: 0.9rem;
   }
+
+  /* Botón de usuario responsive */
+  .user-controls {
+    top: 10px;
+    right: 10px;
+  }
+
+  .user-btn {
+    padding: 8px 15px;
+    font-size: 0.85rem;
+  }
+
+  .user-icon {
+    font-size: 1rem;
+  }
+
+  /* Ajustes para el botón de créditos en móviles */
+  .header-with-credits {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .dashboard-header .credits-btn-header {
+    width: 45px;
+    height: 45px;
+    font-size: 1.4rem;
+  }
 }
 
 @media (max-width: 480px) {
   .tools-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
   
   .tool-card {
-    padding: 0.6rem;
-    min-height: 90px;
+    min-height: 8.9rem;
+    max-width: 100%;
+    margin: 0 auto;
   }
-  
-  .tool-icon {
-    width: 28px;
-    height: 28px;
-    margin-bottom: 0.4rem;
+
+  .card-body h3 {
+    font-size: 0.82rem;
   }
-  
-  .tool-title {
-    font-size: 0.9rem;
-    margin-bottom: 0.2rem;
+
+  .card-body p {
+    font-size: 0.52rem;
   }
-  
-  .tool-description {
-    font-size: 0.7rem;
-    line-height: 1.2;
+
+  .card-header .date {
+    display: none;
   }
-  
-  .tag {
-    font-size: 0.6rem;
-    padding: 1px 6px;
+
+  .card-header svg {
+    width: 1.04rem;
+  }
+
+  .btn-countdown {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.52rem;
+  }
+
+  .card-footer ul {
+    display: none;
   }
   
   .mini-theme-btn {
-    width: 24px;
-    height: 24px;
-    font-size: 0.8rem;
+    width: 18px;
+    height: 18px;
+    font-size: 0.6rem;
   }
   
   .header-content {
@@ -469,88 +1187,49 @@
   .dashboard-header {
     margin-bottom: 2rem;
   }
+
+  /* Botón de usuario en móviles */
+  /* Botón global responsivo para móviles */
+  .global-user-controls {
+    top: 10px;
+    right: 10px;
+  }
+
+  .user-controls {
+    top: 5px;
+    right: 5px;
+  }
+
+  .user-btn {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    gap: 6px;
+  }
+
+  .user-text {
+    display: none; /* Solo mostrar el icono en móviles muy pequeños */
+  }
+
+  .user-icon {
+    font-size: 1.2rem;
+  }
+  
+  /* Header theme selector responsive */
+  .header-theme-selector {
+    gap: 0.5rem;
+    padding: 0.6rem;
+    margin: 0.8rem 0;
+  }
+  
+  .header-theme-btn {
+    width: 35px;
+    height: 35px;
+    font-size: 1rem;
+  }
 }
 
-/* Ajustes para temas específicos */
-/* Tema Oscuro/Neón */
-body.theme-dark .tool-card {
-  background: rgba(26, 26, 46, 0.95);
-  border: 1px solid rgba(102, 126, 234, 0.3);
-  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.1);
-}
-
-body.theme-dark .tool-card:hover {
-  border-color: rgba(102, 126, 234, 0.6);
-  box-shadow: 0 16px 48px rgba(102, 126, 234, 0.2);
-}
-
-body.theme-dark .tool-title {
-  color: #ffffff;
-}
-
-body.theme-dark .tool-description {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-/* Tema Claro */
-body.theme-light .tool-card {
-  background: #fff8e1;
-  border: 1px solid rgba(255, 193, 7, 0.3);
-  box-shadow: 0 4px 20px rgba(255, 193, 7, 0.1);
-}
-
-body.theme-light .tool-card:hover {
-  border-color: rgba(255, 193, 7, 0.6);
-  box-shadow: 0 16px 48px rgba(255, 193, 7, 0.2);
-}
-
-body.theme-light .tool-title {
-  color: #d84315;
-}
-
-body.theme-light .tool-description {
-  color: #e65100;
-}
-
-/* Tema Rosa */
-body.theme-rosa .tool-card {
-  background: #fce4ec;
-  border: 1px solid rgba(233, 30, 99, 0.3);
-  box-shadow: 0 4px 20px rgba(233, 30, 99, 0.1);
-}
-
-body.theme-rosa .tool-card:hover {
-  border-color: rgba(233, 30, 99, 0.6);
-  box-shadow: 0 16px 48px rgba(233, 30, 99, 0.2);
-}
-
-body.theme-rosa .tool-title {
-  color: #ad1457;
-}
-
-body.theme-rosa .tool-description {
-  color: #c2185b;
-}
-
-/* Tema Oscuro */
-body.theme-oscuro .tool-card {
-  background: #37474f;
-  border: 1px solid rgba(96, 125, 139, 0.5);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-}
-
-body.theme-oscuro .tool-card:hover {
-  border-color: rgba(144, 164, 174, 0.8);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
-}
-
-body.theme-oscuro .tool-title {
-  color: #eceff1;
-}
-
-body.theme-oscuro .tool-description {
-  color: #b0bec5;
-}
+/* Ajustes para temas específicos - Tarjetas modernas aplicadas a todos los temas */
+/* Las tarjetas ahora usan el diseño moderno consistente en todos los temas */
 
 /* Ocultar otros elementos cuando dashboard está activo */
 .dashboard-active .side-menu {
@@ -706,6 +1385,9 @@ body.theme-oscuro .filter-btn.active {
 #calendario-panel, #word-counter-panel, #rubricas-panel, #config {
   position: relative;
   transition: opacity 0.3s ease, transform 0.3s ease;
+  display: none;
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
 }
 
 #calc-panel.visible, #escala-panel.visible, #multi-panel.visible,
@@ -1318,24 +2000,7 @@ body.theme-custom {
   color: var(--custom-text, #ffffff) !important;
 }
 
-body.theme-custom .tool-card {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-body.theme-custom .tool-card:hover {
-  border-color: var(--custom-accent, #667eea);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
-}
-
-body.theme-custom .tool-title {
-  color: var(--custom-text, #ffffff);
-}
-
-body.theme-custom .tool-description {
-  color: rgba(255, 255, 255, 0.7);
-}
+/* Tema custom ahora usa el diseño moderno de tarjetas */
 
 body.theme-custom .search-input {
   background: rgba(255, 255, 255, 0.1);
@@ -1582,4 +2247,433 @@ body.theme-oscuro .btn-secondary {
 
 .oscuro-preview .preview-card {
   background: rgba(96, 125, 139, 0.3);
+} 
+
+/* Colores del texto de las tarjetas según el tema (igual que PROFENINJA) */
+
+/* Tema por defecto */
+.card-body h3,
+.tool-title {
+  background: linear-gradient(135deg, #fff 0%, #a8edea 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  text-shadow: 0 2px 10px rgba(255, 255, 255, 0.3) !important;
+}
+
+.card-body p,
+.tool-description {
+  color: rgba(255, 255, 255, 0.8) !important;
+  text-shadow: 0 1px 5px rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Tema Dark */
+body.theme-dark .card-body h3,
+body.theme-dark .tool-title {
+  background: linear-gradient(135deg, #ae81ff 0%, #667eea 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  text-shadow: 0 2px 10px rgba(174, 129, 255, 0.4) !important;
+}
+
+body.theme-dark .card-body p,
+body.theme-dark .tool-description {
+  color: rgba(174, 129, 255, 0.8) !important;
+  text-shadow: 0 1px 5px rgba(174, 129, 255, 0.3) !important;
+}
+
+/* Tema Light */
+body.theme-light .card-body h3,
+body.theme-light .tool-title {
+  background: linear-gradient(135deg, #ffda88 0%, #ffb716 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  text-shadow: 0 2px 10px rgba(255, 218, 136, 0.4) !important;
+}
+
+body.theme-light .card-body p,
+body.theme-light .tool-description {
+  color: rgba(255, 218, 136, 0.9) !important;
+  text-shadow: 0 1px 5px rgba(255, 218, 136, 0.3) !important;
+}
+
+/* Tema Rosa */
+body.theme-rosa .card-body h3,
+body.theme-rosa .tool-title {
+  background: linear-gradient(135deg, #fffefc 0%, #ffffff 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  text-shadow: 0 2px 10px rgba(255, 218, 136, 0.4) !important;
+}
+
+body.theme-rosa .card-body p,
+body.theme-rosa .tool-description {
+  color: rgba(255, 218, 136, 0.9) !important;
+  text-shadow: 0 1px 5px rgba(255, 218, 136, 0.3) !important;
+}
+
+/* Tema Oscuro */
+body.theme-oscuro .card-body h3,
+body.theme-oscuro .tool-title {
+  background: linear-gradient(135deg, #ffda88 0%, #ffb716 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  text-shadow: 0 2px 10px rgba(144, 164, 174, 0.4) !important;
+}
+
+body.theme-oscuro .card-body p,
+body.theme-oscuro .tool-description {
+  color: rgba(144, 164, 174, 0.8) !important;
+  text-shadow: 0 1px 5px rgba(144, 164, 174, 0.3) !important;
+}
+
+/* Tema Neon - usando colores vibrantes típicos del neon */
+body.theme-neon .card-body h3,
+body.theme-neon .tool-title {
+  background: linear-gradient(135deg, #ffda00 0%, #ff7600 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  text-shadow: 0 2px 10px rgba(0, 255, 255, 0.6) !important;
+}
+
+body.theme-neon .card-body p,
+body.theme-neon .tool-description {
+  color: rgba(0, 255, 255, 0.9) !important;
+  text-shadow: 0 1px 5px rgba(0, 255, 255, 0.4) !important;
+}
+
+/* Tema Custom - usando variables CSS */
+body.theme-custom .card-body h3,
+body.theme-custom .tool-title {
+  background: linear-gradient(135deg, var(--accent-color, #fff) 0%, var(--secondary-color, #a8edea) 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  text-shadow: 0 2px 10px rgba(255, 255, 255, 0.3) !important;
+}
+
+body.theme-custom .card-body p,
+body.theme-custom .tool-description {
+  color: var(--text-color, rgba(255, 255, 255, 0.8)) !important;
+  text-shadow: 0 1px 5px rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Fondos dorados para las tarjetas en temas específicos */
+
+/* Tema Light - Fondo dorado suave */
+body.theme-light .tool-card.green,
+body.theme-light .tool-card.blue,
+body.theme-light .tool-card.orange,
+body.theme-light .tool-card.red {
+  background: radial-gradient(
+    ellipse at right top,
+    #ffda8880 0%,
+    #2a2520 47%,
+    #1a1815 100%
+  ) !important;
+}
+
+body.theme-light .tool-card.green::before,
+body.theme-light .tool-card.blue::before,
+body.theme-light .tool-card.orange::before,
+body.theme-light .tool-card.red::before {
+  background: linear-gradient(
+      45deg,
+      #2a2520,
+      #2a2520,
+      #2a2520,
+      #2a2520,
+      #ffb716
+    )
+    border-box !important;
+}
+
+/* Tema Rosa - Fondo magenta elegante */
+body.theme-rosa .tool-card.green,
+body.theme-rosa .tool-card.blue,
+body.theme-rosa .tool-card.orange,
+body.theme-rosa .tool-card.red {
+  background: radial-gradient(
+    ellipse at right top,
+    #ff00ff80 0%,
+    #2a1520 47%,
+    #1a1015 100%
+  ) !important;
+}
+
+body.theme-rosa .tool-card.green::before,
+body.theme-rosa .tool-card.blue::before,
+body.theme-rosa .tool-card.orange::before,
+body.theme-rosa .tool-card.red::before {
+  background: linear-gradient(
+      45deg,
+      #2a1520,
+      #2a1520,
+      #2a1520,
+      #2a1520,
+      #ff00ff
+    )
+    border-box !important;
+}
+
+/* Tema Oscuro - Fondo dorado elegante */
+body.theme-oscuro .tool-card.green,
+body.theme-oscuro .tool-card.blue,
+body.theme-oscuro .tool-card.orange,
+body.theme-oscuro .tool-card.red {
+  background: radial-gradient(
+    ellipse at right top,
+    #ffda8880 0%,
+    #2a2520 47%,
+    #1a1815 100%
+  ) !important;
+}
+
+body.theme-oscuro .tool-card.green::before,
+body.theme-oscuro .tool-card.blue::before,
+body.theme-oscuro .tool-card.orange::before,
+body.theme-oscuro .tool-card.red::before {
+  background: linear-gradient(
+      45deg,
+      #2a2520,
+      #2a2520,
+      #2a2520,
+      #2a2520,
+      #ffb716
+    )
+    border-box !important;
+}
+
+/* Footer dorado para estos temas */
+body.theme-light .tool-card .card-footer,
+body.theme-oscuro .tool-card .card-footer {
+  background: #2a2520 !important;
+  border-top-color: #3a3025 !important;
+}
+
+/* Footer magenta para tema rosa */
+body.theme-rosa .tool-card .card-footer {
+  background: #2a1520 !important;
+  border-top-color: #3a2030 !important;
+}
+
+/* Botones dorados para estos temas */
+body.theme-light .tool-card .btn-countdown,
+body.theme-oscuro .tool-card .btn-countdown {
+  background: #3a3025 !important;
+  color: #ffda88 !important;
+}
+
+body.theme-light .tool-card .btn-countdown:hover,
+body.theme-oscuro .tool-card .btn-countdown:hover {
+  background: #ffb716 !important;
+  color: #1a1815 !important;
+}
+
+/* Botones magenta para tema rosa */
+body.theme-rosa .tool-card .btn-countdown {
+  background: #3a2030 !important;
+  color: #ff88da !important;
+}
+
+body.theme-rosa .tool-card .btn-countdown:hover {
+  background: #ff00ff !important;
+  color: #1a1015 !important;
+}
+
+/* ================================
+   CONTROL DE VISIBILIDAD DE BOTONES POR CONTEXTO
+   ================================ */
+
+/* Ocultar botón de usuario cuando timeline esté activo */
+body.timeline-active .global-user-controls {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Asegurar que el botón de volver esté bien posicionado dentro de apps */
+body.timeline-active .back-to-dashboard {
+  position: fixed !important;
+  top: 20px !important;
+  left: 20px !important;
+  z-index: 10000 !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Ocultar botón de usuario en todas las aplicaciones activas */
+body:not(.dashboard-active) .global-user-controls {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Mostrar botón de usuario solo en el dashboard */
+body.dashboard-active .global-user-controls {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+/* Asegurar posicionamiento correcto del botón de volver en todas las apps */
+.back-to-dashboard {
+  position: fixed !important;
+  top: 20px !important;
+  left: 20px !important;
+  z-index: 10000 !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+  border-radius: 50% !important;
+  width: 50px !important;
+  height: 50px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #333 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+}
+
+/* Estilos del botón de volver para temas oscuros */
+body.theme-dark .back-to-dashboard,
+body.theme-oscuro .back-to-dashboard,
+body.theme-neon .back-to-dashboard {
+  background: rgba(26, 26, 46, 0.95) !important;
+  border: 1px solid rgba(102, 126, 234, 0.3) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.2) !important;
+}
+
+/* Estilos del botón de volver para tema rosa */
+body.theme-rosa .back-to-dashboard {
+  background: rgba(253, 242, 248, 0.95) !important;
+  border: 1px solid rgba(233, 30, 99, 0.3) !important;
+  color: #ad1457 !important;
+  box-shadow: 0 4px 20px rgba(233, 30, 99, 0.2) !important;
+}
+
+/* Hover del botón de volver */
+.back-to-dashboard:hover {
+  transform: scale(1.1) !important;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2) !important;
+}
+
+body.theme-dark .back-to-dashboard:hover,
+body.theme-oscuro .back-to-dashboard:hover,
+body.theme-neon .back-to-dashboard:hover {
+  box-shadow: 0 6px 25px rgba(102, 126, 234, 0.3) !important;
+}
+
+body.theme-rosa .back-to-dashboard:hover {
+  box-shadow: 0 6px 25px rgba(233, 30, 99, 0.3) !important;
+}
+
+/* ================================
+   OCULTAR ELEMENTOS DEL TIMELINE EN EL LAUNCHER
+   ================================ */
+
+/* Ocultar elementos del timeline cuando no esté activo */
+body:not(.timeline-active) #presentation-modal,
+body:not(.timeline-active) .presentation-modal,
+body:not(.timeline-active) [id*="presentation"],
+body:not(.timeline-active) [class*="presentation"],
+body:not(.timeline-active) .download-link,
+body:not(.timeline-active) [id*="download-presentation"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Forzar ocultación del presentation-modal SIEMPRE cuando timeline esté activo */
+body.timeline-active #presentation-modal {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  z-index: -9999 !important;
+  position: absolute !important;
+  top: -9999px !important;
+  left: -9999px !important;
+}
+
+/* Asegurar que elementos con z-index alto del timeline no aparezcan fuera */
+body:not(.timeline-active) .modal[style*="z-index"],
+body:not(.timeline-active) .notification[style*="z-index"],
+body:not(.timeline-active) [style*="position: fixed"][id*="timeline"],
+body:not(.timeline-active) [style*="position: fixed"][class*="timeline"] {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* Contener específicamente elementos del timeline */
+#timeline-panel {
+  position: relative !important;
+  overflow: hidden !important;
+  contain: layout style paint !important;
+}
+
+/* Asegurar que modales del timeline estén contenidos */
+#timeline-panel .modal,
+#timeline-panel .presentation-modal,
+#timeline-panel [id*="presentation"] {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 999 !important;
+}
+
+/* ================================
+   CORRECCIÓN ADICIONAL DE BORROSIDAD
+   ================================ */
+
+/* PERMITIR fondos animados en timeline - Los fondos animados ahora son visibles */
+/* Las reglas anteriores que ocultaban fondos animados han sido eliminadas */
+
+/* El timeline ahora mantiene los fondos animados de cada tema */
+body.timeline-active {
+  /* Sin fondo forzado - permite fondos animados */
+}
+
+/* Eliminar cualquier elemento superpuesto */
+body.timeline-active .overlay,
+body.timeline-active .backdrop,
+body.timeline-active [class*="blur"] {
+  display: none !important;
+}
+
+/* Ocultar específicamente elementos con fondo semitransparente oscuro */
+body.timeline-active [style*="background: rgba(0, 0, 0"],
+body.timeline-active [style*="background:rgba(0,0,0"],
+body.timeline-active .modal-backdrop,
+body.timeline-active .overlay-dark {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Asegurar que el timeline tenga interacción completa */
+body.timeline-active #timeline-panel {
+  pointer-events: auto !important;
+  z-index: 1 !important;
+}
+
+body.timeline-active #timeline-panel * {
+  pointer-events: auto !important;
 } 

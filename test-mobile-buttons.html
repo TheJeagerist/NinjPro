@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Botones Móvil</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        
+        .test-button {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin: 10px auto;
+            padding: 15px;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            user-select: none;
+        }
+        
+        .test-button:active {
+            transform: scale(0.95);
+            background: #555;
+        }
+        
+        .dropdown {
+            display: none;
+            background: #444;
+            border-radius: 8px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        .dropdown.show {
+            display: block;
+        }
+        
+        .dropdown-item {
+            padding: 15px;
+            border-bottom: 1px solid #555;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+        
+        .dropdown-item:active {
+            background: #666;
+        }
+        
+        .log {
+            background: #222;
+            padding: 10px;
+            margin: 20px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Botones Móvil</h1>
+    <p>Prueba los botones en modo responsive de Chrome:</p>
+    
+    <button class="test-button" id="normal-btn" data-mode="normal">Normal</button>
+    <button class="test-button" id="simce-btn" data-mode="simce">SIMCE</button>
+    <button class="test-button" id="paes-btn" data-mode="paes">PAES ▼</button>
+    
+    <div class="dropdown" id="paes-dropdown">
+        <div class="dropdown-item" data-paes-mode="competencia">Competencia Lectora</div>
+        <div class="dropdown-item" data-paes-mode="m1">M1</div>
+        <div class="dropdown-item" data-paes-mode="m2">M2</div>
+        <div class="dropdown-item" data-paes-mode="ciencias">Ciencias</div>
+        <div class="dropdown-item" data-paes-mode="historia">Historia</div>
+    </div>
+    
+    <div class="log" id="log">
+        <div>Log de eventos:</div>
+    </div>
+
+    <script>
+        const log = document.getElementById('log');
+        
+        function addLog(message) {
+            const div = document.createElement('div');
+            div.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+            log.appendChild(div);
+            log.scrollTop = log.scrollHeight;
+        }
+        
+        // Botones normales
+        document.querySelectorAll('.test-button:not(#paes-btn)').forEach(btn => {
+            function handleClick(e) {
+                e.preventDefault();
+                addLog(`Botón ${btn.dataset.mode} presionado (${e.type})`);
+            }
+            
+            btn.addEventListener('click', handleClick);
+            btn.addEventListener('touchend', handleClick);
+        });
+        
+        // Botón PAES con dropdown
+        const paesBtn = document.getElementById('paes-btn');
+        const dropdown = document.getElementById('paes-dropdown');
+        
+        function toggleDropdown(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dropdown.classList.toggle('show');
+            addLog(`PAES dropdown ${dropdown.classList.contains('show') ? 'abierto' : 'cerrado'} (${e.type})`);
+        }
+        
+        paesBtn.addEventListener('click', toggleDropdown);
+        paesBtn.addEventListener('touchend', toggleDropdown);
+        
+        // Items del dropdown
+        document.querySelectorAll('.dropdown-item').forEach(item => {
+            function selectItem(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                addLog(`PAES ${item.dataset.paesMode} seleccionado (${e.type})`);
+                dropdown.classList.remove('show');
+            }
+            
+            item.addEventListener('click', selectItem);
+            item.addEventListener('touchend', selectItem);
+        });
+        
+        // Cerrar dropdown al tocar fuera
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#paes-btn') && !e.target.closest('#paes-dropdown')) {
+                if (dropdown.classList.contains('show')) {
+                    dropdown.classList.remove('show');
+                    addLog('Dropdown cerrado por click fuera');
+                }
+            }
+        });
+        
+        document.addEventListener('touchend', (e) => {
+            if (!e.target.closest('#paes-btn') && !e.target.closest('#paes-dropdown')) {
+                if (dropdown.classList.contains('show')) {
+                    dropdown.classList.remove('show');
+                    addLog('Dropdown cerrado por touch fuera');
+                }
+            }
+        });
+        
+        addLog('Test inicializado - Prueba los botones');
+    </script>
+</body>
+</html> 

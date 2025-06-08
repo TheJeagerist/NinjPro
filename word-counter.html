@@ -3,32 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contador de Palabras</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <div id="word-counter-panel">
-        <div class="word-counter-header">
-            <h2>Contador de Palabras</h2>
-            <button id="close-word-counter" class="close">&times;</button>
-        </div>
+    <title>Contador de Palabras - NinjPro</title>
+    <link rel="stylesheet" href="word-counter-styles.css">
+    <link rel="stylesheet" href="animated-backgrounds.css">
+    <!-- Librería para exportar a Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        /* Sobrescribir estilos específicos del styles.css principal */
+        body {
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            min-height: 100vh !important;
+            overflow: auto !important;
+            animation: none !important;
+            background-size: unset !important;
+            padding: 20px;
+            box-sizing: border-box;
+        }
         
-        <div class="file-upload-area" id="upload-area">
-            <input type="file" id="file-input" accept=".docx,.txt">
-            <p>Haz clic aquí o arrastra un archivo .docx o .txt</p>
+        .container {
+            animation: none !important;
+            backdrop-filter: blur(20px) !important;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+            background: var(--card-bg) !important;
+            border-radius: 24px !important;
+            max-width: 520px !important;
+            width: 100% !important;
+            padding: 32px !important;
+            border: 1px solid var(--border-color) !important;
+        }
+    </style>
+</head>
+<body class="theme-dark">
+    <!-- Script inmediato para aplicar tema -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'theme-dark';
+            console.log('🎨 Aplicando tema inmediatamente al cargar:', savedTheme);
+            document.body.className = savedTheme;
+        })();
+    </script>
+
+    <!-- Los fondos animados se crean dinámicamente por animated-backgrounds.js -->
+
+    <!-- Botón de regreso posicionado de manera fija -->
+    <button onclick="window.location.href='index.html'" class="back-to-dashboard">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m12 19-7-7 7-7"></path>
+            <path d="M19 12H5"></path>
+        </svg>
+    </button>
+
+    <div class="container">
+        <!-- Header con título -->
+        <div class="app-header">
+            <h1>📝 Contador de Palabras</h1>
+            <p>Analiza tu velocidad de lectura</p>
         </div>
 
-        <div class="word-counter-content">
-            <div class="word-counter-text" id="text-content">
-                <!-- El texto se insertará aquí -->
+        <!-- Display principal - Área de carga de archivos -->
+        <div class="main-display">
+            <div class="file-upload-area" id="word-counter-upload-area">
+                <input type="file" id="word-counter-file-input" accept=".docx,.txt" style="display: none;">
+                <div class="upload-content">
+                    <div class="upload-icon">📄</div>
+                    <div class="upload-text">
+                        <span class="upload-title">Cargar Archivo</span>
+                        <span class="upload-subtitle">Arrastra o haz clic para seleccionar</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Estadísticas en grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Palabras</div>
+                <div class="stat-value success" id="word-count">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Errores</div>
+                <div class="stat-value error" id="error-count">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Precisión</div>
+                <div class="stat-value info" id="error-percentage">100%</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Tiempo</div>
+                <div class="stat-value primary" id="final-time">00:00.0</div>
+            </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="action-buttons">
+            <button id="view-content" class="btn-action btn-secondary">
+                <span class="btn-icon">📖</span>
+                <span class="btn-text">Abrir Panel</span>
+            </button>
+            <button id="export-excel" class="btn-action btn-primary" disabled>
+                <span class="btn-icon">📊</span>
+                <span class="btn-text">Exportar Excel</span>
+            </button>
+        </div>
+
+        <!-- Indicador de estado -->
+        <div class="status-indicator" id="status-indicator">
+            <span id="status-text">Carga un archivo para comenzar</span>
+        </div>
+    </div>
+
+    <!-- Modal para mostrar contenido del archivo -->
+    <div id="content-modal" class="content-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title-section">
+                    <h3>Panel de Lectura</h3>
+                    <div class="modal-timer-display">
+                        <span id="timer-display">00:00.0</span>
+                    </div>
+                </div>
+                <button class="close-modal" id="close-modal">×</button>
             </div>
             
-            <div class="word-counter-stats">
-                <p>Palabras seleccionadas: <span id="word-count">0</span></p>
+            <!-- Selectores de curso y estudiante -->
+            <div class="course-selector-section">
+                <div class="selector-row">
+                    <div class="selector-group">
+                        <label for="course-select">Curso:</label>
+                        <select id="course-select" class="course-select">
+                            <option value="">Seleccionar curso...</option>
+                        </select>
+                    </div>
+                    <div class="selector-group">
+                        <label for="student-select">Estudiante:</label>
+                        <select id="student-select" class="student-select" disabled>
+                            <option value="">Primero selecciona un curso</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="selector-actions">
+                    <button id="refresh-courses" class="refresh-btn" title="Recargar cursos desde gestión">
+                        <span class="btn-icon">🔄</span>
+                        <span class="btn-text">Actualizar</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="modal-timer-controls">
+                <button id="start-timer" class="timer-btn start">
+                    <span class="btn-icon">▶</span>
+                    <span class="btn-text">Iniciar</span>
+                </button>
+                <button id="pause-timer" class="timer-btn pause" disabled>
+                    <span class="btn-icon">⏸</span>
+                    <span class="btn-text">Pausar</span>
+                </button>
+                <button id="reset-timer" class="timer-btn reset">
+                    <span class="btn-icon">🔄</span>
+                    <span class="btn-text">Reiniciar</span>
+                </button>
+                <div class="timer-info">
+                    <span>💡 Presiona <kbd>Espacio</kbd> para iniciar/pausar</span>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div id="text-content" class="text-content">
+                    <!-- El contenido del archivo se mostrará aquí -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="save-session-modal" class="btn-modal btn-success">
+                    💾 Guardar Sesión
+                </button>
+                <button id="modal-close-btn" class="btn-modal btn-secondary">
+                    ✕ Cerrar
+                </button>
             </div>
         </div>
     </div>
 
+    <script src="theme-manager.js"></script>
     <script src="word-counter.js"></script>
+    <script src="animated-backgrounds.js"></script>
+    
+    <!-- Script simplificado para sincronización de temas -->
+    <script>
+        // Aplicar tema inicial
+        const savedTheme = localStorage.getItem('theme') || 'theme-dark';
+        document.body.classList.add(savedTheme);
+        
+        // Listener para cambios de tema desde otras ventanas
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'theme' && window.animatedBackgrounds && window.animatedBackgrounds.isInitialized) {
+                window.animatedBackgrounds.switchTheme(e.newValue);
+            }
+        });
+        
+        // Polling para detectar cambios en la misma ventana
+        let lastTheme = localStorage.getItem('theme');
+        setInterval(() => {
+            const currentTheme = localStorage.getItem('theme');
+            if (currentTheme !== lastTheme && window.animatedBackgrounds && window.animatedBackgrounds.isInitialized) {
+                lastTheme = currentTheme;
+                window.animatedBackgrounds.switchTheme(currentTheme);
+            }
+        }, 500);
+    </script>
 </body>
 </html> 

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Supabase - NinjPro</title>
+    <link rel="stylesheet" href="animated-backgrounds.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .log {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body class="theme-dark">
+    <div class="container">
+        <h1>🧪 Test de Integración Supabase - NinjPro</h1>
+        <p>Esta página te ayuda a verificar que la integración con Supabase esté funcionando correctamente.</p>
+
+        <!-- Estado General -->
+        <div class="test-section">
+            <h3>📊 Estado General</h3>
+            <div id="general-status">Iniciando tests...</div>
+            <button onclick="runAllTests()">🔄 Ejecutar Todos los Tests</button>
+        </div>
+
+        <!-- Test de Configuración -->
+        <div class="test-section">
+            <h3>⚙️ Configuración</h3>
+            <div id="config-status">Verificando...</div>
+            <button onclick="testConfig()">Test Configuración</button>
+        </div>
+
+        <!-- Test de Conexión -->
+        <div class="test-section">
+            <h3>🌐 Conexión</h3>
+            <div id="connection-status">Verificando...</div>
+            <button onclick="testConnection()">Test Conexión</button>
+        </div>
+
+        <!-- Test de Autenticación -->
+        <div class="test-section">
+            <h3>🔐 Autenticación</h3>
+            <div id="auth-status">Verificando...</div>
+            <button onclick="testAuth()">Test Login Modal</button>
+            <button onclick="showUserStatus()">Estado Usuario</button>
+        </div>
+
+        <!-- Test de Base de Datos -->
+        <div class="test-section">
+            <h3>🗄️ Base de Datos</h3>
+            <div id="db-status">Verificando...</div>
+            <button onclick="testDatabase()">Test Tablas</button>
+            <button onclick="exportSQL()">📄 Exportar SQL</button>
+        </div>
+
+        <!-- Log Console -->
+        <div class="test-section">
+            <h3>📝 Log de Console</h3>
+            <div id="console-log" class="log">Los logs aparecerán aquí...</div>
+            <button onclick="clearLog()">🗑️ Limpiar Log</button>
+        </div>
+    </div>
+
+    <!-- Scripts de Supabase -->
+    <script src="supabase-config.js"></script>
+    <script src="supabase-adapter.js"></script>
+    <script src="auth-manager.js"></script>
+    <script src="animated-backgrounds.js"></script>
+
+    <script>
+        // Intercept console.log to show in page
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            appendToLog('LOG: ' + args.join(' '));
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            appendToLog('ERROR: ' + args.join(' '));
+        };
+        
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            appendToLog('WARN: ' + args.join(' '));
+        };
+
+        function appendToLog(message) {
+            const logDiv = document.getElementById('console-log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.textContent += `[${timestamp}] ${message}\n`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('console-log').textContent = '';
+        }
+
+        function setStatus(elementId, status, message) {
+            const element = document.getElementById(elementId);
+            element.className = `status ${status}`;
+            element.textContent = message;
+        }
+
+        async function runAllTests() {
+            console.log('🚀 Iniciando suite completa de tests...');
+            
+            await testConfig();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            await testConnection();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            await testDatabase();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            updateGeneralStatus();
+            console.log('✅ Suite de tests completada');
+        }
+
+        async function testConfig() {
+            console.log('🔧 Testing configuración...');
+            
+            try {
+                // Check if config is loaded
+                if (typeof window.SupabaseConfig === 'undefined') {
+                    throw new Error('SupabaseConfig module not loaded');
+                }
+
+                // Check config values
+                const config = window.SupabaseConfig.config;
+                if (!config.url || config.url === 'TU_SUPABASE_URL_AQUI') {
+                    throw new Error('Supabase URL not configured');
+                }
+                
+                if (!config.anonKey || config.anonKey === 'TU_SUPABASE_ANON_KEY_AQUI') {
+                    throw new Error('Supabase anon key not configured');
+                }
+
+                // Try to initialize
+                const initialized = window.SupabaseConfig.init();
+                if (!initialized) {
+                    throw new Error('Failed to initialize Supabase config');
+                }
+
+                setStatus('config-status', 'success', '✅ Configuración correcta');
+                console.log('✅ Config test passed');
+                return true;
+            } catch (error) {
+                setStatus('config-status', 'error', '❌ Error: ' + error.message);
+                console.error('❌ Config test failed:', error);
+                return false;
+            }
+        }
+
+        async function testConnection() {
+            console.log('🌐 Testing conexión...');
+            
+            try {
+                if (typeof supabase === 'undefined') {
+                    // Try to load Supabase library
+                    await loadSupabaseLibrary();
+                }
+
+                const connected = await window.SupabaseConfig.test();
+                if (connected) {
+                    setStatus('connection-status', 'success', '✅ Conexión exitosa');
+                    console.log('✅ Connection test passed');
+                    return true;
+                } else {
+                    setStatus('connection-status', 'warning', '⚠️ Conexión falló, pero configuración OK');
+                    console.warn('⚠️ Connection test failed, but config seems OK');
+                    return false;
+                }
+            } catch (error) {
+                setStatus('connection-status', 'error', '❌ Error: ' + error.message);
+                console.error('❌ Connection test failed:', error);
+                return false;
+            }
+        }
+
+        async function loadSupabaseLibrary() {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        }
+
+        async function testAuth() {
+            console.log('🔐 Testing autenticación...');
+            
+            try {
+                if (!window.authManager) {
+                    throw new Error('AuthManager not loaded');
+                }
+
+                await window.authManager.init();
+                window.authManager.showAuthModal();
+                
+                setStatus('auth-status', 'success', '✅ Modal de login mostrado');
+                console.log('✅ Auth test passed - modal shown');
+                return true;
+            } catch (error) {
+                setStatus('auth-status', 'error', '❌ Error: ' + error.message);
+                console.error('❌ Auth test failed:', error);
+                return false;
+            }
+        }
+
+        function showUserStatus() {
+            if (window.authManager && window.authManager.isAuthenticated()) {
+                const user = window.authManager.getCurrentUser();
+                setStatus('auth-status', 'success', `✅ Usuario conectado: ${user.email}`);
+            } else {
+                setStatus('auth-status', 'warning', '⚠️ Usuario no autenticado');
+            }
+        }
+
+        async function testDatabase() {
+            console.log('🗄️ Testing base de datos...');
+            
+            try {
+                if (typeof supabase === 'undefined') {
+                    await loadSupabaseLibrary();
+                }
+
+                const client = window.SupabaseConfig.getClient();
+                if (!client) {
+                    throw new Error('Supabase client not available');
+                }
+
+                // Test basic query
+                const { data, error } = await client
+                    .from('usuarios')
+                    .select('count', { count: 'exact', head: true });
+
+                if (error && error.code !== 'PGRST116') {
+                    throw error;
+                }
+
+                setStatus('db-status', 'success', '✅ Base de datos accesible');
+                console.log('✅ Database test passed');
+                return true;
+            } catch (error) {
+                setStatus('db-status', 'error', '❌ Error: ' + error.message);
+                console.error('❌ Database test failed:', error);
+                return false;
+            }
+        }
+
+        function exportSQL() {
+            try {
+                const sql = window.SupabaseConfig.getCreateTablesSQL();
+                const blob = new Blob([sql], { type: 'text/sql' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'ninjpro-database-schema.sql';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                console.log('📄 SQL exported successfully');
+            } catch (error) {
+                console.error('❌ Error exporting SQL:', error);
+            }
+        }
+
+        function updateGeneralStatus() {
+            const configOK = document.getElementById('config-status').classList.contains('success');
+            const connectionOK = document.getElementById('connection-status').classList.contains('success');
+            const dbOK = document.getElementById('db-status').classList.contains('success');
+            
+            if (configOK && connectionOK && dbOK) {
+                setStatus('general-status', 'success', '✅ Todo funcionando correctamente');
+            } else if (configOK) {
+                setStatus('general-status', 'warning', '⚠️ Configuración OK, pero hay problemas de conexión');
+            } else {
+                setStatus('general-status', 'error', '❌ Hay problemas de configuración');
+            }
+        }
+
+        // Run initial tests
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                runAllTests();
+            }, 1000);
+        });
+    </script>
+    
+    <!-- Script simplificado para sincronización de temas -->
+    <script>
+        // Aplicar tema inicial
+        const savedTheme = localStorage.getItem('theme') || 'theme-dark';
+        document.body.classList.add(savedTheme);
+        
+        // Listener para cambios de tema desde otras ventanas
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'theme' && window.animatedBackgrounds && window.animatedBackgrounds.isInitialized) {
+                window.animatedBackgrounds.switchTheme(e.newValue);
+            }
+        });
+    </script>
+</body>
+</html> 

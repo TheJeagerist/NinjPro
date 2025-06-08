@@ -6,12 +6,28 @@
   <title>Calculadora de Promedio Ponderado</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="dashboard-styles.css">
-  <link rel="stylesheet" href="timeline.css">
+  <link rel="stylesheet" href="launcher-cards.css">
+  <link rel="stylesheet" href="escala-notas-responsive.css">
+
+  <link rel="stylesheet" href="animated-backgrounds.css">
   <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
-<body>
+<body class="theme-dark">
+  <!-- Botón de Usuario Global - Siempre visible -->
+  <div class="global-user-controls">
+    <button id="user-btn" class="user-btn">
+      <span class="user-icon">👤</span>
+      <span class="user-text">Cuenta</span>
+    </button>
+  </div>
+
+  <!-- Botón de Créditos en esquina superior izquierda -->
+  <button id="credits-btn" class="credits-btn-fixed" role="button" title="Créditos y Licencias">
+    i
+  </button>
+
   <!-- Dashboard Principal -->
   <div id="dashboard-main" class="dashboard-main">
     <!-- Header del Dashboard -->
@@ -20,6 +36,7 @@
         <h1 class="dashboard-title">PROFENINJA</h1>
         <p class="dashboard-subtitle">Accede a todas tus herramientas favoritas en un lugar</p>
       </div>
+      <!-- Botón de Usuario movido fuera del header -->
       <!-- Barra de búsqueda -->
       <div class="search-container">
         <input type="text" id="search-tools" class="search-input" placeholder="Buscar herramientas...">
@@ -28,396 +45,236 @@
           <path d="M21 21l-4.35-4.35"></path>
     </svg>
     </div>
+      
+      <!-- Selector de temas horizontal -->
+      <div class="header-theme-selector">
+        <button class="header-theme-btn" data-theme="theme-dark" title="Dark">🌙</button>
+        <button class="header-theme-btn" data-theme="theme-light" title="Claro">🌞</button>
+        <button class="header-theme-btn" data-theme="theme-rosa" title="Rosa">🌸</button>
+        <button class="header-theme-btn" data-theme="theme-oscuro" title="Oscuro">🌑</button>
+        <button class="header-theme-btn" data-theme="theme-neon" title="Neón">🎇</button>
+      </div>
+      
       <!-- Filtros de categoría -->
       <div class="category-filters">
         <button class="filter-btn active" data-category="all">Todas</button>
         <button class="filter-btn" data-category="calculadora">Calculadora</button>
         <button class="filter-btn" data-category="herramientas">Herramientas</button>
+        <button class="filter-btn" data-category="juegos">Juegos</button>
         <button class="filter-btn" data-category="configuracion">Configuración</button>
       </div>
     </header>
     
     <!-- Grid de Herramientas -->
     <main class="tools-grid">
-      <!-- Calculadora Principal -->
-      <div class="tool-card" data-tool="calculadora" data-category="calculadora">
-        <div class="tool-icon calculadora-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
-          <line x1="8" y1="6" x2="16" y2="6"></line>
-          <line x1="8" y1="10" x2="16" y2="10"></line>
-          <line x1="8" y1="14" x2="16" y2="14"></line>
-          <line x1="8" y1="18" x2="16" y2="18"></line>
-        </svg>
-        </div>
-        <h3 class="tool-title">Calculadora</h3>
-        <p class="tool-description">Calculadora de promedio ponderado</p>
-        <div class="tool-tags">
-          <span class="tag calculadora-tag">Calculadora</span>
-        </div>
-      </div>
-
-      <!-- Escala de Notas -->
-      <div class="tool-card" data-tool="escala" data-category="calculadora">
-        <div class="tool-icon escala-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path>
-          <line x1="12" y1="10" x2="12" y2="16"></line>
-          <line x1="9" y1="13" x2="15" y2="13"></line>
-        </svg>
-        </div>
-        <h3 class="tool-title">Escala de Notas</h3>
-        <p class="tool-description">Conversión de escala de calificaciones</p>
-        <div class="tool-tags">
-          <span class="tag calculadora-tag">Calculadora</span>
-        </div>
-      </div>
-
-      <!-- Múltiples Promedios -->
-      <div class="tool-card" data-tool="multi" data-category="calculadora">
-        <div class="tool-icon multi-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="3" width="7" height="7"></rect>
-          <rect x="14" y="3" width="7" height="7"></rect>
-          <rect x="14" y="14" width="7" height="7"></rect>
-          <rect x="3" y="14" width="7" height="7"></rect>
-        </svg>
-        </div>
-        <h3 class="tool-title">Múltiples Promedios</h3>
-        <p class="tool-description">Gestión de múltiples cursos</p>
-        <div class="tool-tags">
-          <span class="tag calculadora-tag">Calculadora</span>
-        </div>
-      </div>
-
-      <!-- Calendario -->
-      <div class="tool-card" data-tool="calendario" data-category="herramientas">
-        <div class="tool-icon calendario-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-          <line x1="16" y1="2" x2="16" y2="6"></line>
-          <line x1="8" y1="2" x2="8" y2="6"></line>
-          <line x1="3" y1="10" x2="21" y2="10"></line>
-        </svg>
-        </div>
-        <h3 class="tool-title">Calendario</h3>
-        <p class="tool-description">Organización temporal y fechas</p>
-        <div class="tool-tags">
-          <span class="tag herramientas-tag">Herramientas</span>
-        </div>
-      </div>
-
-      <!-- Líneas de Tiempo -->
-      <div class="tool-card" data-tool="timeline" data-category="herramientas">
-        <div class="tool-icon timeline-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="3"></circle>
-            <path d="M12 9V2"></path>
-            <path d="M12 15v7"></path>
-            <path d="M9 12H2"></path>
-            <path d="M15 12h7"></path>
-            <circle cx="12" cy="2" r="1"></circle>
-            <circle cx="12" cy="22" r="1"></circle>
-            <circle cx="2" cy="12" r="1"></circle>
-            <circle cx="22" cy="12" r="1"></circle>
-          </svg>
-        </div>
-        <h3 class="tool-title">Líneas de Tiempo</h3>
-        <p class="tool-description">Crea y gestiona líneas de tiempo históricas</p>
-        <div class="tool-tags">
-          <span class="tag herramientas-tag">Herramientas</span>
-        </div>
-      </div>
-
-      <!-- Contador de Palabras -->
-      <div class="tool-card" data-tool="word-counter" data-category="herramientas">
-        <div class="tool-icon word-counter-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 7V4h16v3"></path>
-          <path d="M9 20h6"></path>
-          <path d="M12 4v16"></path>
-        </svg>
-        </div>
-        <h3 class="tool-title">Contador de Palabras</h3>
-        <p class="tool-description">Análisis de texto y documentos</p>
-        <div class="tool-tags">
-          <span class="tag herramientas-tag">Herramientas</span>
-        </div>
-      </div>
-
-      <!-- Rúbricas -->
-      <div class="tool-card" data-tool="rubricas" data-category="herramientas">
-        <div class="tool-icon rubricas-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-          <polyline points="14 2 14 8 20 8"></polyline>
-          <line x1="16" y1="13" x2="8" y2="13"></line>
-          <line x1="16" y1="17" x2="8" y2="17"></line>
-          <line x1="10" y1="9" x2="8" y2="9"></line>
-        </svg>
-        </div>
-        <h3 class="tool-title">Rúbricas</h3>
-        <p class="tool-description">Creación y gestión de rúbricas</p>
-        <div class="tool-tags">
-          <span class="tag herramientas-tag">Herramientas</span>
-        </div>
-      </div>
-    
-      <!-- Gestión de Estudiantes -->
-      <div class="tool-card" data-tool="config" data-category="configuracion">
-        <div class="tool-icon config-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-            <circle cx="9" cy="7" r="4"></circle>
-            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-          </svg>
-        </div>
-        <h3 class="tool-title">Gestión de Estudiantes</h3>
-        <p class="tool-description">Administrar cursos y listas de estudiantes</p>
-        <div class="tool-tags">
-          <span class="tag configuracion-tag">Configuración</span>
-        </div>
-      </div>
-
-      <!-- Tema Visual -->
-      <div class="tool-card theme-card" data-tool="themes" data-category="configuracion">
-        <div class="tool-icon themes-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-          </svg>
-      </div>
-        <h3 class="tool-title">Temas Visuales</h3>
-        <p class="tool-description">Personalización de apariencia</p>
-        <div class="tool-tags">
-          <span class="tag configuracion-tag">Configuración</span>
-    </div>
-        <!-- Mini selector de temas dentro de la tarjeta -->
-        <div class="mini-theme-selector">
-          <button class="mini-theme-btn" data-theme="theme-dark" title="Neón">🎇</button>
-          <button class="mini-theme-btn" data-theme="theme-light" title="Claro">🌞</button>
-          <button class="mini-theme-btn" data-theme="theme-rosa" title="Rosa">🌸</button>
-          <button class="mini-theme-btn" data-theme="theme-oscuro" title="Oscuro">🌑</button>
-        </div>
-      </div>
     </main>
+    
+    <!-- Nuevo Launcher de Aplicaciones -->
+    <div class="launcher-container">
+      <div class="launcher-apps-grid">
+        <!-- Calculadora Principal -->
+        <div class="launcher-app-item" data-app="calculadora" data-category="calculadora">
+          <a href="#" class="launcher-app-link" data-tool="calculadora">
+            <div class="launcher-app-icon">🧮</div>
+            <div class="launcher-app-title">Calculadora</div>
+            <div class="launcher-app-description">Promedio Ponderado</div>
+            <div class="launcher-app-category">Calculadora</div>
+            <div class="launcher-app-bg"></div>
+          </a>
+        </div>
+
+        <!-- Escala de Notas -->
+        <div class="launcher-app-item" data-app="conversor" data-category="calculadora">
+          <a href="#" class="launcher-app-link" data-tool="escala">
+            <div class="launcher-app-icon">🔄</div>
+            <div class="launcher-app-title">Escala de Notas</div>
+            <div class="launcher-app-description">Conversión de Escalas</div>
+            <div class="launcher-app-category">Calculadora</div>
+            <div class="launcher-app-bg"></div>
+          </a>
+        </div>
+
+        <!-- Múltiples Promedios -->
+        <div class="launcher-app-item" data-app="multi" data-category="calculadora">
+          <a href="#" class="launcher-app-link" data-tool="multi">
+            <div class="launcher-app-icon">📊</div>
+            <div class="launcher-app-title">Múltiples Promedios</div>
+            <div class="launcher-app-description">Gestión de Cursos</div>
+            <div class="launcher-app-category">Calculadora</div>
+            <div class="launcher-app-bg"></div>
+          </a>
+        </div>
+
+        <!-- Calendario -->
+        <div class="launcher-app-item" data-app="calendario" data-category="herramientas">
+          <a href="#" class="launcher-app-link" data-tool="calendario">
+            <div class="launcher-app-icon">📅</div>
+            <div class="launcher-app-title">Calendario</div>
+            <div class="launcher-app-description">Organización Temporal</div>
+            <div class="launcher-app-category">Herramientas</div>
+            <div class="launcher-app-bg"></div>
+          </a>
+        </div>
+
+
+
+        <!-- Contador de Palabras -->
+        <div class="launcher-app-item" data-app="contador" data-category="herramientas">
+          <a href="#" class="launcher-app-link" data-tool="word-counter">
+            <div class="launcher-app-icon">📝</div>
+            <div class="launcher-app-title">Contador de Palabras</div>
+            <div class="launcher-app-description">Análisis de Texto</div>
+            <div class="launcher-app-category">Herramientas</div>
+            <div class="launcher-app-bg"></div>
+          </a>
+        </div>
+
+        <!-- Rúbricas -->
+        <div class="launcher-app-item" data-app="rubricas" data-category="herramientas">
+          <a href="#" class="launcher-app-link" data-tool="rubricas">
+            <div class="launcher-app-icon">📋</div>
+            <div class="launcher-app-title">Rúbricas</div>
+            <div class="launcher-app-description">Evaluación Educativa</div>
+            <div class="launcher-app-category">Herramientas</div>
+            <div class="launcher-app-bg"></div>
+          </a>
+        </div>
+
+        <!-- Grupos Aleatorios -->
+        <div class="launcher-app-item" data-app="grupos" data-category="herramientas">
+          <a href="#" class="launcher-app-link" data-tool="grupos-aleatorios">
+            <div class="launcher-app-icon">👥</div>
+            <div class="launcher-app-title">Grupos Aleatorios</div>
+            <div class="launcher-app-description">Organización Automática</div>
+            <div class="launcher-app-category">Herramientas</div>
+            <div class="launcher-app-bg"></div>
+          </a>
+        </div>
+
+        <!-- Gestión de Estudiantes -->
+        <div class="launcher-app-item" data-app="estudiantes" data-category="configuracion">
+          <a href="#" class="launcher-app-link" data-tool="config">
+            <div class="launcher-app-icon">👨‍🎓</div>
+            <div class="launcher-app-title">Gestión de Estudiantes</div>
+            <div class="launcher-app-description">Administración</div>
+            <div class="launcher-app-category">Configuración</div>
+            <div class="launcher-app-bg"></div>
+          </a>
+        </div>
+
+        <!-- Libro de Clases -->
+        <div class="launcher-app-item" data-app="libro-clases" data-category="educacion">
+          <a href="libro-clases.html" class="launcher-app-link" data-tool="libro-clases">
+            <div class="launcher-app-icon">📚</div>
+            <div class="launcher-app-title">Libro de Clases</div>
+            <div class="launcher-app-description">Sistema Educativo</div>
+            <div class="launcher-app-category">Educación</div>
+            <div class="launcher-app-bg"></div>
+          </a>
+        </div>
+
+        <!-- Matemáticas Rápidas -->
+        <div class="launcher-app-item" data-app="matematicas-rapidas" data-category="juegos">
+          <a href="matematicas-rapidas.html" class="launcher-app-link" data-tool="matematicas-rapidas">
+            <div class="launcher-app-icon">🧠</div>
+            <div class="launcher-app-title">Matemáticas Rápidas</div>
+            <div class="launcher-app-description">Suma Mental Rápida</div>
+            <div class="launcher-app-category">Juegos</div>
+            <div class="launcher-app-bg"></div>
+          </a>
+        </div>
+
+        <!-- Temas Visuales - ELIMINADO -->
+      </div>
+    </div>
+
+    <!-- Sistema de fondos bg-wrap eliminado - ahora se usa animated-backgrounds.js -->
   </div>
 
-  <!-- Fondos animados (BGs) -->
-  <div id="bg-wrap" style="position:fixed;z-index:0;top:0;left:0;width:100vw;height:100vh;pointer-events:none;opacity:0;transition:opacity 0.6s;">
-  <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" style="width:100vw;height:100vh;display:block;">
-    <defs>
-      <radialGradient id="Gradient1" cx="50%" cy="50%" fx="0.441602%" fy="50%" r=".5">
-        <animate attributeName="fx" dur="34s" values="0%;3%;0%" repeatCount="indefinite"/>
-        <stop offset="0%" stop-color="rgba(255, 0, 255, 1)"/>
-        <stop offset="100%" stop-color="rgba(255, 0, 255, 0)"/>
-      </radialGradient>
-      <radialGradient id="Gradient2" cx="50%" cy="50%" fx="2.68147%" fy="50%" r=".5">
-        <animate attributeName="fx" dur="23.5s" values="0%;3%;0%" repeatCount="indefinite"/>
-        <stop offset="0%" stop-color="rgba(255, 255, 0, 1)"/>
-        <stop offset="100%" stop-color="rgba(255, 255, 0, 0)"/>
-      </radialGradient>
-      <radialGradient id="Gradient3" cx="50%" cy="50%" fx="0.836536%" fy="50%" r=".5">
-        <animate attributeName="fx" dur="21.5s" values="0%;3%;0%" repeatCount="indefinite"/>
-        <stop offset="0%" stop-color="rgba(0, 255, 255, 1)"/>
-        <stop offset="100%" stop-color="rgba(0, 255, 255, 0)"/>
-      </radialGradient>
-    </defs>
-    <rect x="13.744%" y="1.18473%" width="100%" height="100%" fill="url(#Gradient1)" transform="rotate(334.41 50 50)">
-      <animate attributeName="x" dur="20s" values="25%;0%;25%" repeatCount="indefinite"/>
-      <animate attributeName="y" dur="21s" values="0%;25%;0%" repeatCount="indefinite"/>
-      <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="7s" repeatCount="indefinite"/>
-    </rect>
-    <rect x="-2.17916%" y="35.4267%" width="100%" height="100%" fill="url(#Gradient2)" transform="rotate(255.072 50 50)">
-      <animate attributeName="x" dur="23s" values="-25%;0%;-25%" repeatCount="indefinite"/>
-      <animate attributeName="y" dur="24s" values="0%;50%;0%" repeatCount="indefinite"/>
-      <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="12s" repeatCount="indefinite"/>
-    </rect>
-    <rect x="9.00483%" y="14.5733%" width="100%" height="100%" fill="url(#Gradient3)" transform="rotate(139.903 50 50)">
-      <animate attributeName="x" dur="25s" values="0%;25%;0%" repeatCount="indefinite"/>
-      <animate attributeName="y" dur="12s" values="0%;25%;0%" repeatCount="indefinite"/>
-      <animateTransform attributeName="transform" type="rotate" from="360 50 50" to="0 50 50" dur="9s" repeatCount="indefinite"/>
-    </rect>
-  </svg>
-</div>
-<div id="bg-wrap-dark" style="position:fixed;z-index:0;top:0;left:0;width:100vw;height:100vh;pointer-events:none;opacity:0;transition:opacity 0.6s;">
-  <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" style="width:100vw;height:100vh;display:block;">
-    <defs>
-      <radialGradient id="DarkGradient1" cx="50%" cy="50%" fx="0.441602%" fy="50%" r=".5">
-        <animate attributeName="fx" dur="34s" values="0%;3%;0%" repeatCount="indefinite"/>
-        <stop offset="0%" stop-color="rgba(125, 0, 255, 1)"/>
-        <stop offset="100%" stop-color="rgba(125, 0, 255, 0)"/>
-      </radialGradient>
-      <radialGradient id="DarkGradient2" cx="50%" cy="50%" fx="2.68147%" fy="50%" r=".5">
-        <animate attributeName="fx" dur="23.5s" values="0%;3%;0%" repeatCount="indefinite"/>
-        <stop offset="0%" stop-color="rgba(0, 255, 255, 0.7)"/>
-        <stop offset="100%" stop-color="rgba(0, 255, 255, 0)"/>
-      </radialGradient>
-      <radialGradient id="DarkGradient3" cx="50%" cy="50%" fx="0.836536%" fy="50%" r=".5">
-        <animate attributeName="fx" dur="21.5s" values="0%;3%;0%" repeatCount="indefinite"/>
-        <stop offset="0%" stop-color="rgba(255, 80, 220, 0.8)"/>
-        <stop offset="100%" stop-color="rgba(255, 80, 220, 0)"/>
-      </radialGradient>
-    </defs>
-    <rect x="13.744%" y="1.18473%" width="100%" height="100%" fill="url(#DarkGradient1)" transform="rotate(334.41 50 50)">
-      <animate attributeName="x" dur="20s" values="25%;0%;25%" repeatCount="indefinite"/>
-      <animate attributeName="y" dur="21s" values="0%;25%;0%" repeatCount="indefinite"/>
-      <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="7s" repeatCount="indefinite"/>
-    </rect>
-    <rect x="-2.17916%" y="35.4267%" width="100%" height="100%" fill="url(#DarkGradient2)" transform="rotate(255.072 50 50)">
-      <animate attributeName="x" dur="23s" values="-25%;0%;-25%" repeatCount="indefinite"/>
-      <animate attributeName="y" dur="24s" values="0%;50%;0%" repeatCount="indefinite"/>
-      <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="12s" repeatCount="indefinite"/>
-    </rect>
-    <rect x="9.00483%" y="14.5733%" width="100%" height="100%" fill="url(#DarkGradient3)" transform="rotate(139.903 50 50)">
-      <animate attributeName="x" dur="25s" values="0%;25%;0%" repeatCount="indefinite"/>
-      <animate attributeName="y" dur="12s" values="0%;25%;0%" repeatCount="indefinite"/>
-      <animateTransform attributeName="transform" type="rotate" from="360 50 50" to="0 50 50" dur="9s" repeatCount="indefinite"/>
-    </rect>
-  </svg>
-</div>
-<div id="bg-wrap-rosa" style="position:fixed;z-index:0;top:0;left:0;width:100vw;height:100vh;pointer-events:none;opacity:0;transition:opacity 0.6s;">
-  <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" style="width:100vw;height:100vh;display:block;">
-    <defs>
-      <radialGradient id="RosaGradient1" cx="50%" cy="50%" fx="1%" fy="50%" r=".5">
-        <stop offset="0%" stop-color="#fe67d2"/>
-        <stop offset="100%" stop-color="#fe67d200"/>
-      </radialGradient>
-      <radialGradient id="RosaGradient2" cx="50%" cy="50%" fx="2%" fy="50%" r=".5">
-        <stop offset="0%" stop-color="#ffc6ec"/>
-        <stop offset="100%" stop-color="#ffc6ec00"/>
-      </radialGradient>
-      <radialGradient id="RosaGradient3" cx="50%" cy="50%" fx="1%" fy="50%" r=".5">
-        <stop offset="0%" stop-color="#fff7b2"/>
-        <stop offset="100%" stop-color="#fff7b200"/>
-      </radialGradient>
-    </defs>
-    <rect x="13.744%" y="1.18473%" width="100%" height="100%" fill="url(#RosaGradient1)" transform="rotate(334.41 50 50)">
-      <animate attributeName="x" dur="20s" values="25%;0%;25%" repeatCount="indefinite"/>
-      <animate attributeName="y" dur="21s" values="0%;25%;0%" repeatCount="indefinite"/>
-      <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="7s" repeatCount="indefinite"/>
-    </rect>
-    <rect x="-2.17916%" y="35.4267%" width="100%" height="100%" fill="url(#RosaGradient2)" transform="rotate(255.072 50 50)">
-      <animate attributeName="x" dur="23s" values="-25%;0%;-25%" repeatCount="indefinite"/>
-      <animate attributeName="y" dur="24s" values="0%;50%;0%" repeatCount="indefinite"/>
-      <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="12s" repeatCount="indefinite"/>
-    </rect>
-    <rect x="9.00483%" y="14.5733%" width="100%" height="100%" fill="url(#RosaGradient3)" transform="rotate(139.903 50 50)">
-      <animate attributeName="x" dur="25s" values="0%;25%;0%" repeatCount="indefinite"/>
-      <animate attributeName="y" dur="12s" values="0%;25%;0%" repeatCount="indefinite"/>
-      <animateTransform attributeName="transform" type="rotate" from="360 50 50" to="0 50 50" dur="9s" repeatCount="indefinite"/>
-    </rect>
-  </svg>
-</div>
-<div id="bg-wrap-oscuro" style="position:fixed;z-index:0;top:0;left:0;width:100vw;height:100vh;pointer-events:none;opacity:0;transition:opacity 0.6s;">
-  <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" style="width:100vw;height:100vh;display:block;">
-    <defs>
-      <radialGradient id="OscuroGradient1" cx="50%" cy="50%" r=".5">
-        <stop offset="0%" stop-color="#222d46"/>
-        <stop offset="100%" stop-color="#222d4600"/>
-      </radialGradient>
-      <radialGradient id="OscuroGradient2" cx="50%" cy="50%" r=".5">
-        <stop offset="0%" stop-color="#232736"/>
-        <stop offset="100%" stop-color="#23273600"/>
-      </radialGradient>
-      <radialGradient id="OscuroGradient3" cx="50%" cy="50%" r=".5">
-        <stop offset="0%" stop-color="#2e2f38"/>
-        <stop offset="100%" stop-color="#2e2f3800"/>
-      </radialGradient>
-    </defs>
-    <rect x="15%" y="3%" width="100%" height="100%" fill="url(#OscuroGradient1)" />
-    <rect x="2%" y="30%" width="100%" height="100%" fill="url(#OscuroGradient2)" />
-    <rect x="8%" y="15%" width="100%" height="100%" fill="url(#OscuroGradient3)" />
-  </svg>
-</div>
+  <!-- Panel de Calculadora de Promedio Ponderado -->
+  <div class="container" id="calc-panel" style="display: none;">
+    <h1>Calculadora de Promedio Ponderado</h1>
+    
+    <!-- Panel superior con plantillas -->
+    <div class="top-panel">
+      <select id="tplSelect"><option value="">Seleccionar ramo</option></select>
+      <button id="show-ramo-panel" class="add-ramo-btn">+ Agregar Ramo</button>
+    </div>
 
-
-  <!-- ...PEGA AQUÍ LOS CUATRO DIVS: #bg-wrap, #bg-wrap-dark, #bg-wrap-rosa, #bg-wrap-oscuro... -->
-  <!-- Puedes copiar tal cual como en tu archivo actual, son SVGs grandes -->
-
-  <!-- Selector de temas -->
-  <div class="container" id="calc-panel">
-      <h1>Calculadora de Promedio Ponderado</h1>
-      
-      <!-- Panel superior con plantillas -->
-      <div class="top-panel">
-        <select id="tplSelect"><option value="">Seleccionar ramo</option></select>
-        <button id="show-ramo-panel" class="add-ramo-btn">+ Agregar Ramo</button>
+    <!-- Panel de guardado de ramos -->
+    <div class="template-controls" id="ramo-panel" style="display:none;">
+      <input type="text" id="tplName" placeholder="Nombre de ramo">
+      <div class="template-buttons">
+        <button id="delTpl">Eliminar</button>
+        <button id="saveTpl">Guardar</button>
       </div>
+      <button id="hide-ramo-panel">Cerrar</button>
+    </div>
 
-      <!-- Panel de guardado de ramos -->
-      <div class="template-controls" id="ramo-panel" style="display:none;">
-        <input type="text" id="tplName" placeholder="Nombre de ramo">
-        <div class="template-buttons">
-          <button id="delTpl">Eliminar</button>
-          <button id="saveTpl">Guardar</button>
-        </div>
-        <button id="hide-ramo-panel">Cerrar</button>
-      </div>
-
-      <div class="main">
-        <!-- Panel de notas -->
-        <div class="grades-panel">
-          <!-- Campo para respuestas correctas PAES -->
-          <div id="paes-input" style="display: none;" class="paes-input-container">
-            <label for="respuestas-correctas">Respuestas Correctas</label>
-            <input type="number" id="respuestas-correctas" min="0" max="60" placeholder="0-60">
-            <button onclick="calcularPuntajePAES()">Calcular Puntaje PAES</button>
-          </div>
-
-          <!-- Panel normal de notas -->
-          <div id="notas-normales">
-            <div class="controls">
-              <button class="btn-add" onclick="addRow()">+</button>
-              <button class="btn-remove" onclick="removeRow()">-</button>
-              <button class="btn-reset" onclick="resetAll()">↻</button>
-            </div>
-            
-            <div class="rows-wrapper">
-              <div class="labels">
-                <div>Nota</div>
-                <div>Ponderación</div>
-              </div>
-              <div id="rows-container"></div>
-            </div>
-          </div>
+    <div class="main">
+      <!-- Panel de notas -->
+      <div class="grades-panel">
+        <!-- Campo para respuestas correctas PAES -->
+        <div id="paes-input" style="display: none;" class="paes-input-container">
+          <label for="respuestas-correctas">Respuestas Correctas</label>
+          <input type="number" id="respuestas-correctas" min="0" max="60" placeholder="0-60">
+          <button onclick="calcularPuntajePAES()">Calcular Puntaje PAES</button>
         </div>
 
-        <!-- Panel de resultados -->
-        <div class="results-panel">
-          <div id="result-panel" class="result-panel red">
-            <div id="result-title">Promedio ponderado</div>
-            <div id="result-value">0.00</div>
-            <div id="result-status">Reprobado</div>
+        <!-- Panel normal de notas -->
+        <div id="notas-normales">
+          <div class="controls">
+            <button class="btn-add" onclick="addRow()">+</button>
+            <button class="btn-remove" onclick="removeRow()">-</button>
+            <button class="btn-reset" onclick="resetAll()">↻</button>
           </div>
           
-          <div id="needed-panel" class="result-panel" style="display:none;">
-            <div id="needed-title">Nota mínima necesaria</div>
-            <div id="needed-value">-</div>
+          <div class="rows-wrapper">
+            <div class="labels">
+              <div>Nota</div>
+              <div>Ponderación</div>
+            </div>
+            <div id="rows-container"></div>
           </div>
-
-          <!-- Botón calcular -->
-          <button id="calcBtn" onclick="calculateAverage()">Calcular Promedio</button>
         </div>
+      </div>
+
+      <!-- Panel de resultados -->
+      <div class="results-panel">
+        <div id="result-panel" class="result-panel red">
+          <div id="result-title">Promedio ponderado</div>
+          <div id="result-value">0.00</div>
+          <div id="result-status">Reprobado</div>
+        </div>
+        
+        <div id="needed-panel" class="result-panel" style="display:none;">
+          <div id="needed-title">Nota mínima necesaria</div>
+          <div id="needed-value">-</div>
+        </div>
+
+        <!-- Botón calcular -->
+        <button id="calcBtn" onclick="calculateAverage()">Calcular Promedio</button>
       </div>
     </div>
   </div>
 
+  <!-- Scripts originales -->
   <script src="script.js"></script>
+  <script src="animated-backgrounds.js"></script>
   <script src="main.js"></script>
-  <script src="word-counter.js"></script>
+  <script src="escala-notas-mobile.js"></script>
   <script src="multi-panel-functions.js"></script>
   <script src="rubricas.js"></script>
   <script src="rubrica-config.js"></script>
   <script src="calendario.js"></script>
+  
+
+  
+  <!-- Módulos de Supabase -->
+  <script src="supabase-config.js"></script>
+  <script src="supabase-adapter.js"></script>
+  <script src="auth-manager.js"></script>
+  <script src="supabase-init.js"></script>
   <div id="escala-panel" style="display:none;max-width:900px;margin:40px auto 0 auto;">
     <div class="container" style="background: var(--card-bg);">
       <h2>Generador de Escala de Notas</h2>
@@ -666,66 +523,7 @@
     </div>
   </div>
 
-  <!-- Panel del Contador de Palabras -->
-  <div id="word-counter-panel" style="display:none;">
-    <div class="container">
-      <h1>Contador de Palabras</h1>
 
-      <!-- Panel de estudiantes -->
-      <div class="students-panel">
-        <div class="students-controls">
-          <div class="course-student-selection">
-            <select id="course-select" disabled>
-              <option value="">Seleccionar curso</option>
-            </select>
-            <select id="student-select" disabled>
-              <option value="">Primero selecciona un curso</option>
-            </select>
-          </div>
-          <div class="timer-controls">
-            <button id="start-timer" class="btn-success" disabled>▶ Iniciar</button>
-            <button id="stop-timer" class="btn-secondary" disabled>⏸ Pausar</button>
-            <button id="reset-timer" class="btn-secondary" disabled>🔄 Reiniciar</button>
-            <span id="timer-display" style="font-family: monospace; font-size: 1.2em; margin-left: 10px;">00:00.0</span>
-          </div>
-          <div class="action-buttons">
-            <button id="save-reading-data" class="btn-success" disabled>💾 Guardar Lectura</button>
-            <button id="export-readings" class="btn-export" disabled>📊 Exportar Todo</button>
-          </div>
-        </div>
-        <div id="current-student-info" class="student-info" style="display: none;">
-          <p>Curso: <strong id="current-course-name">-</strong></p>
-          <p>Estudiante: <strong id="current-student-name">-</strong></p>
-          <p>Lecturas registradas: <span id="student-readings-count">0</span></p>
-        </div>
-      </div>
-      
-      <div class="file-upload-area" id="upload-area">
-        <input type="file" id="file-input" accept=".docx,.txt">
-        <p>Haz clic aquí o arrastra un archivo .docx o .txt</p>
-      </div>
-
-      <div class="word-counter-content">
-        <div class="word-counter-text" id="text-content">
-          <!-- El texto se insertará aquí -->
-        </div>
-        
-        <div class="word-counter-stats">
-          <p>Palabras seleccionadas: <span id="word-count">0</span></p>
-          <p>Palabras mal pronunciadas: <span id="mispronounced-count" class="error-count">0</span></p>
-          <p>Porcentaje de errores: <span id="error-percentage">0%</span></p>
-          <div class="instrucciones">
-            <p><strong>💡 Instrucciones:</strong></p>
-            <p>• <strong>Click izquierdo</strong> en una palabra: Selecciona desde la primera palabra hasta esa palabra</p>
-            <p>• <strong>Click con rueda del mouse</strong>: Marca la palabra como mal pronunciada (rojo)</p>
-            <p>• <strong>Barra espaciadora</strong>: Iniciar/pausar cronómetro</p>
-          </div>
-        </div>
-      </div>
-
-      <button id="close-word-counter" class="close">&times;</button>
-    </div>
-  </div>
 
   <!-- Panel de Rúbricas -->
   <div id="rubricas-panel" class="panel" style="display: none;">
@@ -870,196 +668,7 @@
     </div>
   </div>
 
-  <!-- Panel de Temas Visuales -->
-  <div id="themes-panel" class="panel" style="display:none;">
-    <div class="container">
-      <h2>Configuración de Temas Visuales</h2>
-      
-      <!-- Contenedor principal -->
-      <div class="themes-container">
-        
-        <!-- Sección de Temas Predefinidos -->
-        <div class="themes-section">
-          <h3>Temas Predefinidos</h3>
-          <div class="predefined-themes">
-            <div class="theme-option" data-theme="theme-dark">
-              <div class="theme-preview dark-preview">
-                <div class="preview-header"></div>
-                <div class="preview-content">
-                  <div class="preview-card"></div>
-                  <div class="preview-card"></div>
-                </div>
-              </div>
-              <h4>Neón</h4>
-              <p>Tema oscuro con efectos neón vibrantes</p>
-              <button class="apply-theme-btn">Aplicar</button>
-            </div>
-            
-            <div class="theme-option" data-theme="theme-light">
-              <div class="theme-preview light-preview">
-                <div class="preview-header"></div>
-                <div class="preview-content">
-                  <div class="preview-card"></div>
-                  <div class="preview-card"></div>
-                </div>
-              </div>
-              <h4>Claro</h4>
-              <p>Tema claro con colores suaves y cálidos</p>
-              <button class="apply-theme-btn">Aplicar</button>
-            </div>
-            
-            <div class="theme-option" data-theme="theme-rosa">
-              <div class="theme-preview rosa-preview">
-                <div class="preview-header"></div>
-                <div class="preview-content">
-                  <div class="preview-card"></div>
-                  <div class="preview-card"></div>
-                </div>
-              </div>
-              <h4>Rosa</h4>
-              <p>Tema rosa elegante y femenino</p>
-              <button class="apply-theme-btn">Aplicar</button>
-            </div>
-            
-            <div class="theme-option" data-theme="theme-oscuro">
-              <div class="theme-preview oscuro-preview">
-                <div class="preview-header"></div>
-                <div class="preview-content">
-                  <div class="preview-card"></div>
-                  <div class="preview-card"></div>
-                </div>
-              </div>
-              <h4>Oscuro</h4>
-              <p>Tema oscuro profesional y elegante</p>
-              <button class="apply-theme-btn">Aplicar</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Sección del Editor de Fondos -->
-        <div class="background-editor-section">
-          <h3>Editor de Fondos Personalizados</h3>
-          
-          <!-- Controles del Editor -->
-          <div class="editor-controls">
-            <div class="color-controls">
-              <div class="control-group">
-                <label for="bg-color-1">Color Principal:</label>
-                <input type="color" id="bg-color-1" value="#1a1e2e">
-                <span class="color-value" id="color-1-value">#1a1e2e</span>
-              </div>
-              
-              <div class="control-group">
-                <label for="bg-color-2">Color Secundario:</label>
-                <input type="color" id="bg-color-2" value="#232636">
-                <span class="color-value" id="color-2-value">#232636</span>
-              </div>
-              
-              <div class="control-group">
-                <label for="bg-color-3">Color de Acento:</label>
-                <input type="color" id="bg-color-3" value="#667eea">
-                <span class="color-value" id="color-3-value">#667eea</span>
-              </div>
-              
-              <div class="control-group">
-                <label for="text-color">Color de Texto:</label>
-                <input type="color" id="text-color" value="#ffffff">
-                <span class="color-value" id="text-color-value">#ffffff</span>
-              </div>
-            </div>
-            
-            <!-- Controles de Tipo de Fondo -->
-            <div class="background-type-controls">
-              <h4>Tipo de Fondo</h4>
-              <div class="radio-group">
-                <label class="radio-option">
-                  <input type="radio" name="bg-type" value="solid" checked>
-                  <span>Color Sólido</span>
-                </label>
-                <label class="radio-option">
-                  <input type="radio" name="bg-type" value="gradient">
-                  <span>Degradado</span>
-                </label>
-                <label class="radio-option">
-                  <input type="radio" name="bg-type" value="animated">
-                  <span>Animado</span>
-                </label>
-              </div>
-            </div>
-            
-            <!-- Controles de Degradado -->
-            <div class="gradient-controls" style="display: none;">
-              <div class="control-group">
-                <label for="gradient-angle">Ángulo del Degradado:</label>
-                <input type="range" id="gradient-angle" min="0" max="360" value="135">
-                <span class="range-value" id="gradient-angle-value">135°</span>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Vista Previa del Fondo -->
-          <div class="background-preview">
-            <h4>Vista Previa</h4>
-            <div class="preview-container" id="background-preview">
-              <div class="preview-dashboard">
-                <div class="preview-header">
-                  <h5>PROFENINJA</h5>
-                  <p>Vista previa del fondo personalizado</p>
-                </div>
-                <div class="preview-cards">
-                  <div class="preview-tool-card">
-                    <div class="preview-icon"></div>
-                    <h6>Calculadora</h6>
-                    <p>Herramienta de ejemplo</p>
-                  </div>
-                  <div class="preview-tool-card">
-                    <div class="preview-icon"></div>
-                    <h6>Calendario</h6>
-                    <p>Herramienta de ejemplo</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Acciones del Editor -->
-          <div class="editor-actions">
-            <button id="apply-custom-bg" class="btn-primary">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
-              Aplicar Fondo
-            </button>
-            
-            <button id="save-custom-theme" class="btn-secondary">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                <polyline points="17 21 17 13 7 13 7 21"></polyline>
-                <polyline points="7 3 7 8 15 8"></polyline>
-              </svg>
-              Guardar Tema
-            </button>
-            
-            <button id="reset-to-default" class="btn-danger">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="3 6 5 6 21 6"></polyline>
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-              </svg>
-              Restaurar Predeterminado
-            </button>
-          </div>
-          
-          <!-- Paletas Guardadas -->
-          <div class="saved-palettes">
-            <h4>Paletas Guardadas</h4>
-            <div id="saved-palettes-list" class="palettes-list">
-              <!-- Las paletas guardadas aparecerán aquí -->
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- Panel de Temas Visuales - ELIMINADO -->
 
   <!-- Panel de Inicio -->
   <div id="config" class="panel" style="display:none;">
@@ -1164,220 +773,187 @@
         </div>
     </div>
   </div>
-  <script src="themes-editor.js"></script>
+  <!-- <script src="themes-editor.js"></script> - ELIMINADO -->
+
+  
+  <!-- Dashboard JavaScript - DEBE IR AL FINAL -->
   <script src="dashboard.js"></script>
-  <script src="timeline.js"></script>
 
-  <!-- Panel de Líneas de Tiempo -->
-  <div id="timeline-panel" class="panel" style="display: none;">
-    <div class="container">
-      <div class="timeline-header">
-        <h1 class="timeline-title">Línea de Tiempo Histórica</h1>
-        <p class="timeline-subtitle">Explora los eventos más importantes de la historia humana, desde el 6000 a.C. hasta la actualidad</p>
-        
-        <div class="timeline-controls">
-          <div class="timeline-stats">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-              <line x1="16" y1="2" x2="16" y2="6"></line>
-              <line x1="8" y1="2" x2="8" y2="6"></line>
-              <line x1="3" y1="10" x2="21" y2="10"></line>
-            </svg>
-            <span id="events-count">0 eventos históricos</span>
-            <span class="separator">•</span>
-            <span id="timeline-range">Desde hoy hasta hoy</span>
-          </div>
-          
-          <div class="timeline-actions">
-            <button id="add-event-btn" class="btn-primary">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19"></line>
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-              </svg>
-              Agregar Evento
-            </button>
-            
-            <button id="save-timeline-btn" class="btn-secondary">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                <polyline points="17 21 17 13 7 13 7 21"></polyline>
-                <polyline points="7 3 7 8 15 8"></polyline>
-              </svg>
-              Guardar
-            </button>
-            
-            <button id="load-timeline-btn" class="btn-secondary">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="16" y1="13" x2="8" y2="13"></line>
-                <line x1="16" y1="17" x2="8" y2="17"></line>
-                <line x1="10" y1="9" x2="8" y2="9"></line>
-              </svg>
-              Cargar
-            </button>
-          </div>
-        </div>
-      </div>
 
-      <div class="timeline-content">
-        <div class="timeline-sidebar">
-          <div class="timeline-filters">
-            <h3>Filtros</h3>
-            
-            <div class="filter-group">
-              <label for="period-filter">Período:</label>
-              <select id="period-filter">
-                <option value="all">Todos los períodos</option>
-                <option value="ancient">Antigüedad (antes de 500 d.C.)</option>
-                <option value="medieval">Medieval (500-1500)</option>
-                <option value="modern">Moderno (1500-1800)</option>
-                <option value="contemporary">Contemporáneo (1800-presente)</option>
-              </select>
-            </div>
-            
-            <div class="filter-group">
-              <label for="category-filter">Categoría:</label>
-              <select id="category-filter">
-                <option value="all">Todas las categorías</option>
-                <option value="historical">Histórico</option>
-                <option value="cultural">Cultural</option>
-                <option value="scientific">Científico</option>
-                <option value="political">Político</option>
-                <option value="religious">Religioso</option>
-                <option value="artistic">Artístico</option>
-              </select>
-            </div>
-            
-            <div class="filter-group">
-              <label for="search-events">Buscar:</label>
-              <input type="text" id="search-events" placeholder="Buscar eventos...">
-            </div>
-          </div>
-          
-          <div class="saved-timelines">
-            <h3>Líneas de Tiempo Guardadas</h3>
-            <div id="saved-timelines-list">
-              <!-- Las líneas de tiempo guardadas aparecerán aquí -->
-            </div>
-          </div>
-        </div>
 
-        <div class="timeline-main">
-          <div class="timeline-container">
-            <div class="timeline-line"></div>
-            <div id="timeline-events" class="timeline-events">
-              <!-- Los eventos se generarán dinámicamente aquí -->
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Modal para agregar/editar eventos -->
-  <div id="event-modal" class="modal">
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <h3 id="modal-title">Agregar Evento</h3>
-      <form id="event-form">
-        <div class="form-row">
-          <div class="form-group">
-            <label for="event-title">Título del Evento</label>
-            <input type="text" id="event-title" required>
-          </div>
-          
-          <div class="form-group">
-            <label for="event-category">Categoría</label>
-            <select id="event-category" required>
-              <option value="">Seleccionar categoría</option>
-              <option value="historical">Histórico</option>
-              <option value="cultural">Cultural</option>
-              <option value="scientific">Científico</option>
-              <option value="political">Político</option>
-              <option value="religious">Religioso</option>
-              <option value="artistic">Artístico</option>
-            </select>
-          </div>
-        </div>
-        
-        <div class="form-row">
-          <div class="form-group">
-            <label for="event-date">Fecha</label>
-            <input type="date" id="event-date" required>
-          </div>
-          
-          <div class="form-group">
-            <label for="event-year">Año (AC/DC)</label>
-            <div class="year-input-group">
-              <input type="number" id="event-year" min="-6000" max="2024" required>
-              <select id="era-select">
-                <option value="dc">d.C.</option>
-                <option value="ac">a.C.</option>
-              </select>
-            </div>
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label for="event-description">Descripción</label>
-          <textarea id="event-description" rows="4" required></textarea>
-        </div>
-        
-        <div class="form-group">
-          <label for="event-location">Ubicación (opcional)</label>
-          <input type="text" id="event-location" placeholder="País, ciudad, región...">
-        </div>
-        
-        <div class="form-actions">
-          <button type="button" id="cancel-event" class="btn-secondary">Cancelar</button>
-          <button type="submit" id="save-event" class="btn-primary">Guardar Evento</button>
-        </div>
-      </form>
-    </div>
-  </div>
 
-  <!-- Modal para visualizar presentaciones PowerPoint -->
-  <div id="presentation-modal" class="presentation-modal">
-    <div class="presentation-content">
-      <div class="presentation-header">
-        <h3 class="presentation-title">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-            <line x1="8" y1="21" x2="16" y2="21"></line>
-            <line x1="12" y1="17" x2="12" y2="21"></line>
-          </svg>
-          <span id="presentation-file-name">Presentación PowerPoint</span>
-        </h3>
-        
-        <div class="presentation-controls">
-          <button class="presentation-control-btn close-presentation" onclick="timelineApp.closePresentationModal()" title="Cerrar">✕</button>
-        </div>
-      </div>
+
+  
+  <!-- Script de inicialización de temas para el dashboard principal -->
+  <script>
+    // Aplicar tema inmediatamente al cargar
+    (function() {
+      const savedTheme = localStorage.getItem('theme') || 'theme-dark';
+      console.log('🎨 Aplicando tema al dashboard principal:', savedTheme);
+      document.body.className = savedTheme;
       
-      <div class="presentation-viewer" id="presentation-viewer">
-        <div class="presentation-preview">
-          <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-            <line x1="8" y1="21" x2="16" y2="21"></line>
-            <line x1="12" y1="17" x2="12" y2="21"></line>
-            <polygon points="10,8 10,16 16,12"></polygon>
-          </svg>
-          <h3>Vista previa de presentación PowerPoint</h3>
-          <p>Esta presentación contiene diapositivas relacionadas con el evento histórico.</p>
-          <p><strong>Para una experiencia completa:</strong> Descarga el archivo y ábrelo en Microsoft PowerPoint, LibreOffice Impress, o Google Slides.</p>
-          <a id="download-presentation-link" class="download-link" href="#" download>
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="7 10 12 15 17 10"></polyline>
-              <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
-            Descargar Presentación
-          </a>
+      // Asegurar que el scroll funcione correctamente
+      document.documentElement.style.overflowY = 'auto';
+      document.body.style.overflowY = 'auto';
+      document.body.style.overflowX = 'hidden';
+      console.log('✅ Scroll vertical habilitado');
+    })();
+
+    // Inicializar fondos animados cuando esté listo
+    document.addEventListener('DOMContentLoaded', () => {
+      // Inicializar fondos animados
+      if (window.animatedBackgrounds) {
+        const savedTheme = localStorage.getItem('theme') || 'theme-dark';
+        setTimeout(() => {
+          window.animatedBackgrounds.switchTheme(savedTheme);
+          console.log('✅ Fondos animados inicializados en dashboard principal');
+        }, 100);
+      }
+      
+      // Inicializar sistema de créditos
+      initializeCreditsSystem();
+    });
+
+    // Listener para cambios de tema desde otras ventanas
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'theme') {
+        console.log('🔄 Tema cambiado en dashboard principal:', e.newValue);
+        document.body.className = e.newValue;
+        if (window.animatedBackgrounds && window.animatedBackgrounds.isInitialized) {
+          window.animatedBackgrounds.switchTheme(e.newValue);
+        }
+      }
+    });
+
+    // Listener para cambios de tema en la misma ventana (desde el editor de temas)
+    let lastTheme = localStorage.getItem('theme');
+    setInterval(() => {
+      const currentTheme = localStorage.getItem('theme');
+      if (currentTheme !== lastTheme) {
+        console.log('🔄 Tema cambiado en la misma ventana del dashboard:', currentTheme);
+        lastTheme = currentTheme;
+        document.body.className = currentTheme;
+        if (window.animatedBackgrounds && window.animatedBackgrounds.isInitialized) {
+          window.animatedBackgrounds.switchTheme(currentTheme);
+        }
+      }
+    }, 500);
+
+    // ========================================
+    // FUNCIONALIDAD DEL BOTÓN DE CRÉDITOS
+    // ========================================
+    
+    function initializeCreditsSystem() {
+      // Elementos del modal de créditos
+      const creditsBtn = document.getElementById('credits-btn');
+      const creditsModal = document.getElementById('credits-modal');
+      const creditsClose = document.querySelector('.credits-close');
+
+      // Verificar que todos los elementos existan
+      if (!creditsBtn) {
+        console.warn('⚠️ Botón de créditos no encontrado');
+        return;
+      }
+      if (!creditsModal) {
+        console.warn('⚠️ Modal de créditos no encontrado');
+        return;
+      }
+      if (!creditsClose) {
+        console.warn('⚠️ Botón de cerrar créditos no encontrado');
+        return;
+      }
+
+      // Cerrar modal de créditos
+      function closeCreditsModal() {
+        creditsModal.classList.remove('show');
+        // Restaurar scroll normal - no bloquear el scroll de la página
+        document.body.style.overflow = 'auto';
+        document.body.style.overflowY = 'auto';
+      }
+
+      // Abrir modal de créditos
+      creditsBtn.addEventListener('click', () => {
+        creditsModal.classList.add('show');
+        // Solo prevenir scroll horizontal, mantener scroll vertical
+        document.body.style.overflowX = 'hidden';
+        document.body.style.overflowY = 'auto';
+      });
+
+      // Event listeners para cerrar el modal
+      creditsClose.addEventListener('click', closeCreditsModal);
+      
+      // Cerrar al hacer clic fuera del contenido
+      creditsModal.addEventListener('click', (e) => {
+        if (e.target === creditsModal) {
+          closeCreditsModal();
+        }
+      });
+
+      // Cerrar con tecla Escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && creditsModal.classList.contains('show')) {
+          closeCreditsModal();
+        }
+      });
+
+      console.log('✅ Sistema de créditos inicializado correctamente');
+    }
+  </script>
+
+
+
+  <!-- Modal de Créditos -->
+  <div id="credits-modal" class="credits-modal">
+    <div class="credits-content">
+      <div class="credits-header">
+        <h3>Créditos y Licencias</h3>
+        <button class="credits-close">&times;</button>
+      </div>
+      <div class="credits-body">
+        <div class="credits-section">
+          <h4>🎨 Fondos Animados</h4>
+          <ul>
+            <li><strong>Tema Neon:</strong> Vanta.js HALO Effect - <a href="https://www.vantajs.com/" target="_blank">vantajs.com</a></li>
+            <li><strong>Tema Light:</strong> Ocean Waves SVG - <a href="https://s3-us-west-2.amazonaws.com/s.cdpn.io/85486/wave.svg" target="_blank">CodePen Assets</a></li>
+            <li><strong>Tema PS2:</strong> Efectos CSS 3D personalizados</li>
+            <li><strong>Tema XMB:</strong> Gradientes CSS inspirados en PlayStation 3</li>
+          </ul>
+        </div>
+        
+        <div class="credits-section">
+          <h4>📚 Librerías y Dependencias</h4>
+          <ul>
+            <li><strong>Three.js:</strong> <a href="https://threejs.org/" target="_blank">threejs.org</a> - MIT License</li>
+            <li><strong>Vanta.js:</strong> <a href="https://www.vantajs.com/" target="_blank">vantajs.com</a> - MIT License</li>
+            <li><strong>Supabase:</strong> <a href="https://supabase.com/" target="_blank">supabase.com</a> - Apache 2.0 License</li>
+          </ul>
+        </div>
+        
+        <div class="credits-section">
+          <h4>🎯 Recursos Externos</h4>
+          <ul>
+            <li><strong>Iconos:</strong> Emojis Unicode estándar</li>
+            <li><strong>Fuentes:</strong> Fuentes del sistema</li>
+            <li><strong>SVG Waves:</strong> Recursos de CodePen bajo licencia libre</li>
+          </ul>
+        </div>
+        
+        <div class="credits-section">
+          <h4>⚖️ Licencias</h4>
+          <p><strong>NinjPro:</strong> Proyecto educativo desarrollado con fines académicos.</p>
+          <p>Todas las librerías externas mantienen sus licencias originales.</p>
+          <p>Los efectos visuales personalizados están disponibles bajo licencia MIT.</p>
+        </div>
+        
+        <div class="credits-footer">
+          <p>💻 Desarrollado con ❤️ para la educación</p>
+          <p><small>Versión 2024 - Sistema de Fondos Animados</small></p>
         </div>
       </div>
     </div>
   </div>
+
 </body>
 </html>
 

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Grupos Aleatorios - NinjPro</title>
+    <link rel="stylesheet" href="grupos-aleatorios-styles.css">
+    <link rel="stylesheet" href="animated-backgrounds.css">
+    <style>
+        /* Sobrescribir estilos específicos del styles.css principal */
+        body {
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            min-height: 100vh !important;
+            overflow: auto !important;
+            animation: none !important;
+            background-size: unset !important;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .container {
+            animation: none !important;
+            backdrop-filter: blur(20px) !important;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+            background: var(--card-bg) !important;
+            border-radius: 24px !important;
+            max-width: 480px !important;
+            width: 100% !important;
+            padding: 32px !important;
+            border: 1px solid var(--border-color) !important;
+        }
+    </style>
+</head>
+<body class="theme-dark">
+    <!-- Script inmediato para aplicar tema -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'theme-dark';
+            console.log('🎨 Aplicando tema inmediatamente al cargar:', savedTheme);
+            document.body.className = savedTheme;
+        })();
+    </script>
+
+    <!-- Los fondos animados se crean dinámicamente por animated-backgrounds.js -->
+
+    <!-- Botón de regreso posicionado de manera fija -->
+    <button onclick="window.location.href='index.html'" class="back-to-dashboard">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m12 19-7-7 7-7"></path>
+            <path d="M19 12H5"></path>
+        </svg>
+    </button>
+
+    <div class="container">
+        <!-- Header con título -->
+        <div class="app-header">
+            <h1>🎲 Grupos Aleatorios</h1>
+            <p>Organiza estudiantes en grupos</p>
+        </div>
+
+        <!-- Display principal -->
+        <div class="main-display">
+            <div class="course-display" id="course-display">
+                <span class="course-name" id="course-name">Selecciona un curso</span>
+                <span class="student-count" id="student-count">0 estudiantes</span>
+            </div>
+        </div>
+
+        <!-- Controles principales -->
+        <div class="controls-grid">
+            <!-- Selector de curso -->
+            <div class="control-section">
+                <label>Curso</label>
+                <select id="course-select-groups" class="modern-select">
+                    <option value="">Seleccionar curso</option>
+                </select>
+            </div>
+
+            <!-- Selector de número de grupos -->
+            <div class="control-section">
+                <label>Grupos</label>
+                <select id="groups-number" class="modern-select">
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4" selected>4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="action-buttons">
+            <button id="generate-groups-btn" class="btn-action btn-primary">
+                <span class="btn-icon">✨</span>
+                <span class="btn-text">Generar</span>
+            </button>
+            
+            <button id="randomize-groups-btn" class="btn-action btn-secondary" style="display: none;">
+                <span class="btn-icon">🔄</span>
+                <span class="btn-text">Reorganizar</span>
+            </button>
+            
+            <button id="export-groups-btn" class="btn-action btn-success" style="display: none;">
+                <span class="btn-icon">📄</span>
+                <span class="btn-text">Exportar</span>
+            </button>
+        </div>
+
+        <!-- Indicador de estado -->
+        <div class="status-indicator" id="status-indicator">
+            <span id="status-text">Listo para generar grupos</span>
+        </div>
+    </div>
+
+    <!-- Modal para mostrar grupos generados -->
+    <div id="groups-modal" class="groups-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Grupos Generados</h3>
+                <button class="close-modal" id="close-modal">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="groups-container" class="groups-container">
+                    <!-- Los grupos se generarán aquí dinámicamente -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="modal-randomize-btn" class="btn-modal btn-secondary">
+                    🔄 Reorganizar
+                </button>
+                <button id="modal-export-btn" class="btn-modal btn-success">
+                    📄 Exportar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="theme-manager.js"></script>
+    <script src="grupos-aleatorios.js"></script>
+    <script src="animated-backgrounds.js"></script>
+    
+    <!-- Script simplificado para sincronización de temas -->
+    <script>
+        // Aplicar tema inicial
+        const savedTheme = localStorage.getItem('theme') || 'theme-dark';
+        document.body.classList.add(savedTheme);
+        
+        // Listener para cambios de tema desde otras ventanas
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'theme' && window.animatedBackgrounds && window.animatedBackgrounds.isInitialized) {
+                window.animatedBackgrounds.switchTheme(e.newValue);
+            }
+        });
+        
+        // Polling para detectar cambios en la misma ventana
+        let lastTheme = localStorage.getItem('theme');
+        setInterval(() => {
+            const currentTheme = localStorage.getItem('theme');
+            if (currentTheme !== lastTheme && window.animatedBackgrounds && window.animatedBackgrounds.isInitialized) {
+                lastTheme = currentTheme;
+                window.animatedBackgrounds.switchTheme(currentTheme);
+            }
+        }, 500);
+    </script>
+</body>
+</html> 

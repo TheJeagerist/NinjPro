@@ -1,0 +1,616 @@
+/* Sistema de Fondos Animados - NinjPro */
+/* ========================================= */
+
+/* Contenedor base para todos los fondos */
+.animated-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
+}
+
+.animated-background.active {
+    opacity: 1;
+}
+
+/* SVG base para todos los fondos */
+.animated-background svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* ========================================= */
+/* TEMA DARK - Ocean Waves Style con colores oscuros */
+/* ========================================= */
+#bg-animated-dark {
+    background: radial-gradient(ellipse at center, rgba(26,26,46,1) 0%, rgba(22,33,62,1) 35%, #0f0f23 100%);
+    overflow: hidden;
+    height: 100vh;
+}
+
+#bg-animated-dark .ocean-dark { 
+    height: 5%;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background: #1a1a2e;
+}
+
+#bg-animated-dark .wave-dark {
+    background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/85486/wave.svg) repeat-x; 
+    position: absolute;
+    top: -198px;
+    width: 6400px;
+    height: 198px;
+    animation: wave 7s cubic-bezier(0.36, 0.45, 0.63, 0.53) infinite;
+    transform: translate3d(0, 0, 0);
+    filter: brightness(0) saturate(100%) invert(8%) sepia(15%) saturate(2796%) hue-rotate(209deg) brightness(95%) contrast(103%);
+}
+
+#bg-animated-dark .wave-dark:nth-of-type(2) {
+    top: -175px;
+    animation: wave 7s cubic-bezier(0.36, 0.45, 0.63, 0.53) -.125s infinite, swell 7s ease -1.25s infinite;
+    opacity: 1;
+    filter: brightness(0) saturate(100%) invert(6%) sepia(25%) saturate(3456%) hue-rotate(209deg) brightness(92%) contrast(108%);
+}
+
+/* ========================================= */
+/* TEMA LIGHT - Ocean Waves Style */
+/* ========================================= */
+#bg-animated-light {
+    background: radial-gradient(ellipse at center, rgba(255,254,234,1) 0%, rgba(255,254,234,1) 35%, #B7E8EB 100%);
+    overflow: hidden;
+    height: 100vh;
+}
+
+#bg-animated-light .ocean { 
+    height: 5%;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background: #015871;
+}
+
+#bg-animated-light .wave {
+    background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/85486/wave.svg) repeat-x; 
+    position: absolute;
+    top: -198px;
+    width: 6400px;
+    height: 198px;
+    animation: wave 7s cubic-bezier(0.36, 0.45, 0.63, 0.53) infinite;
+    transform: translate3d(0, 0, 0);
+}
+
+#bg-animated-light .wave:nth-of-type(2) {
+    top: -175px;
+    animation: wave 7s cubic-bezier(0.36, 0.45, 0.63, 0.53) -.125s infinite, swell 7s ease -1.25s infinite;
+    opacity: 1;
+}
+
+/* Animaciones de las olas */
+@keyframes wave {
+    0% {
+        margin-left: 0;
+    }
+    100% {
+        margin-left: -1600px;
+    }
+}
+
+@keyframes swell {
+    0%, 100% {
+        transform: translate3d(0, -25px, 0);
+    }
+    50% {
+        transform: translate3d(0, 5px, 0);
+    }
+}
+
+/* ========================================= */
+/* TEMA ROSA - Ocean Waves Style con colores rosa */
+/* ========================================= */
+#bg-animated-rosa {
+    background: radial-gradient(ellipse at center, rgba(255,240,245,1) 0%, rgba(255,228,240,1) 35%, #F8BBD9 100%);
+    overflow: hidden;
+    height: 100vh;
+}
+
+#bg-animated-rosa .ocean-rosa { 
+    height: 5%;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background: #C2185B;
+}
+
+#bg-animated-rosa .wave-rosa {
+    background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/85486/wave.svg) repeat-x; 
+    position: absolute;
+    top: -198px;
+    width: 6400px;
+    height: 198px;
+    animation: wave 7s cubic-bezier(0.36, 0.45, 0.63, 0.53) infinite;
+    transform: translate3d(0, 0, 0);
+    filter: brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%);
+}
+
+#bg-animated-rosa .wave-rosa:nth-of-type(2) {
+    top: -175px;
+    animation: wave 7s cubic-bezier(0.36, 0.45, 0.63, 0.53) -.125s infinite, swell 7s ease -1.25s infinite;
+    opacity: 1;
+    filter: brightness(0) saturate(100%) invert(15%) sepia(78%) saturate(4684%) hue-rotate(322deg) brightness(90%) contrast(88%);
+}
+
+/* ========================================= */
+/* TEMA NEON - Ocean Waves Style con colores GameCube púrpura */
+/* ========================================= */
+#bg-animated-neon {
+    background: radial-gradient(ellipse at center, rgb(43 16 77)  100%, rgba(75,73,144,1) 100%, #4A4A8A 100%);
+    overflow: hidden;
+    height: 100vh;
+}
+
+#bg-animated-neon .ocean-neon { 
+    height: 5%;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background: #2D2B5F;
+}
+
+#bg-animated-neon .wave-neon {
+    background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/85486/wave.svg) repeat-x; 
+    position: absolute;
+    top: -198px;
+    width: 6400px;
+    height: 198px;
+    animation: wave 7s cubic-bezier(0.36, 0.45, 0.63, 0.53) infinite;
+    transform: translate3d(0, 0, 0);
+    filter:  brightness(0) saturate(100%) invert(100%) sepia(100%) hue-rotate(346deg) brightness(52%) contrast(3125%);
+    opacity: 1 !important;
+}
+
+#bg-animated-neon .wave-neon:nth-of-type(2) {
+    top: -175px;
+    animation: wave 7s cubic-bezier(0.36, 0.45, 0.63, 0.53) -.125s infinite, swell 7s ease -1.25s infinite;
+    opacity: 1 !important;
+    filter: brightness(0) saturate(100%) invert(20%) sepia(35%) saturate(2500%) hue-rotate(330deg) brightness(150%) contrast(150%);
+}
+
+/* ========================================= */
+/* TEMA OSCURO - 4 Olas Coloridas */
+/* ========================================= */
+#bg-animated-oscuro {
+    background: #000000;
+    overflow: hidden;
+    height: 100vh;
+}
+
+#bg-animated-oscuro .ocean-oscuro { 
+    height: 5%;
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background: #000000;
+}
+
+#bg-animated-oscuro .wave-oscuro {
+    background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/85486/wave.svg) repeat-x; 
+    position: absolute;
+    top: -198px;
+    width: 6400px;
+    height: 198px;
+    animation: wave 7s cubic-bezier(0.36, 0.45, 0.63, 0.53) infinite;
+    transform: translate3d(0, 0, 0);
+}
+
+/* Ola 1 - Amarillo #EEB931 (base) */
+#bg-animated-oscuro .wave-oscuro.wave-yellow {
+    top: -198px;
+    filter: brightness(0) saturate(100%) invert(75%) sepia(85%) saturate(1800%) hue-rotate(357deg) brightness(100%) contrast(95%);
+    animation-delay: 0s;
+}
+
+/* Ola 2 - Azul #5176BA */
+#bg-animated-oscuro .wave-oscuro.wave-blue {
+    top: -175px;
+    filter: brightness(0) saturate(100%) invert(35%) sepia(45%) saturate(2000%) hue-rotate(200deg) brightness(85%) contrast(105%);
+    animation: wave 7s cubic-bezier(0.36, 0.45, 0.63, 0.53) -0.5s infinite, swell 7s ease -1.25s infinite;
+}
+
+/* Ola 3 - Rojo #CD2229 */
+#bg-animated-oscuro .wave-oscuro.wave-red {
+    top: -152px;
+    filter: brightness(0) saturate(100%) invert(15%) sepia(85%) saturate(4500%) hue-rotate(350deg) brightness(95%) contrast(110%);
+    animation: wave 7s cubic-bezier(0.36, 0.45, 0.63, 0.53) -1s infinite, swell 7s ease -2.5s infinite;
+}
+
+/* Ola 4 - Verde #5CB49C */
+#bg-animated-oscuro .wave-oscuro.wave-green {
+    top: -129px;
+    filter: brightness(0) saturate(100%) invert(60%) sepia(25%) saturate(1500%) hue-rotate(147deg) brightness(90%) contrast(90%);
+    animation: wave 7s cubic-bezier(0.36, 0.45, 0.63, 0.53) -1.5s infinite, swell 7s ease -3.75s infinite;
+}
+
+/* ========================================= */
+/* ANIMACIONES PERSONALIZADAS */
+/* ========================================= */
+
+/* Animación de partículas flotantes */
+@keyframes floatParticles {
+    0% {
+        transform: translateY(100vh) translateX(0) scale(0);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100px) translateX(50px) scale(1);
+        opacity: 0;
+    }
+}
+
+/* Animación de ondas */
+@keyframes waveFlow {
+    0% {
+        d: path("M0,50 Q25,30 50,50 T100,50");
+    }
+    25% {
+        d: path("M0,50 Q25,70 50,50 T100,50");
+    }
+    50% {
+        d: path("M0,50 Q25,30 50,50 T100,50");
+    }
+    75% {
+        d: path("M0,50 Q25,70 50,50 T100,50");
+    }
+    100% {
+        d: path("M0,50 Q25,30 50,50 T100,50");
+    }
+}
+
+/* Animación de rotación suave */
+@keyframes gentleRotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Animación de pulsación */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 0.6;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+}
+
+/* Animación de deriva */
+@keyframes drift {
+    0% {
+        transform: translateX(0) translateY(0);
+    }
+    25% {
+        transform: translateX(20px) translateY(-10px);
+    }
+    50% {
+        transform: translateX(-10px) translateY(15px);
+    }
+    75% {
+        transform: translateX(15px) translateY(-5px);
+    }
+    100% {
+        transform: translateX(0) translateY(0);
+    }
+}
+
+
+
+/* ========================================= */
+/* ANIMACIÓN XMB PS3 */
+/* ========================================= */
+@keyframes xmbGradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* ========================================= */
+/* EFECTOS ESPECIALES */
+/* ========================================= */
+
+/* Efecto de brillo para tema dark */
+.glow-effect {
+    filter: drop-shadow(0 0 20px currentColor);
+    animation: pulse 4s ease-in-out infinite;
+}
+
+/* Efecto de ondulación para tema light */
+.ripple-effect {
+    animation: waveFlow 6s ease-in-out infinite;
+}
+
+/* Efecto de flotación para tema rosa */
+.float-effect {
+    animation: floatParticles 15s linear infinite;
+}
+
+/* Efecto de deriva para tema oscuro */
+.drift-effect {
+    animation: drift 8s ease-in-out infinite;
+}
+
+/* ========================================= */
+/* RESPONSIVE DESIGN */
+/* ========================================= */
+
+@media (max-width: 768px) {
+    .animated-background {
+        transform: none;
+    }
+    
+    .particle {
+        filter: none !important;
+    }
+    
+    .wave, .wave-dark, .wave-rosa, .wave-neon, .wave-oscuro {
+        stroke-width: 1 !important;
+        filter: none !important;
+    }
+    
+    /* Sobrescribir todas las animaciones de olas para móviles */
+    #bg-animated-dark .wave-dark {
+        animation: wave 10s cubic-bezier(0.36, 0.45, 0.63, 0.53) infinite !important;
+    }
+    
+    #bg-animated-dark .wave-dark:nth-of-type(2) {
+        animation: wave 10s cubic-bezier(0.36, 0.45, 0.63, 0.53) -.125s infinite, swell 10s ease -1.25s infinite !important;
+    }
+    
+    #bg-animated-light .wave {
+        animation: wave 10s cubic-bezier(0.36, 0.45, 0.63, 0.53) infinite !important;
+    }
+    
+    #bg-animated-light .wave:nth-of-type(2) {
+        animation: wave 10s cubic-bezier(0.36, 0.45, 0.63, 0.53) -.125s infinite, swell 10s ease -1.25s infinite !important;
+    }
+    
+    #bg-animated-rosa .wave-rosa {
+        animation: wave 10s cubic-bezier(0.36, 0.45, 0.63, 0.53) infinite !important;
+    }
+    
+    #bg-animated-rosa .wave-rosa:nth-of-type(2) {
+        animation: wave 10s cubic-bezier(0.36, 0.45, 0.63, 0.53) -.125s infinite, swell 10s ease -1.25s infinite !important;
+    }
+    
+    #bg-animated-neon .wave-neon {
+        animation: wave 10s cubic-bezier(0.36, 0.45, 0.63, 0.53) infinite !important;
+    }
+    
+    #bg-animated-neon .wave-neon:nth-of-type(2) {
+        animation: wave 10s cubic-bezier(0.36, 0.45, 0.63, 0.53) -.125s infinite, swell 10s ease -1.25s infinite !important;
+    }
+    
+    #bg-animated-oscuro .wave-oscuro {
+        animation: wave 10s cubic-bezier(0.36, 0.45, 0.63, 0.53) infinite !important;
+    }
+    
+    #bg-animated-oscuro .wave-oscuro.wave-blue {
+        animation: wave 10s cubic-bezier(0.36, 0.45, 0.63, 0.53) -0.5s infinite, swell 10s ease -1.25s infinite !important;
+    }
+    
+    #bg-animated-oscuro .wave-oscuro.wave-red {
+        animation: wave 10s cubic-bezier(0.36, 0.45, 0.63, 0.53) -1s infinite, swell 10s ease -2.5s infinite !important;
+    }
+    
+    #bg-animated-oscuro .wave-oscuro.wave-green {
+        animation: wave 10s cubic-bezier(0.36, 0.45, 0.63, 0.53) -1.5s infinite, swell 10s ease -3.75s infinite !important;
+    }
+    
+    /* Ocean waves oscuro responsive para móviles */
+    #bg-animated-oscuro .ocean-oscuro {
+        height: 8%;
+    }
+
+    #bg-animated-oscuro .wave-oscuro {
+        width: 3200px;
+        height: 150px;
+        top: -150px;
+    }
+
+    #bg-animated-oscuro .wave-oscuro.wave-blue {
+        top: -130px;
+    }
+
+    #bg-animated-oscuro .wave-oscuro.wave-red {
+        top: -110px;
+    }
+
+    #bg-animated-oscuro .wave-oscuro.wave-green {
+        top: -90px;
+    }
+
+    /* Ocean waves dark responsive para móviles */
+    #bg-animated-dark .ocean-dark {
+        height: 8%;
+    }
+
+    #bg-animated-dark .wave-dark {
+        width: 3200px;
+        height: 150px;
+        top: -150px;
+    }
+
+    #bg-animated-dark .wave-dark:nth-of-type(2) {
+        top: -130px;
+    }
+
+    /* Ocean waves light responsive para móviles */
+    #bg-animated-light .ocean {
+        height: 8%;
+    }
+
+    #bg-animated-light .wave {
+        width: 3200px;
+        height: 150px;
+        top: -150px;
+    }
+
+    #bg-animated-light .wave:nth-of-type(2) {
+        top: -130px;
+    }
+
+    /* Ocean waves rosa responsive para móviles */
+    #bg-animated-rosa .ocean-rosa {
+        height: 8%;
+    }
+
+    #bg-animated-rosa .wave-rosa {
+        width: 3200px;
+        height: 150px;
+        top: -150px;
+    }
+
+    #bg-animated-rosa .wave-rosa:nth-of-type(2) {
+        top: -130px;
+    }
+
+    /* Ocean waves neon responsive para móviles */
+    #bg-animated-neon .ocean-neon {
+        height: 8%;
+    }
+
+    #bg-animated-neon .wave-neon {
+        width: 3200px;
+        height: 150px;
+        top: -150px;
+    }
+
+    #bg-animated-neon .wave-neon:nth-of-type(2) {
+        top: -130px;
+        filter: brightness(0) saturate(100%) invert(20%) sepia(35%) saturate(2500%) hue-rotate(330deg) brightness(150%) contrast(150%);
+        opacity: 1 !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .animated-background {
+        transform: none;
+    }
+}
+
+/* ========================================= */
+/* MODO DE RENDIMIENTO REDUCIDO */
+/* ========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .animated-background * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    /* Desactivar animaciones de océano oscuro para accesibilidad */
+    #bg-animated-oscuro .wave-oscuro {
+        animation: none !important;
+        transform: translate3d(0, 0, 0) !important;
+    }
+
+    /* Desactivar animaciones de océano dark para accesibilidad */
+    #bg-animated-dark .wave-dark {
+        animation: none !important;
+        transform: translate3d(0, 0, 0) !important;
+    }
+
+    /* Desactivar animaciones de océano light para accesibilidad */
+    #bg-animated-light .wave {
+        animation: none !important;
+        transform: translate3d(0, 0, 0) !important;
+    }
+
+    /* Desactivar animaciones de océano rosa para accesibilidad */
+    #bg-animated-rosa .wave-rosa {
+        animation: none !important;
+        transform: translate3d(0, 0, 0) !important;
+    }
+
+    /* Desactivar animaciones de océano neon para accesibilidad */
+    #bg-animated-neon .wave-neon {
+        animation: none !important;
+        transform: translate3d(0, 0, 0) !important;
+    }
+}
+
+/* ========================================= */
+/* ELIMINACIÓN TOTAL DE CÍRCULOS SVG */
+/* ========================================= */
+
+/* Ocultar todos los elementos SVG en todos los temas */
+.animated-background svg,
+.animated-background circle,
+.animated-background ellipse {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+/* Asegurar que no aparezcan elementos circulares */
+*[class*="particle"],
+*[class*="circle"],
+*[class*="bubble"] {
+    display: none !important;
+}
+
+/* Eliminar específicamente círculos en tema dark */
+#bg-animated-dark *[style*="border-radius"],
+#bg-animated-dark *[class*="particle"] {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+/* Eliminar cualquier elemento con border-radius circular */
+*[style*="border-radius: 50%"],
+*[style*="border-radius:50%"] {
+    display: none !important;
+}
+
+/* ========================================= */
+/* CLASE PARA DESACTIVAR ANIMACIONES */
+/* ========================================= */
+
+.no-animations .animated-background * {
+    animation: none !important;
+    transition: none !important;
+}
+
+.no-animations #bg-animated-oscuro .wave-oscuro {
+    animation: none !important;
+} 

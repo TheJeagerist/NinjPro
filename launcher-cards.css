@@ -1,0 +1,232 @@
+/* Sistema de Tarjetas Moderno para el Launcher */
+
+/* Ocultar el sistema de tarjetas anterior */
+.tools-grid {
+  display: none !important;
+}
+
+.tool-card {
+  display: none !important;
+}
+
+/* Contenedor principal del launcher */
+.launcher-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 30px 12px;
+  display: block !important;
+  visibility: visible !important;
+}
+
+/* Grid de aplicaciones */
+.launcher-apps-grid {
+  display: flex !important;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 18px;
+  justify-content: center;
+  visibility: visible !important;
+}
+
+/* Tarjeta individual de aplicación */
+.launcher-app-item {
+  flex-basis: calc(25% - 22.5px);
+  min-width: 150px;
+  margin-bottom: 18px;
+  overflow: hidden;
+  border-radius: 17px;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.launcher-app-item:hover {
+  /* Efecto hover removido para evitar animación de respiración */
+}
+
+/* Link de la aplicación */
+.launcher-app-link {
+  display: block;
+  padding: 18px 15px;
+  background-color: #121212;
+  overflow: hidden;
+  position: relative;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 17px;
+}
+
+.launcher-app-link:hover,
+.launcher-app-link:hover .launcher-app-description {
+  text-decoration: none;
+  color: #FFF;
+}
+
+.launcher-app-link:hover .launcher-app-bg {
+  transform: scale(10);
+}
+
+/* Icono de la aplicación */
+.launcher-app-icon {
+  font-size: 1.5rem;
+  margin-bottom: 9px;
+  z-index: 2;
+  position: relative;
+  display: block;
+}
+
+/* Título de la aplicación */
+.launcher-app-title {
+  min-height: 36px;
+  margin: 0 0 9px;
+  overflow: hidden;
+  font-weight: bold;
+  font-size: 14px;
+  color: #FFF;
+  z-index: 2;
+  position: relative;
+  line-height: 1.2;
+}
+
+/* Descripción de la aplicación */
+.launcher-app-description {
+  font-size: 10px;
+  color: #FFF;
+  z-index: 2;
+  position: relative;
+  opacity: 0.8;
+  line-height: 1.4;
+}
+
+.launcher-app-category {
+  font-weight: bold;
+  color: #f9b234;
+  transition: color 0.5s ease;
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 6px;
+  z-index: 2;
+  position: relative;
+}
+
+/* Fondo animado circular */
+.launcher-app-bg {
+  height: 77px;
+  width: 77px;
+  background-color: #f9b234;
+  z-index: 1;
+  position: absolute;
+  top: -45px;
+  right: -45px;
+  border-radius: 50%;
+  transition: all 0.5s ease;
+}
+
+/* Colores específicos para diferentes aplicaciones */
+.launcher-app-item:nth-child(1) .launcher-app-bg { background-color: #f9b234; }
+.launcher-app-item:nth-child(2) .launcher-app-bg { background-color: #3ecd5e; }
+.launcher-app-item:nth-child(3) .launcher-app-bg { background-color: #e44002; }
+.launcher-app-item:nth-child(4) .launcher-app-bg { background-color: #952aff; }
+.launcher-app-item:nth-child(5) .launcher-app-bg { background-color: #cd3e94; }
+.launcher-app-item:nth-child(6) .launcher-app-bg { background-color: #4c49ea; }
+.launcher-app-item:nth-child(7) .launcher-app-bg { background-color: #ff6b35; }
+.launcher-app-item:nth-child(8) .launcher-app-bg { background-color: #00d4aa; }
+.launcher-app-item:nth-child(9) .launcher-app-bg { background-color: #ff4757; }
+.launcher-app-item:nth-child(10) .launcher-app-bg { background-color: #5352ed; }
+
+/* Mini selector de temas en la tarjeta de configuración */
+.launcher-app-item .mini-theme-selector {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+  z-index: 3;
+}
+
+.launcher-app-item .mini-theme-btn {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  transition: transform 0.2s ease;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.launcher-app-item .mini-theme-btn:hover {
+  transform: scale(1.1);
+}
+
+.launcher-app-item .mini-theme-btn.active {
+  transform: scale(1.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+/* Responsive Design */
+@media only screen and (max-width: 1200px) {
+  .launcher-app-item {
+    flex-basis: calc(33.33333% - 12px);
+    min-width: 144px;
+  }
+  
+  .launcher-app-title {
+    font-size: 13px;
+    min-height: 33px;
+  }
+}
+
+@media only screen and (max-width: 979px) {
+  .launcher-app-item {
+    flex-basis: calc(50% - 9px);
+    min-width: 132px;
+  }
+  
+  .launcher-app-title {
+    font-size: 12px;
+    min-height: 30px;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  .launcher-container {
+    width: 96%;
+    padding: 18px 6px;
+  }
+  
+  .launcher-apps-grid {
+    gap: 12px;
+  }
+}
+
+@media only screen and (max-width: 639px) {
+  .launcher-app-item {
+    flex-basis: 100%;
+    min-width: auto;
+  }
+  
+  .launcher-app-title {
+    min-height: 27px;
+    line-height: 1.1;
+    font-size: 12px;
+  }
+  
+  .launcher-app-link {
+    padding: 15px 18px;
+  }
+  
+  .launcher-app-description {
+    font-size: 8px;
+  }
+  
+  .launcher-app-icon {
+    font-size: 1.2rem;
+  }
+}
+
+/* Animaciones de entrada removidas - las tarjetas aparecen inmediatamente */ 

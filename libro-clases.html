@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Libro de Clases - Sistema Educativo</title>
+    <link rel="stylesheet" href="libro-clases.css">
+    <link rel="stylesheet" href="libro-clases-responsive.css">
+    <link rel="stylesheet" href="animated-backgrounds.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-icon">📚</div>
+                <div class="logo-text">
+                    <h3>Libro de Clases</h3>
+                    <p>Sistema Educativo</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="sidebar-menu">
+            <h4>Navegación</h4>
+            <ul class="menu-list">
+                <li class="menu-item active" data-section="dashboard">
+                    <span class="menu-icon">📊</span>
+                    <span class="menu-text">Dashboard</span>
+                </li>
+                <li class="menu-item" data-section="cursos">
+                    <span class="menu-icon">📖</span>
+                    <span class="menu-text">Cursos</span>
+                </li>
+                <li class="menu-item" data-section="estudiantes">
+                    <span class="menu-icon">👥</span>
+                    <span class="menu-text">Estudiantes</span>
+                </li>
+                <li class="menu-item" data-section="asistencia">
+                    <span class="menu-icon">✅</span>
+                    <span class="menu-text">Asistencia</span>
+                </li>
+                <li class="menu-item" data-section="calificaciones">
+                    <span class="menu-icon">📝</span>
+                    <span class="menu-text">Calificaciones</span>
+                </li>
+            </ul>
+            
+            <!-- Selector de temas en el sidebar -->
+            <div class="sidebar-theme-section">
+                <h4>Temas</h4>
+                <div class="sidebar-theme-selector">
+                    <button class="sidebar-theme-btn" data-theme="theme-dark" title="Dark">
+                        <span class="theme-icon">🌙</span>
+                    </button>
+                    <button class="sidebar-theme-btn" data-theme="theme-light" title="Claro">
+                        <span class="theme-icon">🌞</span>
+                    </button>
+                    <button class="sidebar-theme-btn" data-theme="theme-rosa" title="Rosa">
+                        <span class="theme-icon">🌸</span>
+                    </button>
+                    <button class="sidebar-theme-btn" data-theme="theme-oscuro" title="Oscuro">
+                        <span class="theme-icon">🌑</span>
+                    </button>
+                    <button class="sidebar-theme-btn" data-theme="theme-neon" title="Neón">
+                        <span class="theme-icon">🎇</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <button class="menu-toggle">☰</button>
+                <h1 class="page-title">Dashboard</h1>
+                <p class="page-subtitle">Resumen general del sistema educativo</p>
+            </div>
+            <div class="header-right">
+                <button class="btn-back" onclick="window.history.back()">
+                    <span>←</span> Volver
+                </button>
+            </div>
+        </header>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard-section" class="content-section active">
+            <div class="stats-grid">
+                <div class="stat-card blue">
+                    <div class="stat-content">
+                        <div class="stat-info">
+                            <h3>Cursos Activos</h3>
+                            <div class="stat-number">8</div>
+                        </div>
+                        <div class="stat-icon">📚</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card green">
+                    <div class="stat-content">
+                        <div class="stat-info">
+                            <h3>Total Estudiantes</h3>
+                            <div class="stat-number">247</div>
+                        </div>
+                        <div class="stat-icon">👥</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card yellow">
+                    <div class="stat-content">
+                        <div class="stat-info">
+                            <h3>Asistencia Hoy</h3>
+                            <div class="stat-number">89%</div>
+                        </div>
+                        <div class="stat-icon">📅</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card red">
+                    <div class="stat-content">
+                        <div class="stat-info">
+                            <h3>Calificaciones Pendientes</h3>
+                            <div class="stat-number">12</div>
+                        </div>
+                        <div class="stat-icon">📝</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <h3>Acciones Rápidas</h3>
+                    <div class="quick-actions">
+                        <button class="quick-action-btn" data-action="asistencia">
+                            <span class="action-icon">📅</span>
+                            <span class="action-text">Tomar Asistencia del Día</span>
+                        </button>
+                        <button class="quick-action-btn" data-action="estudiantes">
+                            <span class="action-icon">👥</span>
+                            <span class="action-text">Ver Estudiantes</span>
+                        </button>
+                        <button class="quick-action-btn" data-action="calificaciones">
+                            <span class="action-icon">📝</span>
+                            <span class="action-text">Registrar Calificaciones</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="dashboard-card">
+                    <h3>Actividad Reciente</h3>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-content">
+                                <h4>Nueva observación positiva</h4>
+                                <p>María González</p>
+                            </div>
+                            <span class="activity-time">Hace 10 min</span>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-content">
+                                <h4>Asistencia confirmada</h4>
+                                <p>Juan Pérez</p>
+                            </div>
+                            <span class="activity-time">Hace 15 min</span>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-content">
+                                <h4>Calificación agregada</h4>
+                                <p>Ana Martínez</p>
+                            </div>
+                            <span class="activity-time">Hace 30 min</span>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-content">
+                                <h4>Observación negativa</h4>
+                                <p>Carlos López</p>
+                            </div>
+                            <span class="activity-time">Hace 1 hora</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cursos Section -->
+        <section id="cursos-section" class="content-section">
+            <div class="section-header">
+                <h2>Gestión de Cursos</h2>
+                <button class="btn-primary" id="add-curso-btn">+ Agregar Curso</button>
+            </div>
+            
+            <div class="cursos-grid" id="cursos-grid">
+                <!-- Los cursos se generarán dinámicamente -->
+            </div>
+        </section>
+
+        <!-- Estudiantes Section -->
+        <section id="estudiantes-section" class="content-section">
+            <div class="section-header">
+                <h2>Gestión de Estudiantes</h2>
+                <div class="section-controls">
+                    <select id="curso-filter" class="form-select">
+                        <option value="">Todos los cursos</option>
+                    </select>
+                    <div class="import-export-controls">
+                        <button class="btn-secondary" id="download-template-btn">📄 Descargar Plantilla</button>
+                        <input type="file" id="import-excel-input" accept=".xlsx,.xls" style="display: none;">
+                        <button class="btn-secondary" id="import-excel-btn">📊 Importar Excel</button>
+                        <button class="btn-secondary" id="export-excel-btn">💾 Exportar Excel</button>
+                        <button class="btn-advanced" id="gestion-avanzada-btn">⚙️ Gestión Avanzada</button>
+                    </div>
+                    <button class="btn-primary" id="add-estudiante-btn">+ Agregar Estudiante</button>
+                </div>
+            </div>
+            
+            <div class="estudiantes-table-container">
+                <table class="estudiantes-table" id="estudiantes-table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Curso</th>
+                            <th>Observaciones</th>
+                            <th>Promedio</th>
+                            <th>Asistencia</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="estudiantes-tbody">
+                        <!-- Los estudiantes se generarán dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Asistencia Section -->
+        <section id="asistencia-section" class="content-section">
+            <div class="section-header">
+                <h2>Control de Asistencia</h2>
+                <div class="section-controls">
+                    <input type="date" id="fecha-asistencia" class="form-input" />
+                    <select id="curso-asistencia" class="form-select">
+                        <option value="">Seleccionar curso</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="asistencia-container" id="asistencia-container">
+                <!-- La lista de asistencia se generará dinámicamente -->
+            </div>
+        </section>
+
+        <!-- Calificaciones Section -->
+        <section id="calificaciones-section" class="content-section">
+            <div class="section-header">
+                <h2>Registro de Calificaciones</h2>
+                <div class="section-controls">
+                    <select id="curso-calificaciones" class="form-select">
+                        <option value="">Seleccionar curso</option>
+                    </select>
+                    <select id="materia-calificaciones" class="form-select">
+                        <option value="">Seleccionar materia</option>
+                    </select>
+                    <button class="btn-primary" id="add-calificacion-btn">+ Nueva Evaluación</button>
+                </div>
+            </div>
+            
+            <div class="calificaciones-container" id="calificaciones-container">
+                <!-- Las calificaciones se generarán dinámicamente -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Modales -->
+    
+    <!-- Modal Curso -->
+    <div id="curso-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="curso-modal-title">Agregar Curso</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="curso-form">
+                    <div class="form-group">
+                        <label for="curso-nombre">Nombre del Curso</label>
+                        <input type="text" id="curso-nombre" class="form-input" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="curso-nivel">Nivel</label>
+                            <select id="curso-nivel" class="form-select" required>
+                                <option value="">Seleccionar nivel</option>
+                                <option value="1° Básico">1° Básico</option>
+                                <option value="2° Básico">2° Básico</option>
+                                <option value="3° Básico">3° Básico</option>
+                                <option value="4° Básico">4° Básico</option>
+                                <option value="5° Básico">5° Básico</option>
+                                <option value="6° Básico">6° Básico</option>
+                                <option value="7° Básico">7° Básico</option>
+                                <option value="8° Básico">8° Básico</option>
+                                <option value="1° Medio">1° Medio</option>
+                                <option value="2° Medio">2° Medio</option>
+                                <option value="3° Medio">3° Medio</option>
+                                <option value="4° Medio">4° Medio</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="curso-letra">Letra</label>
+                            <select id="curso-letra" class="form-select" required>
+                                <option value="">Seleccionar letra</option>
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="C">C</option>
+                                <option value="D">D</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="curso-materias">Materias (separadas por coma)</label>
+                        <textarea id="curso-materias" class="form-textarea" placeholder="Matemáticas, Lenguaje, Historia, Ciencias..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="closeModal('curso-modal')">Cancelar</button>
+                        <button type="submit" class="btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Estudiante -->
+    <div id="estudiante-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="estudiante-modal-title">Agregar Estudiante</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="estudiante-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="estudiante-nombres">Nombres</label>
+                            <input type="text" id="estudiante-nombres" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="estudiante-apellido-paterno">Apellido Paterno</label>
+                            <input type="text" id="estudiante-apellido-paterno" class="form-input" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="estudiante-apellido-materno">Apellido Materno</label>
+                            <input type="text" id="estudiante-apellido-materno" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="estudiante-rut">RUT</label>
+                            <input type="text" id="estudiante-rut" class="form-input" placeholder="12.345.678-9" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="estudiante-curso">Curso</label>
+                            <select id="estudiante-curso" class="form-select" required>
+                                <option value="">Seleccionar curso</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="estudiante-email">Email</label>
+                            <input type="email" id="estudiante-email" class="form-input">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="estudiante-telefono">Teléfono Estudiante</label>
+                            <input type="tel" id="estudiante-telefono" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="estudiante-telefono-madre">Teléfono Madre</label>
+                            <input type="tel" id="estudiante-telefono-madre" class="form-input" placeholder="+56912345678">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="estudiante-telefono-padre">Teléfono Padre</label>
+                        <input type="tel" id="estudiante-telefono-padre" class="form-input" placeholder="+56912345678">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="closeModal('estudiante-modal')">Cancelar</button>
+                        <button type="submit" class="btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Observación -->
+    <div id="observacion-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="observacion-modal-title">Agregar Observación</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="observacion-form">
+                    <div class="form-group">
+                        <label for="observacion-tipo">Tipo de Observación</label>
+                        <select id="observacion-tipo" class="form-select" required>
+                            <option value="">Seleccionar tipo</option>
+                            <option value="positiva">Positiva</option>
+                            <option value="negativa">Negativa</option>
+                            <option value="neutral">Neutral</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="observacion-descripcion">Descripción</label>
+                        <textarea id="observacion-descripcion" class="form-textarea" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="observacion-fecha">Fecha</label>
+                        <input type="date" id="observacion-fecha" class="form-input" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="closeModal('observacion-modal')">Cancelar</button>
+                        <button type="submit" class="btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Calificación -->
+    <div id="calificacion-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="calificacion-modal-title">Agregar Calificación</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="calificacion-form">
+                    <div class="form-group">
+                        <label for="calificacion-evaluacion">Nombre de la Evaluación</label>
+                        <input type="text" id="calificacion-evaluacion" class="form-input" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="calificacion-fecha">Fecha</label>
+                            <input type="date" id="calificacion-fecha" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="calificacion-ponderacion">Ponderación (%)</label>
+                            <input type="number" id="calificacion-ponderacion" class="form-input" min="1" max="100" required>
+                        </div>
+                    </div>
+                    <div class="calificaciones-estudiantes" id="calificaciones-estudiantes">
+                        <!-- Se generará dinámicamente según el curso seleccionado -->
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="closeModal('calificacion-modal')">Cancelar</button>
+                        <button type="submit" class="btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Ficha de Estudiante -->
+    <div id="ficha-estudiante-modal" class="modal modal-large">
+        <div class="modal-content modal-content-large">
+            <div class="modal-header">
+                <h3 id="ficha-estudiante-title">Ficha de Estudiante</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="ficha-estudiante-container">
+                    <!-- Información Personal -->
+                    <div class="ficha-section">
+                        <h4>📋 Información Personal</h4>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <label>Nombres:</label>
+                                <span id="ficha-nombres">-</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Apellido Paterno:</label>
+                                <span id="ficha-apellido-paterno">-</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Apellido Materno:</label>
+                                <span id="ficha-apellido-materno">-</span>
+                            </div>
+                            <div class="info-item">
+                                <label>RUT:</label>
+                                <span id="ficha-rut">-</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Curso:</label>
+                                <span id="ficha-curso">-</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Email:</label>
+                                <span id="ficha-email">-</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Teléfono Madre:</label>
+                                <span id="ficha-telefono-madre">-</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Teléfono Padre:</label>
+                                <span id="ficha-telefono-padre">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Anotaciones -->
+                    <div class="ficha-section">
+                        <h4>📝 Anotaciones</h4>
+                        <div class="anotaciones-tabs">
+                            <button class="tab-btn active" data-tab="positivas">✅ Positivas (<span id="count-positivas">0</span>)</button>
+                            <button class="tab-btn" data-tab="negativas">❌ Negativas (<span id="count-negativas">0</span>)</button>
+                            <button class="tab-btn" data-tab="neutrales">⚪ Neutrales (<span id="count-neutrales">0</span>)</button>
+                        </div>
+                        <div class="anotaciones-content">
+                            <div id="anotaciones-positivas" class="anotaciones-list active">
+                                <!-- Anotaciones positivas se cargarán aquí -->
+                            </div>
+                            <div id="anotaciones-negativas" class="anotaciones-list">
+                                <!-- Anotaciones negativas se cargarán aquí -->
+                            </div>
+                            <div id="anotaciones-neutrales" class="anotaciones-list">
+                                <!-- Anotaciones neutrales se cargarán aquí -->
+                            </div>
+                        </div>
+                        <button class="btn-primary btn-sm" id="add-anotacion-btn">+ Agregar Anotación</button>
+                    </div>
+
+                    <!-- Notas por Asignatura -->
+                    <div class="ficha-section">
+                        <h4>📊 Notas por Asignatura</h4>
+                        <div class="notas-container" id="notas-container">
+                            <!-- Las notas se cargarán dinámicamente -->
+                        </div>
+                        <button class="btn-primary btn-sm" id="add-nota-btn">+ Agregar Nota</button>
+                    </div>
+
+                    <!-- Informes PDF -->
+                    <div class="ficha-section">
+                        <h4>📄 Informes de Personalidad</h4>
+                        <div class="informes-container" id="informes-container">
+                            <!-- Los informes se cargarán dinámicamente -->
+                        </div>
+                        <div class="upload-area">
+                            <input type="file" id="upload-informe" accept=".pdf" style="display: none;">
+                            <button class="btn-secondary" id="upload-informe-btn">📎 Subir Informe PDF</button>
+                        </div>
+                    </div>
+
+                    <!-- Acciones -->
+                    <div class="ficha-actions">
+                        <button class="btn-secondary" id="edit-estudiante-btn">✏️ Editar Información</button>
+                        <button class="btn-primary" id="export-ficha-btn">💾 Exportar Ficha</button>
+                        <button class="btn-secondary" onclick="closeModal('ficha-estudiante-modal')">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Gestión Avanzada -->
+    <div id="gestion-avanzada-modal" class="modal modal-large">
+        <div class="modal-content modal-content-large">
+            <div class="modal-header">
+                <h3>⚙️ Gestión Avanzada de Estudiantes</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="gestion-avanzada-container">
+                    <div class="gestion-section">
+                        <h4>📋 Información Completa de Estudiantes</h4>
+                        <p>Esta sección permite gestionar información detallada de estudiantes incluyendo datos de contacto de los padres.</p>
+                        
+                        <div class="gestion-controls">
+                            <div class="control-group">
+                                <h5>📄 Plantilla Avanzada</h5>
+                                <p>Descarga la plantilla Excel con todos los campos requeridos:</p>
+                                <ul>
+                                    <li>✅ Nombres, Apellido Paterno, Apellido Materno</li>
+                                    <li>✅ RUT y Curso</li>
+                                    <li>✅ Teléfono de la Madre</li>
+                                    <li>✅ Teléfono del Padre</li>
+                                    <li>✅ Email del estudiante</li>
+                                    <li>✅ Anotaciones y Calificaciones</li>
+                                </ul>
+                                <button class="btn-primary" id="download-advanced-template-btn">📥 Descargar Plantilla Avanzada</button>
+                            </div>
+                            
+                            <div class="control-group">
+                                <h5>📊 Importar Datos Avanzados</h5>
+                                <p>Carga el archivo Excel completado con la información de estudiantes:</p>
+                                <input type="file" id="import-advanced-excel-input" accept=".xlsx,.xls" style="display: none;">
+                                <button class="btn-secondary" id="import-advanced-excel-btn">📤 Importar Excel Avanzado</button>
+                            </div>
+                            
+                            <div class="control-group">
+                                <h5>💾 Exportar Datos Completos</h5>
+                                <p>Exporta toda la información actual incluyendo datos de contacto:</p>
+                                <button class="btn-success" id="export-advanced-excel-btn">💾 Exportar Todo (Avanzado)</button>
+                            </div>
+                        </div>
+                        
+                        <div class="import-status" id="import-status" style="display: none;">
+                            <h5>📊 Estado de la Importación</h5>
+                            <div class="status-content" id="status-content">
+                                <!-- Se mostrará el resultado de la importación -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button class="btn-secondary" onclick="closeModal('gestion-avanzada-modal')">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="theme-manager.js"></script>
+    <script src="animated-backgrounds.js"></script>
+    <script src="libro-clases.js"></script>
+    
+    <!-- Script de inicialización de temas -->
+    <script>
+        // Aplicar tema inmediatamente al cargar
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'theme-dark';
+            console.log('🎨 Aplicando tema al libro de clases:', savedTheme);
+            document.body.className = savedTheme;
+        })();
+
+        // Inicializar fondos animados cuando esté listo
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inicializar fondos animados
+            if (window.animatedBackgrounds) {
+                const savedTheme = localStorage.getItem('theme') || 'theme-dark';
+                setTimeout(() => {
+                    window.animatedBackgrounds.switchTheme(savedTheme);
+                    console.log('✅ Fondos animados inicializados en libro de clases');
+                }, 100);
+            }
+            
+            // Inicializar selector de temas
+            initializeThemeSelector();
+        });
+
+        // Listener para cambios de tema desde otras ventanas
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'theme') {
+                console.log('🔄 Tema cambiado en libro de clases:', e.newValue);
+                document.body.className = e.newValue;
+                if (window.animatedBackgrounds && window.animatedBackgrounds.isInitialized) {
+                    window.animatedBackgrounds.switchTheme(e.newValue);
+                }
+            }
+        });
+
+        // Función para inicializar el selector de temas
+        function initializeThemeSelector() {
+            const themeButtons = document.querySelectorAll('.sidebar-theme-btn');
+            const currentTheme = localStorage.getItem('theme') || 'theme-dark';
+            
+            // Marcar el tema actual como activo
+            themeButtons.forEach(btn => {
+                if (btn.dataset.theme === currentTheme) {
+                    btn.classList.add('active');
+                }
+                
+                btn.addEventListener('click', () => {
+                    const newTheme = btn.dataset.theme;
+                    
+                    // Remover clase active de todos los botones
+                    themeButtons.forEach(b => b.classList.remove('active'));
+                    
+                    // Agregar clase active al botón seleccionado
+                    btn.classList.add('active');
+                    
+                    // Aplicar el tema
+                    document.body.className = newTheme;
+                    localStorage.setItem('theme', newTheme);
+                    
+                    // Cambiar fondos animados
+                    if (window.animatedBackgrounds && window.animatedBackgrounds.isInitialized) {
+                        window.animatedBackgrounds.switchTheme(newTheme);
+                    }
+                    
+                    console.log('🎨 Tema cambiado a:', newTheme);
+                });
+            });
+        }
+    </script>
+</body>
+</html> 

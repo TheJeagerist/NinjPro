@@ -1,0 +1,947 @@
+/* Estilos modernos para Generador de Grupos Aleatorios */
+
+/* Variables CSS para temas */
+:root {
+    /* Tema por defecto (oscuro) */
+    --primary-color: #667eea;
+    --secondary-color: #764ba2;
+    --success-color: #4CAF50;
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.7);
+    --text-muted: rgba(255, 255, 255, 0.5);
+    --main-bg: linear-gradient(135deg, #1e1e2e, #2a2a3e);
+    --card-bg: rgba(26, 26, 46, 0.95);
+    --input-bg: rgba(255, 255, 255, 0.08);
+    --input-border: rgba(255, 255, 255, 0.15);
+    --border-color: rgba(255, 255, 255, 0.1);
+    --card-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    --accent-color: rgba(102, 126, 234, 0.1);
+    --button-bg: rgba(255, 255, 255, 0.1);
+    --button-hover: rgba(255, 255, 255, 0.15);
+    --display-bg: rgba(255, 255, 255, 0.05);
+}
+
+/* Tema claro */
+body.theme-light {
+    --primary-color: #ff6b35;
+    --secondary-color: #f7931e;
+    --success-color: #4CAF50;
+    --text-primary: #333333;
+    --text-secondary: #666666;
+    --text-muted: #999999;
+    --main-bg: linear-gradient(135deg, #fff8e1, #fffacd);
+    --card-bg: rgba(255, 255, 255, 0.95);
+    --input-bg: rgba(255, 255, 255, 0.8);
+    --input-border: rgba(255, 107, 53, 0.2);
+    --border-color: rgba(255, 107, 53, 0.15);
+    --card-shadow: 0 20px 60px rgba(255, 107, 53, 0.15);
+    --accent-color: rgba(255, 107, 53, 0.1);
+    --button-bg: rgba(255, 107, 53, 0.1);
+    --button-hover: rgba(255, 107, 53, 0.15);
+    --display-bg: rgba(255, 107, 53, 0.05);
+}
+
+/* Tema rosa */
+body.theme-rosa {
+    --primary-color: #e91e63;
+    --secondary-color: #f06292;
+    --success-color: #4CAF50;
+    --text-primary: #333333;
+    --text-secondary: #666666;
+    --text-muted: #999999;
+    --main-bg: linear-gradient(135deg, #fff0f5, #fce4ec);
+    --card-bg: rgba(255, 255, 255, 0.95);
+    --input-bg: rgba(255, 255, 255, 0.8);
+    --input-border: rgba(233, 30, 99, 0.2);
+    --border-color: rgba(233, 30, 99, 0.15);
+    --card-shadow: 0 20px 60px rgba(233, 30, 99, 0.15);
+    --accent-color: rgba(233, 30, 99, 0.1);
+    --button-bg: rgba(233, 30, 99, 0.1);
+    --button-hover: rgba(233, 30, 99, 0.15);
+    --display-bg: rgba(233, 30, 99, 0.05);
+}
+
+/* Tema oscuro */
+body.theme-oscuro {
+    --primary-color: #90a4ae;
+    --secondary-color: #607d8b;
+    --success-color: #4CAF50;
+    --text-primary: #e8e8e8;
+    --text-secondary: rgba(232, 232, 232, 0.7);
+    --text-muted: rgba(232, 232, 232, 0.5);
+    --main-bg: linear-gradient(135deg, #1a1a20, #2c2c38);
+    --card-bg: rgba(30, 30, 35, 0.95);
+    --input-bg: rgba(255, 255, 255, 0.08);
+    --input-border: rgba(144, 164, 174, 0.2);
+    --border-color: rgba(144, 164, 174, 0.15);
+    --card-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    --accent-color: rgba(144, 164, 174, 0.1);
+    --button-bg: rgba(255, 255, 255, 0.1);
+    --button-hover: rgba(255, 255, 255, 0.15);
+    --display-bg: rgba(255, 255, 255, 0.05);
+}
+
+/* Estilos base */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: var(--main-bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Contenedor principal - estilo calculadora */
+.container {
+    position: relative;
+    z-index: 10;
+}
+
+/* Header de la aplicación */
+.app-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.app-header h1 {
+    margin: 0 0 8px 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: var(--primary-color);
+}
+
+.app-header p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
+/* Display principal */
+.main-display {
+    background: var(--display-bg);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 24px;
+    border: 1px solid var(--border-color);
+    text-align: center;
+}
+
+.course-display {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.course-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    min-height: 1.3em;
+}
+
+.student-count {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
+/* Grid de controles */
+.controls-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.control-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.control-section label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* Selectores modernos */
+.modern-select {
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 12px center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    padding-right: 40px;
+}
+
+.modern-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background: var(--input-bg);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.modern-select option {
+    background: var(--card-bg);
+    color: var(--text-primary);
+    padding: 8px;
+}
+
+/* Botones de acción */
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.btn-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--button-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 14px 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(10px);
+}
+
+.btn-action:hover {
+    background: var(--button-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-action:active {
+    transform: translateY(0);
+}
+
+.btn-action.btn-primary {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.btn-action.btn-primary:hover {
+    background: var(--secondary-color);
+    border-color: var(--secondary-color);
+}
+
+.btn-action.btn-secondary {
+    background: var(--button-bg);
+    color: var(--text-primary);
+}
+
+.btn-action.btn-success {
+    background: var(--success-color);
+    color: white;
+    border-color: var(--success-color);
+}
+
+.btn-icon {
+    font-size: 1rem;
+}
+
+.btn-text {
+    font-weight: 500;
+}
+
+/* Indicador de estado */
+.status-indicator {
+    text-align: center;
+    padding: 12px;
+    background: var(--accent-color);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.status-indicator span {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+/* Modal para grupos */
+.groups-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.groups-modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: var(--card-bg);
+    border-radius: 20px;
+    max-width: 800px;
+    width: 100%;
+    max-height: 90vh;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--card-shadow);
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.close-modal:hover {
+    background: var(--button-hover);
+    color: var(--text-primary);
+}
+
+.modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 24px;
+}
+
+.modal-footer {
+    display: flex;
+    gap: 12px;
+    padding: 20px 24px;
+    border-top: 1px solid var(--border-color);
+}
+
+.btn-modal {
+    flex: 1;
+    background: var(--button-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-modal:hover {
+    background: var(--button-hover);
+}
+
+.btn-modal.btn-success {
+    background: var(--success-color);
+    color: white;
+    border-color: var(--success-color);
+}
+
+/* Contenedor de grupos en modal */
+.groups-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+}
+
+.group-card {
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+.group-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.group-header {
+    padding: 12px 16px;
+    background: var(--accent-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.group-header h3 {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.group-students {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.student-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: var(--button-bg);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+    cursor: grab;
+}
+
+.student-card:hover {
+    background: var(--button-hover);
+}
+
+.student-card.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+}
+
+.student-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+
+.student-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.student-name {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.student-email {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Botón de regreso */
+.back-to-dashboard {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    width: 48px;
+    height: 48px;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.back-to-dashboard:hover {
+    background: var(--button-hover);
+    transform: scale(1.05);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    body {
+        padding: 16px;
+    }
+    
+    .container {
+        max-width: 100% !important;
+        padding: 24px !important;
+    }
+    
+    .controls-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .action-buttons {
+        gap: 10px;
+    }
+    
+    .btn-action {
+        padding: 12px 16px;
+        font-size: 0.85rem;
+    }
+    
+    .groups-container {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .modal-content {
+        margin: 10px;
+        max-height: calc(100vh - 20px);
+    }
+    
+    .modal-footer {
+        flex-direction: column;
+    }
+    
+    .back-to-dashboard {
+        width: 44px;
+        height: 44px;
+        top: 16px;
+        left: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 20px !important;
+    }
+    
+    .app-header h1 {
+        font-size: 1.3rem;
+    }
+    
+    .main-display {
+        padding: 16px;
+    }
+    
+    .course-name {
+        font-size: 1rem;
+    }
+    
+    .modern-select {
+        padding: 10px 14px;
+        font-size: 0.85rem;
+    }
+    
+    .btn-action {
+        padding: 10px 14px;
+    }
+    
+    .modal-header,
+    .modal-body,
+    .modal-footer {
+        padding: 16px 20px;
+    }
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.groups-modal.show .modal-content {
+    animation: slideIn 0.3s ease;
+}
+
+.group-card {
+    animation: fadeIn 0.3s ease;
+}
+
+/* Estados de carga */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid var(--border-color);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Estilos para Drag & Drop mejorado */
+
+/* Estados de arrastre para estudiantes */
+.student-card {
+    cursor: grab;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    z-index: 1;
+}
+
+.student-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.student-card:active {
+    cursor: grabbing;
+}
+
+.student-card.dragging {
+    opacity: 0.7;
+    transform: scale(1.05) rotate(2deg);
+    z-index: 1000;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    cursor: grabbing;
+    animation: dragPulse 1s infinite alternate;
+}
+
+@keyframes dragPulse {
+    0% { transform: scale(1.05) rotate(2deg); }
+    100% { transform: scale(1.08) rotate(-1deg); }
+}
+
+/* Estados de los grupos durante drag & drop */
+.group-card.drop-target {
+    border: 2px dashed var(--primary-color);
+    background: var(--accent-color);
+    transform: scale(1.02);
+    transition: all 0.3s ease;
+}
+
+.group-card.drop-active {
+    border: 2px solid var(--success-color);
+    background: rgba(76, 175, 80, 0.1);
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
+    animation: dropGlow 1s infinite alternate;
+}
+
+@keyframes dropGlow {
+    0% { box-shadow: 0 0 20px rgba(76, 175, 80, 0.3); }
+    100% { box-shadow: 0 0 30px rgba(76, 175, 80, 0.5); }
+}
+
+.group-card.source-group {
+    opacity: 0.6;
+    border: 2px dashed var(--text-muted);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.group-students.drag-over {
+    background: rgba(76, 175, 80, 0.15);
+    border-radius: 12px;
+    min-height: 120px;
+    position: relative;
+}
+
+.group-students.drag-over::before {
+    content: "📥 Soltar aquí";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--success-color);
+    font-weight: 600;
+    font-size: 0.9rem;
+    opacity: 0.8;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* Indicador de arrastre */
+.drag-indicator {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--primary-color);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-weight: 600;
+        font-size: 0.9rem;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    z-index: 10000;
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: none;
+    backdrop-filter: blur(10px);
+}
+
+.drag-indicator.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Notificación de movimiento */
+.move-notification {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: var(--card-shadow);
+    backdrop-filter: blur(20px);
+    z-index: 9999;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    max-width: 300px;
+}
+
+.move-notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.notification-icon {
+    font-size: 1.2rem;
+    animation: sparkle 1.5s infinite;
+}
+
+@keyframes sparkle {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.2) rotate(180deg); }
+}
+
+.notification-text {
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+/* Efectos para dispositivos táctiles */
+@media (hover: none) and (pointer: coarse) {
+    .student-card {
+        cursor: default;
+    }
+    
+    .student-card:hover {
+        transform: none;
+    }
+    
+    .student-card.dragging {
+        animation: touchDragPulse 0.8s infinite alternate;
+    }
+    
+    @keyframes touchDragPulse {
+        0% { transform: scale(1.1); }
+        100% { transform: scale(1.15); }
+    }
+    
+    .group-card.drop-target {
+        animation: touchDropTarget 1s infinite alternate;
+    }
+    
+    @keyframes touchDropTarget {
+        0% { border-color: var(--primary-color); }
+        100% { border-color: var(--success-color); }
+    }
+}
+
+/* Mejoras para grupos vacíos durante drag & drop */
+.group-students:empty.drag-over {
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed var(--success-color);
+    background: rgba(76, 175, 80, 0.1);
+}
+
+.group-students:empty.drag-over::before {
+    content: "📥 Primer estudiante";
+    color: var(--success-color);
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+/* Estados de hover mejorados */
+.group-card:not(.dragging):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+}
+
+/* Transiciones suaves para todos los elementos */
+.group-card,
+.student-card,
+.group-students {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Estilos específicos para temas */
+body.theme-light .drag-indicator {
+    background: var(--primary-color);
+    color: white;
+}
+
+body.theme-light .group-card.drop-active {
+    background: rgba(76, 175, 80, 0.08);
+    border-color: #4CAF50;
+}
+
+body.theme-rosa .drag-indicator {
+    background: var(--primary-color);
+}
+
+body.theme-rosa .group-card.drop-active {
+    background: rgba(233, 30, 99, 0.08);
+    border-color: #e91e63;
+}
+
+body.theme-oscuro .drag-indicator {
+    background: var(--primary-color);
+}
+
+body.theme-oscuro .group-card.drop-active {
+    background: rgba(144, 164, 174, 0.08);
+    border-color: #90a4ae;
+}
+
+/* Animaciones de entrada para elementos dinámicos */
+@keyframes slideInFromRight {
+    0% {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInFromTop {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.move-notification {
+    animation: slideInFromRight 0.3s ease-out;
+}
+
+.drag-indicator {
+    animation: slideInFromTop 0.3s ease-out;
+}
+
+/* Responsive adjustments para drag & drop */
+@media (max-width: 768px) {
+    .drag-indicator {
+        font-size: 0.8rem;
+        padding: 10px 20px;
+        top: 15px;
+    }
+    
+    .move-notification {
+        right: 15px;
+        top: 70px;
+        max-width: calc(100vw - 30px);
+        font-size: 0.85rem;
+    }
+    
+    .group-students.drag-over::before {
+        font-size: 0.8rem;
+    }
+    
+    .student-card.dragging {
+        transform: scale(1.1);
+    }
+}
+
+@media (max-width: 480px) {
+    .drag-indicator {
+        font-size: 0.75rem;
+        padding: 8px 16px;
+    }
+    
+    .move-notification {
+        right: 10px;
+        top: 60px;
+        padding: 12px 16px;
+    }
+    
+    .notification-text {
+        font-size: 0.8rem;
+    }
+} 

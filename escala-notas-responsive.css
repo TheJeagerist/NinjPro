@@ -1,0 +1,511 @@
+/* ===================================
+   ESCALA DE NOTAS - OPTIMIZACIÓN RESPONSIVE
+   Optimizaciones específicas para tablets y móviles
+   =================================== */
+
+/* Variables para dispositivos móviles */
+:root {
+  --mobile-touch-target: 44px;
+  --tablet-touch-target: 40px;
+  --mobile-spacing: 12px;
+  --tablet-spacing: 16px;
+}
+
+/* ===================================
+   OPTIMIZACIONES GENERALES MÓVILES
+   =================================== */
+
+@media (max-width: 768px) {
+  /* Panel principal más compacto */
+  #escala-panel {
+    margin-left: 0;
+    width: 100%;
+    padding: 10px;
+    min-height: calc(100vh - 20px);
+  }
+
+  #escala-panel .container {
+    padding: 1rem;
+    margin: 0;
+    border-radius: 12px;
+    min-height: calc(100vh - 40px);
+  }
+
+  /* Título más compacto */
+  #escala-panel h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  /* Inputs más grandes para touch */
+  .input-group {
+    margin-bottom: 1rem;
+  }
+
+  .input-group label {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+
+  .input-group input {
+    min-height: var(--mobile-touch-target);
+    font-size: 1rem;
+    padding: 12px;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+  }
+
+  .input-group input:focus {
+    border-color: var(--primary-color, #4facfe);
+    transform: scale(1.02);
+  }
+
+  /* Controles de tabla más accesibles */
+  .tabla-controls {
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 1rem 0;
+    justify-content: center;
+  }
+
+  .tabla-mode-btn {
+    min-height: var(--mobile-touch-target);
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    min-width: 100px;
+    flex: 1;
+    max-width: 140px;
+  }
+
+  /* Contenedor PAES relativo */
+  .paes-container {
+    position: relative;
+  }
+
+  /* Dropdown PAES optimizado */
+  .paes-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 8px;
+    width: auto;
+    min-width: 200px;
+    max-width: 320px;
+    max-height: 70vh;
+    overflow-y: auto;
+    z-index: 2000;
+  }
+
+  .paes-dropdown-item {
+    min-height: var(--mobile-touch-target);
+    padding: 12px 16px;
+    font-size: 0.95rem;
+  }
+
+  /* Conversores optimizados */
+  .conversor-container {
+    margin: 1rem auto;
+    padding: 1rem;
+    max-width: 100%;
+  }
+
+  .conversor-inputs {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .conversor-group {
+    width: 100%;
+  }
+
+  .conversor-input,
+  .conversor-result {
+    min-height: var(--mobile-touch-target);
+    font-size: 1.1rem;
+    padding: 12px;
+  }
+
+  /* Botón toggle columnas */
+  #toggle-columnas {
+    min-height: var(--mobile-touch-target);
+    padding: 12px 20px;
+    font-size: 1rem;
+    margin: 1rem 0;
+  }
+
+  /* Tablas optimizadas */
+  .tabla-multi-inner {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .tabla-multi table {
+    font-size: 0.9rem;
+    border-radius: 8px;
+  }
+
+  .tabla-multi th,
+  .tabla-multi td {
+    padding: 8px 6px;
+    min-height: 36px;
+  }
+
+  .tabla-multi th {
+    font-size: 0.9rem;
+    padding: 10px 6px;
+  }
+}
+
+/* ===================================
+   OPTIMIZACIONES ESPECÍFICAS TABLETS
+   =================================== */
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  #escala-panel {
+    margin-left: 0;
+    width: 100%;
+    padding: 20px;
+  }
+
+  #escala-panel .container {
+    max-width: 100%;
+    padding: 1.5rem;
+  }
+
+  /* Inputs optimizados para tablet */
+  .input-group input {
+    min-height: var(--tablet-touch-target);
+    font-size: 1rem;
+    padding: 10px 12px;
+  }
+
+  /* Controles de tabla para tablet */
+  .tabla-mode-btn {
+    min-height: var(--tablet-touch-target);
+    padding: 10px 18px;
+    min-width: 120px;
+  }
+
+  /* Conversores en tablet */
+  .conversor-container {
+    max-width: 450px;
+  }
+
+  .conversor-input,
+  .conversor-result {
+    min-height: var(--tablet-touch-target);
+    font-size: 1rem;
+  }
+
+  /* Tablas en tablet */
+  .tabla-multi-inner {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+/* ===================================
+   OPTIMIZACIONES ULTRA MÓVILES
+   =================================== */
+
+@media (max-width: 480px) {
+  #escala-panel {
+    padding: 8px;
+  }
+
+  #escala-panel .container {
+    padding: 0.75rem;
+    border-radius: 8px;
+  }
+
+  #escala-panel h2 {
+    font-size: 1.3rem;
+    margin-bottom: 0.75rem;
+  }
+
+  /* Inputs más grandes en móviles pequeños */
+  .input-group input {
+    min-height: 48px;
+    font-size: 1.1rem;
+    padding: 14px;
+  }
+
+  /* Botones más grandes */
+  .tabla-mode-btn {
+    min-height: 48px;
+    padding: 14px 12px;
+    font-size: 0.85rem;
+    min-width: 80px;
+  }
+
+  /* Conversores stack completo */
+  .conversor-input,
+  .conversor-result {
+    min-height: 48px;
+    font-size: 1.2rem;
+    padding: 14px;
+  }
+
+  /* Toggle columnas más grande */
+  #toggle-columnas {
+    min-height: 48px;
+    padding: 14px 18px;
+    font-size: 0.95rem;
+  }
+
+  /* Tablas más compactas */
+  .tabla-multi th,
+  .tabla-multi td {
+    padding: 6px 4px;
+    font-size: 0.8rem;
+    min-height: 32px;
+  }
+}
+
+/* ===================================
+   MEJORAS DE USABILIDAD TÁCTIL
+   =================================== */
+
+@media (hover: none) and (pointer: coarse) {
+  /* Eliminar hover effects en dispositivos táctiles */
+  .tabla-mode-btn:hover,
+  .input-group input:hover,
+  #toggle-columnas:hover {
+    transform: none;
+  }
+
+  /* Feedback táctil mejorado */
+  .tabla-mode-btn:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+  }
+
+  .input-group input:focus {
+    transform: scale(1.01);
+    box-shadow: 0 0 0 3px rgba(79, 188, 255, 0.3);
+  }
+
+  #toggle-columnas:active {
+    transform: scale(0.98);
+  }
+
+  /* Área de toque más grande para elementos pequeños */
+  .paes-dropdown-item {
+    position: relative;
+  }
+
+  .paes-dropdown-item::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    z-index: -1;
+  }
+}
+
+/* ===================================
+   MODO ACTUAL RESPONSIVE
+   =================================== */
+
+@media (max-width: 768px) {
+  .modo-actual {
+    font-size: 0.85rem;
+    padding: 8px 12px;
+    margin: 0.5rem 0;
+    border-radius: 6px;
+  }
+
+  .modo-actual #modo-paes-texto {
+    font-weight: 600;
+  }
+}
+
+/* ===================================
+   DROPDOWN PAES MEJORADO MÓVIL
+   =================================== */
+
+/* Estilos del dropdown PAES movidos a styles.css para evitar conflictos */
+
+/* ===================================
+   SCROLL OPTIMIZADO
+   =================================== */
+
+@media (max-width: 768px) {
+  /* Scroll suave en contenedores */
+  .paes-dropdown,
+  .tabla-multi {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Scrollbars más gruesos en móvil */
+  .paes-dropdown::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .paes-dropdown::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+  }
+
+  .paes-dropdown::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+  }
+}
+
+/* ===================================
+   ORIENTACIÓN LANDSCAPE MÓVIL
+   =================================== */
+
+@media (max-width: 768px) and (orientation: landscape) {
+  #escala-panel .container {
+    padding: 1rem;
+  }
+
+  .inputs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .tabla-controls {
+    margin: 0.75rem 0;
+  }
+
+  .conversor-container {
+    margin: 0.75rem auto;
+  }
+
+  .conversor-inputs {
+    flex-direction: row;
+    gap: 1rem;
+  }
+}
+
+/* ===================================
+   ACCESIBILIDAD MEJORADA
+   =================================== */
+
+@media (max-width: 768px) {
+  /* Focus visible mejorado */
+  .tabla-mode-btn:focus,
+  .input-group input:focus,
+  #toggle-columnas:focus {
+    outline: 3px solid var(--primary-color, #4facfe);
+    outline-offset: 2px;
+  }
+
+  /* Contraste mejorado para texto pequeño */
+  .tabla-multi td,
+  .tabla-multi th {
+    font-weight: 500;
+  }
+
+  /* Espaciado mejorado para legibilidad */
+  .conversor-label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* ===================================
+   ANIMACIONES OPTIMIZADAS MÓVIL
+   =================================== */
+
+@media (max-width: 768px) {
+  /* Reducir animaciones en móviles para mejor rendimiento */
+  .tabla-mode-btn,
+  .input-group input,
+  #toggle-columnas {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  /* Animación de entrada más rápida */
+  .conversor-container {
+    animation-duration: 0.3s;
+  }
+
+  .paes-dropdown {
+    transition: all 0.2s ease;
+  }
+}
+
+/* ===================================
+   TEMA ESPECÍFICO MÓVIL
+   =================================== */
+
+/* Tema Oscuro Móvil */
+@media (max-width: 768px) {
+  body.theme-dark .input-group input:focus {
+    box-shadow: 0 0 0 3px rgba(158, 147, 246, 0.4);
+  }
+
+  body.theme-dark .tabla-mode-btn:focus {
+    outline-color: rgba(158, 147, 246, 0.8);
+  }
+}
+
+/* Tema Claro Móvil */
+@media (max-width: 768px) {
+  body.theme-light .input-group input:focus {
+    box-shadow: 0 0 0 3px rgba(79, 188, 255, 0.4);
+  }
+
+  body.theme-light .tabla-mode-btn:focus {
+    outline-color: rgba(79, 188, 255, 0.8);
+  }
+}
+
+/* Tema Rosa Móvil */
+@media (max-width: 768px) {
+  body.theme-rosa .input-group input:focus {
+    box-shadow: 0 0 0 3px rgba(231, 84, 128, 0.4);
+  }
+
+  body.theme-rosa .tabla-mode-btn:focus {
+    outline-color: rgba(231, 84, 128, 0.8);
+  }
+}
+
+/* Tema Oscuro Profundo Móvil */
+@media (max-width: 768px) {
+  body.theme-oscuro .input-group input:focus {
+    box-shadow: 0 0 0 3px rgba(122, 162, 255, 0.4);
+  }
+
+  body.theme-oscuro .tabla-mode-btn:focus {
+    outline-color: rgba(122, 162, 255, 0.8);
+  }
+}
+
+/* ===================================
+   MEJORAS DE RENDIMIENTO
+   =================================== */
+
+@media (max-width: 768px) {
+  /* Optimización de GPU para animaciones suaves */
+  .tabla-mode-btn,
+  .input-group input,
+  #toggle-columnas,
+  .conversor-container {
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+
+  /* Reducir complejidad visual en móviles */
+  .tabla-multi table {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .conversor-container {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  }
+} 

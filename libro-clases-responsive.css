@@ -1,0 +1,692 @@
+/* Mejoras Responsivas Específicas para Libro de Clases */
+
+/* Tablets (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .sidebar {
+        width: 240px;
+    }
+    
+    .main-content {
+        margin-left: 240px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
+    }
+    
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+    
+    .cursos-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
+    }
+    
+    .estudiantes-table {
+        font-size: 0.8rem;
+    }
+    
+    .estudiantes-table th,
+    .estudiantes-table td {
+        padding: 0.75rem;
+    }
+    
+    .modal-content {
+        max-width: 600px;
+        margin: 2rem;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+    
+    .asistencia-item {
+        padding: 1rem;
+    }
+    
+    .asistencia-controls {
+        gap: 0.75rem;
+    }
+    
+    .asistencia-btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.8rem;
+    }
+    
+    .calificaciones-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+}
+
+/* Móviles grandes (480px - 767px) */
+@media (min-width: 480px) and (max-width: 767px) {
+    .header {
+        padding: 0 1rem;
+        height: 70px;
+    }
+    
+    .page-title {
+        font-size: 1.375rem;
+    }
+    
+    .content-section {
+        padding: 1.5rem 1rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .stat-card {
+        padding: 1.25rem;
+    }
+    
+    .stat-number {
+        font-size: 1.75rem;
+    }
+    
+    .dashboard-card {
+        padding: 1.25rem;
+    }
+    
+    .quick-action-btn {
+        padding: 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .action-icon {
+        font-size: 1.125rem;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+    
+    .section-controls {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .btn-primary {
+        width: 100%;
+        justify-content: center;
+        padding: 0.875rem 1.5rem;
+    }
+    
+    .cursos-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .curso-card {
+        padding: 1.25rem;
+    }
+    
+    .curso-stats {
+        flex-direction: row;
+        justify-content: space-around;
+        gap: 1rem;
+    }
+    
+    .estudiantes-table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .estudiantes-table {
+        min-width: 700px;
+        font-size: 0.8rem;
+    }
+    
+    .estudiantes-table th,
+    .estudiantes-table td {
+        padding: 0.75rem 0.5rem;
+    }
+    
+    .observaciones-badges {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    
+    .observacion-badge {
+        text-align: center;
+    }
+    
+    .asistencia-item {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+        padding: 1rem;
+    }
+    
+    .estudiante-info {
+        justify-content: center;
+        text-align: center;
+    }
+    
+    .asistencia-controls {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .asistencia-btn {
+        flex: 1;
+        min-width: 80px;
+        padding: 0.75rem;
+        font-size: 0.8rem;
+    }
+    
+    .modal-content {
+        margin: 1rem;
+        max-width: none;
+        max-height: 85vh;
+    }
+    
+    .modal-header,
+    .modal-body {
+        padding: 1.25rem;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .calificaciones-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .calificacion-item {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+    }
+    
+    .calificaciones-estudiantes {
+        max-height: 250px;
+    }
+    
+    .calificacion-estudiante-item {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+    }
+    
+    .calificacion-input {
+        width: 100%;
+        max-width: 120px;
+        margin: 0 auto;
+    }
+}
+
+/* Móviles pequeños (hasta 479px) */
+@media (max-width: 479px) {
+    .sidebar {
+        width: 100%;
+        transform: translateX(-100%);
+    }
+    
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+    
+    .header {
+        padding: 0 0.75rem;
+        height: 60px;
+    }
+    
+    .header-left {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+    
+    .page-title {
+        font-size: 1.125rem;
+        line-height: 1.2;
+    }
+    
+    .page-subtitle {
+        font-size: 0.75rem;
+    }
+    
+    .btn-back {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+    }
+    
+    .content-section {
+        padding: 1rem 0.75rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .stat-card {
+        padding: 1rem;
+    }
+    
+    .stat-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+    
+    .stat-number {
+        font-size: 1.5rem;
+    }
+    
+    .stat-icon {
+        font-size: 1.5rem;
+    }
+    
+    .dashboard-card {
+        padding: 1rem;
+    }
+    
+    .dashboard-card h3 {
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .quick-action-btn {
+        padding: 0.875rem;
+        font-size: 0.85rem;
+    }
+    
+    .activity-item {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+    }
+    
+    .activity-time {
+        font-size: 0.7rem;
+    }
+    
+    .section-header h2 {
+        font-size: 1.25rem;
+    }
+    
+    .section-controls {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .form-select,
+    .form-input {
+        font-size: 0.9rem;
+        padding: 0.75rem;
+    }
+    
+    .btn-primary {
+        width: 100%;
+        padding: 0.875rem;
+        font-size: 0.9rem;
+    }
+    
+    .curso-card {
+        padding: 1rem;
+    }
+    
+    .curso-title {
+        font-size: 1rem;
+    }
+    
+    .curso-actions {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    
+    .curso-stats {
+        flex-direction: column;
+        gap: 0.75rem;
+        text-align: center;
+    }
+    
+    .curso-stat {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem;
+        background: var(--bg-secondary);
+        border-radius: var(--radius-md);
+    }
+    
+    .estudiantes-table {
+        min-width: 600px;
+        font-size: 0.75rem;
+    }
+    
+    .estudiantes-table th,
+    .estudiantes-table td {
+        padding: 0.5rem 0.25rem;
+    }
+    
+    .estudiante-nombre {
+        font-size: 0.8rem;
+    }
+    
+    .observaciones-badges {
+        flex-direction: column;
+        gap: 0.125rem;
+    }
+    
+    .observacion-badge {
+        font-size: 0.7rem;
+        padding: 0.125rem 0.375rem;
+    }
+    
+    .promedio-badge,
+    .calificacion-nota {
+        font-size: 0.75rem;
+        padding: 0.125rem 0.5rem;
+    }
+    
+    .asistencia-container {
+        padding: 1rem;
+    }
+    
+    .asistencia-header {
+        flex-direction: column;
+        gap: 0.75rem;
+        text-align: center;
+    }
+    
+    .asistencia-summary {
+        flex-direction: column;
+        gap: 0.25rem;
+        font-size: 0.8rem;
+    }
+    
+    .asistencia-item {
+        padding: 0.875rem;
+    }
+    
+    .estudiante-avatar {
+        width: 35px;
+        height: 35px;
+        font-size: 0.8rem;
+    }
+    
+    .estudiante-details h4 {
+        font-size: 0.8rem;
+    }
+    
+    .estudiante-details p {
+        font-size: 0.7rem;
+    }
+    
+    .asistencia-btn {
+        padding: 0.625rem 0.75rem;
+        font-size: 0.75rem;
+        min-width: 70px;
+    }
+    
+    .modal-content {
+        margin: 0.5rem;
+        border-radius: var(--radius-lg);
+    }
+    
+    .modal-header {
+        padding: 1rem;
+    }
+    
+    .modal-header h3 {
+        font-size: 1.125rem;
+    }
+    
+    .modal-body {
+        padding: 1rem;
+    }
+    
+    .form-group label {
+        font-size: 0.8rem;
+    }
+    
+    .form-textarea {
+        min-height: 80px;
+    }
+    
+    .calificaciones-container {
+        padding: 1rem;
+    }
+    
+    .evaluacion-card {
+        padding: 1rem;
+    }
+    
+    .evaluacion-header {
+        flex-direction: column;
+        gap: 0.75rem;
+        text-align: center;
+    }
+    
+    .evaluacion-stats {
+        flex-direction: column;
+        gap: 0.25rem;
+        font-size: 0.8rem;
+    }
+    
+    .calificaciones-estudiantes {
+        max-height: 200px;
+        padding: 0.75rem;
+    }
+    
+    .calificacion-estudiante-item {
+        padding: 0.5rem;
+        margin-bottom: 0.375rem;
+    }
+}
+
+/* Mejoras para accesibilidad y usabilidad */
+@media (max-width: 768px) {
+    /* Aumentar área de toque para botones */
+    .btn-primary,
+    .btn-secondary,
+    .btn-success,
+    .btn-danger,
+    .btn-warning {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    .menu-item {
+        min-height: 48px;
+    }
+    
+    .quick-action-btn {
+        min-height: 48px;
+    }
+    
+    .asistencia-btn {
+        min-height: 40px;
+    }
+    
+    /* Mejorar contraste en modo oscuro */
+    .modal-content {
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+    
+    /* Scroll suave en contenedores */
+    .estudiantes-table-container,
+    .calificaciones-estudiantes,
+    .asistencia-list {
+        scroll-behavior: smooth;
+    }
+    
+    /* Indicadores visuales para scroll horizontal */
+    .estudiantes-table-container::after {
+        content: '→ Desliza para ver más';
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: var(--primary-color);
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.7rem;
+        opacity: 0.8;
+        pointer-events: none;
+    }
+    
+    .estudiantes-table-container::-webkit-scrollbar {
+        height: 6px;
+    }
+    
+    .estudiantes-table-container::-webkit-scrollbar-track {
+        background: var(--bg-tertiary);
+        border-radius: 3px;
+    }
+    
+    .estudiantes-table-container::-webkit-scrollbar-thumb {
+        background: var(--primary-color);
+        border-radius: 3px;
+    }
+}
+
+/* Optimizaciones para rendimiento en móviles */
+@media (max-width: 768px) {
+    /* Reducir animaciones en dispositivos móviles */
+    * {
+        animation-duration: 0.2s !important;
+        transition-duration: 0.2s !important;
+    }
+    
+    /* Optimizar fuentes para pantallas pequeñas */
+    body {
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+    }
+    
+    /* Mejorar rendimiento de scroll */
+    .content-section,
+    .modal-body,
+    .estudiantes-table-container {
+        -webkit-overflow-scrolling: touch;
+        overflow-scrolling: touch;
+    }
+}
+
+/* Modo landscape para móviles */
+@media (max-width: 768px) and (orientation: landscape) {
+    .header {
+        height: 50px;
+    }
+    
+    .page-title {
+        font-size: 1rem;
+    }
+    
+    .content-section {
+        padding: 0.75rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+    
+    .stat-card {
+        padding: 0.75rem;
+    }
+    
+    .stat-number {
+        font-size: 1.25rem;
+    }
+    
+    .modal-content {
+        max-height: 80vh;
+    }
+    
+    .asistencia-item {
+        flex-direction: row;
+        align-items: center;
+    }
+    
+    .asistencia-controls {
+        flex-direction: row;
+        gap: 0.5rem;
+    }
+}
+
+/* Mejoras para tablets en modo portrait */
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+    
+    .menu-toggle {
+        display: block;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .cursos-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Mejoras para impresión */
+@media print {
+    .sidebar,
+    .header,
+    .btn-primary,
+    .btn-secondary,
+    .btn-success,
+    .btn-danger,
+    .btn-warning,
+    .modal {
+        display: none !important;
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+    
+    .content-section {
+        padding: 0;
+    }
+    
+    .estudiantes-table {
+        font-size: 10px;
+    }
+    
+    .curso-card,
+    .dashboard-card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+} 

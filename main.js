@@ -183,31 +183,48 @@ function showError(msg) {
 
 // Tema
 function setTheme(theme) {
-  document.body.classList.remove('theme-light', 'theme-dark', 'theme-rosa', 'theme-oscuro');
-  document.body.classList.add(theme);
-  localStorage.setItem('theme', theme);
+  console.log(`🎨 Cambiando al tema: ${theme}`);
+  
+  // Normalizar el nombre del tema (asegurar que tenga el prefijo 'theme-')
+  const normalizedTheme = theme.startsWith('theme-') ? theme : `theme-${theme}`;
+  
+  // Cambiar clase del body
+  document.body.classList.remove('theme-light', 'theme-dark', 'theme-rosa', 'theme-oscuro', 'theme-neon');
+  document.body.classList.add(normalizedTheme);
+  localStorage.setItem('theme', normalizedTheme);
 
-  // Mostrar SVG animado solo para el modo actual
-  const bg = document.getElementById('bg-wrap');
-  const bgDark = document.getElementById('bg-wrap-dark');
-  const bgRosa = document.getElementById('bg-wrap-rosa');
-  const bgOscuro = document.getElementById('bg-wrap-oscuro');
-  if (bg) bg.style.opacity = (theme === 'theme-light') ? '1' : '0';
-  if (bgDark) bgDark.style.opacity = (theme === 'theme-dark') ? '1' : '0';
-  if (bgRosa) bgRosa.style.opacity = (theme === 'theme-rosa') ? '1' : '0';
-  if (bgOscuro) bgOscuro.style.opacity = (theme === 'theme-oscuro') ? '1' : '0';
+  // Usar el sistema de fondos animados
+  if (window.animatedBackgrounds) {
+    const themeKey = normalizedTheme.replace('theme-', '');
+    window.animatedBackgrounds.switchTheme(themeKey);
+    console.log(`✅ Fondo animado activado para ${normalizedTheme}`);
+  } else {
+    // Si el sistema de fondos animados no está disponible aún, intentar más tarde
+    setTimeout(() => {
+      if (window.animatedBackgrounds) {
+        const themeKey = normalizedTheme.replace('theme-', '');
+        window.animatedBackgrounds.switchTheme(themeKey);
+        console.log(`✅ Fondo animado activado para ${normalizedTheme} (retry)`);
+      } else {
+        console.warn(`⚠️ Sistema de fondos animados no disponible para ${normalizedTheme}`);
+      }
+    }, 100);
+  }
 }
 
 const themeBtns = document.querySelectorAll('.theme-btn');
 function updateActiveBtn(theme) {
+  // Normalizar el tema para la comparación
+  const normalizedTheme = theme.startsWith('theme-') ? theme : `theme-${theme}`;
   themeBtns.forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.theme === theme);
+    btn.classList.toggle('active', btn.dataset.theme === normalizedTheme);
   });
 }
 themeBtns.forEach(btn => {
   btn.addEventListener('click', () => {
-    setTheme(btn.dataset.theme);
-    updateActiveBtn(btn.dataset.theme);
+    const selectedTheme = btn.dataset.theme;
+    setTheme(selectedTheme);
+    updateActiveBtn(selectedTheme);
   });
 });
 const savedTheme = localStorage.getItem('theme') || 'theme-dark';
@@ -931,26 +948,59 @@ function cambiarModoTabla(modo, submodo = null) {
 
 // Agregar event listeners
 document.addEventListener('DOMContentLoaded', function() {
-  // Event listeners para los botones de modo
+  // Event listeners para los botones de modo (con soporte táctil)
   document.querySelectorAll('.tabla-mode-btn').forEach(btn => {
     if (!btn.classList.contains('has-dropdown')) {
-      btn.addEventListener('click', () => {
+      // Agregar tanto click como touchend para dispositivos táctiles
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        cambiarModoTabla(btn.dataset.mode);
+      });
+      
+      btn.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
         cambiarModoTabla(btn.dataset.mode);
       });
     }
   });
 
-  // Event listeners para los items del dropdown de PAES
+  // Event listener específico para el botón PAES con dropdown (con soporte táctil)
+  const paesButton = document.querySelector('.tabla-mode-btn.has-dropdown');
+  if (paesButton) {
+    function togglePaesDropdownHandler(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      const dropdown = document.querySelector('.paes-dropdown');
+      dropdown.classList.toggle('show');
+      paesButton.classList.toggle('active');
+      
+      console.log('PAES button clicked/touched - dropdown show:', dropdown.classList.contains('show'));
+    }
+    
+    paesButton.addEventListener('click', togglePaesDropdownHandler);
+    paesButton.addEventListener('touchend', togglePaesDropdownHandler);
+  }
+
+  // Event listeners para los items del dropdown de PAES (con soporte táctil)
   document.querySelectorAll('.paes-dropdown-item').forEach(item => {
-    item.addEventListener('click', () => {
+    function selectPaesMode(event) {
+      event.preventDefault();
+      event.stopPropagation();
       cambiarModoTabla('paes', item.dataset.paesMode);
       document.querySelector('.paes-dropdown').classList.remove('show');
       document.querySelector('.tabla-mode-btn.has-dropdown').classList.remove('active');
-    });
+      
+      console.log('PAES item selected:', item.dataset.paesMode);
+    }
+    
+    item.addEventListener('click', selectPaesMode);
+    item.addEventListener('touchend', selectPaesMode);
   });
 
-  // Cerrar dropdown al hacer click fuera
+  // Cerrar dropdown al hacer click/touch fuera
   document.addEventListener('click', togglePaesDropdown);
+  document.addEventListener('touchend', togglePaesDropdown);
 });
 
 // Conversor de puntaje a nota

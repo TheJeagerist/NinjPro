@@ -11,21 +11,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Fondo matemático animado (creado dinámicamente via JavaScript) -->
+    
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <button class="back-btn" onclick="window.location.href='index.html'">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M19 12H5M12 19l-7-7 7-7"/>
-                </svg>
-                Volver
-            </button>
             <h1 class="title">🧠 Matemáticas Rápidas</h1>
             <div class="theme-selector">
                 <button class="theme-btn" data-theme="theme-dark" title="Oscuro">🌙</button>
                 <button class="theme-btn" data-theme="theme-light" title="Claro">🌞</button>
                 <button class="theme-btn" data-theme="theme-rosa" title="Rosa">🌸</button>
-                <button class="theme-btn" data-theme="theme-oscuro" title="Oscuro Profundo">🌑</button>
                 <button class="theme-btn" data-theme="theme-neon" title="Neón">🎇</button>
             </div>
         </div>
@@ -68,6 +63,14 @@
                         <input type="checkbox" id="include-negatives" class="checkbox">
                         <span class="checkmark"></span>
                         Incluir números negativos
+                    </label>
+                </div>
+
+                <div class="config-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="sound-enabled" checked class="checkbox">
+                        <span class="checkmark"></span>
+                        🔊 Sonidos activados
                     </label>
                 </div>
 
@@ -154,7 +157,7 @@
     <div id="bg-wrap" class="bg-wrap"></div>
     <div id="bg-wrap-dark" class="bg-wrap-dark"></div>
     <div id="bg-wrap-rosa" class="bg-wrap-rosa"></div>
-    <div id="bg-wrap-oscuro" class="bg-wrap-oscuro"></div>
+    
     <div id="bg-wrap-neon" class="bg-wrap-neon"></div>
 
     <script src="theme-manager.js"></script>

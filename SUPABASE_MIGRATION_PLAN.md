@@ -512,8 +512,8 @@ class SupabaseLibroClases {
 ### **Código de Ejemplo para Integración**
 
 ```javascript
-// En libro-clases.js - Modificación mínima
-class LibroClases {
+// Ejemplo de integración - Modificación mínima
+class AppExample {
   constructor() {
     // Inicializar adaptador de datos
     this.dataAdapter = window.supabaseAdapter || new LocalStorageAdapter();

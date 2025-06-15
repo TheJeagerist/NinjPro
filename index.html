@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="dashboard-styles.css">
   <link rel="stylesheet" href="launcher-cards.css">
   <link rel="stylesheet" href="escala-notas-responsive.css">
+  <link rel="stylesheet" href="matematicas-rapidas.css">
 
   <link rel="stylesheet" href="animated-backgrounds.css">
   <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
@@ -28,12 +29,26 @@
     i
   </button>
 
+  <!-- Botón para desplegar selector de temas -->
+  <button id="toggle-themes-btn" class="toggle-themes-btn" role="button" title="Cambiar Tema">
+    🎨
+  </button>
+
+  <!-- Selector de temas vertical debajo del botón de créditos -->
+  <div class="vertical-theme-selector" id="vertical-theme-selector">
+    <button class="vertical-theme-btn" data-theme="theme-dark" title="Dark">🌙</button>
+    <button class="vertical-theme-btn" data-theme="theme-light" title="Claro">🌞</button>
+    <button class="vertical-theme-btn" data-theme="theme-rosa" title="Rosa">🌸</button>
+    
+    <button class="vertical-theme-btn" data-theme="theme-neon" title="Neón">🎇</button>
+  </div>
+
   <!-- Dashboard Principal -->
   <div id="dashboard-main" class="dashboard-main">
     <!-- Header del Dashboard -->
     <header class="dashboard-header">
       <div class="header-content">
-        <h1 class="dashboard-title">PROFENINJA</h1>
+          <h1 class="dashboard-title">PROFENINJA</h1>
         <p class="dashboard-subtitle">Accede a todas tus herramientas favoritas en un lugar</p>
       </div>
       <!-- Botón de Usuario movido fuera del header -->
@@ -45,15 +60,6 @@
           <path d="M21 21l-4.35-4.35"></path>
     </svg>
     </div>
-      
-      <!-- Selector de temas horizontal -->
-      <div class="header-theme-selector">
-        <button class="header-theme-btn" data-theme="theme-dark" title="Dark">🌙</button>
-        <button class="header-theme-btn" data-theme="theme-light" title="Claro">🌞</button>
-        <button class="header-theme-btn" data-theme="theme-rosa" title="Rosa">🌸</button>
-        <button class="header-theme-btn" data-theme="theme-oscuro" title="Oscuro">🌑</button>
-        <button class="header-theme-btn" data-theme="theme-neon" title="Neón">🎇</button>
-      </div>
       
       <!-- Filtros de categoría -->
       <div class="category-filters">
@@ -72,18 +78,20 @@
     <!-- Nuevo Launcher de Aplicaciones -->
     <div class="launcher-container">
       <div class="launcher-apps-grid">
-        <!-- Calculadora Principal -->
+      <!-- Calculadora Principal -->
         <div class="launcher-app-item" data-app="calculadora" data-category="calculadora">
           <a href="#" class="launcher-app-link" data-tool="calculadora">
+            <div class="launcher-app-content">
             <div class="launcher-app-icon">🧮</div>
             <div class="launcher-app-title">Calculadora</div>
             <div class="launcher-app-description">Promedio Ponderado</div>
             <div class="launcher-app-category">Calculadora</div>
+            </div>
             <div class="launcher-app-bg"></div>
           </a>
-        </div>
+      </div>
 
-        <!-- Escala de Notas -->
+      <!-- Escala de Notas -->
         <div class="launcher-app-item" data-app="conversor" data-category="calculadora">
           <a href="#" class="launcher-app-link" data-tool="escala">
             <div class="launcher-app-icon">🔄</div>
@@ -92,9 +100,9 @@
             <div class="launcher-app-category">Calculadora</div>
             <div class="launcher-app-bg"></div>
           </a>
-        </div>
+      </div>
 
-        <!-- Múltiples Promedios -->
+      <!-- Múltiples Promedios -->
         <div class="launcher-app-item" data-app="multi" data-category="calculadora">
           <a href="#" class="launcher-app-link" data-tool="multi">
             <div class="launcher-app-icon">📊</div>
@@ -103,22 +111,11 @@
             <div class="launcher-app-category">Calculadora</div>
             <div class="launcher-app-bg"></div>
           </a>
-        </div>
-
-        <!-- Calendario -->
-        <div class="launcher-app-item" data-app="calendario" data-category="herramientas">
-          <a href="#" class="launcher-app-link" data-tool="calendario">
-            <div class="launcher-app-icon">📅</div>
-            <div class="launcher-app-title">Calendario</div>
-            <div class="launcher-app-description">Organización Temporal</div>
-            <div class="launcher-app-category">Herramientas</div>
-            <div class="launcher-app-bg"></div>
-          </a>
-        </div>
+      </div>
 
 
 
-        <!-- Contador de Palabras -->
+      <!-- Contador de Palabras -->
         <div class="launcher-app-item" data-app="contador" data-category="herramientas">
           <a href="#" class="launcher-app-link" data-tool="word-counter">
             <div class="launcher-app-icon">📝</div>
@@ -127,18 +124,33 @@
             <div class="launcher-app-category">Herramientas</div>
             <div class="launcher-app-bg"></div>
           </a>
-        </div>
+      </div>
 
-        <!-- Rúbricas -->
-        <div class="launcher-app-item" data-app="rubricas" data-category="herramientas">
-          <a href="#" class="launcher-app-link" data-tool="rubricas">
+      <!-- Creador de Rúbricas -->
+        <div class="launcher-app-item" data-app="creador-rubricas" data-category="herramientas">
+          <a href="creador-rubricas.html" class="launcher-app-link" data-tool="creador-rubricas">
+            <div class="launcher-app-content">
             <div class="launcher-app-icon">📋</div>
-            <div class="launcher-app-title">Rúbricas</div>
-            <div class="launcher-app-description">Evaluación Educativa</div>
+            <div class="launcher-app-title">Creador de Rúbricas</div>
+            <div class="launcher-app-description">Crear y Editar Rúbricas</div>
             <div class="launcher-app-category">Herramientas</div>
+            </div>
             <div class="launcher-app-bg"></div>
           </a>
-        </div>
+      </div>
+
+      <!-- Evalúa con Rúbrica -->
+        <div class="launcher-app-item" data-app="evalua-rubricas" data-category="herramientas">
+          <a href="evalua-rubricas.html" class="launcher-app-link" data-tool="evalua-rubricas">
+            <div class="launcher-app-content">
+            <div class="launcher-app-icon">✅</div>
+            <div class="launcher-app-title">Evalúa con Rúbrica</div>
+            <div class="launcher-app-description">Evaluación de Estudiantes</div>
+            <div class="launcher-app-category">Herramientas</div>
+            </div>
+            <div class="launcher-app-bg"></div>
+          </a>
+      </div>
 
         <!-- Grupos Aleatorios -->
         <div class="launcher-app-item" data-app="grupos" data-category="herramientas">
@@ -149,9 +161,9 @@
             <div class="launcher-app-category">Herramientas</div>
             <div class="launcher-app-bg"></div>
           </a>
-        </div>
-
-        <!-- Gestión de Estudiantes -->
+      </div>
+    
+      <!-- Gestión de Estudiantes -->
         <div class="launcher-app-item" data-app="estudiantes" data-category="configuracion">
           <a href="#" class="launcher-app-link" data-tool="config">
             <div class="launcher-app-icon">👨‍🎓</div>
@@ -162,98 +174,120 @@
           </a>
         </div>
 
-        <!-- Libro de Clases -->
-        <div class="launcher-app-item" data-app="libro-clases" data-category="educacion">
-          <a href="libro-clases.html" class="launcher-app-link" data-tool="libro-clases">
-            <div class="launcher-app-icon">📚</div>
-            <div class="launcher-app-title">Libro de Clases</div>
-            <div class="launcher-app-description">Sistema Educativo</div>
-            <div class="launcher-app-category">Educación</div>
+        <!-- SIMCE -->
+        <div class="launcher-app-item" data-app="simce" data-category="herramientas">
+          <a href="simce.html" class="launcher-app-link" data-tool="simce">
+            <div class="launcher-app-content">
+            <div class="launcher-app-icon">📊</div>
+            <div class="launcher-app-title">SIMCE</div>
+            <div class="launcher-app-description">Evaluación SIMCE</div>
+            <div class="launcher-app-category">Herramientas</div>
+            </div>
+            <div class="launcher-app-bg"></div>
+          </a>
+        </div>
+
+        <!-- PAES -->
+        <div class="launcher-app-item" data-app="paes" data-category="herramientas">
+          <a href="paes.html" class="launcher-app-link" data-tool="paes">
+            <div class="launcher-app-content">
+            <div class="launcher-app-icon">📋</div>
+            <div class="launcher-app-title">PAES</div>
+            <div class="launcher-app-description">Evaluación PAES</div>
+            <div class="launcher-app-category">Herramientas</div>
+            </div>
             <div class="launcher-app-bg"></div>
           </a>
         </div>
 
         <!-- Matemáticas Rápidas -->
         <div class="launcher-app-item" data-app="matematicas-rapidas" data-category="juegos">
-          <a href="matematicas-rapidas.html" class="launcher-app-link" data-tool="matematicas-rapidas">
+          <a href="#" class="launcher-app-link" data-tool="matematicas-rapidas">
             <div class="launcher-app-icon">🧠</div>
             <div class="launcher-app-title">Matemáticas Rápidas</div>
             <div class="launcher-app-description">Suma Mental Rápida</div>
             <div class="launcher-app-category">Juegos</div>
             <div class="launcher-app-bg"></div>
           </a>
+      </div>
+
+        <!-- Preguntas Rápidas -->
+        <div class="launcher-app-item" data-app="preguntas-rapidas" data-category="herramientas">
+          <a href="preguntas-rapidas.html" class="launcher-app-link" data-tool="preguntas-rapidas">
+            <div class="launcher-app-icon">❓</div>
+            <div class="launcher-app-title">Preguntas Rápidas</div>
+            <div class="launcher-app-description">Cuestionarios Interactivos</div>
+            <div class="launcher-app-category">Herramientas</div>
+            <div class="launcher-app-bg"></div>
+          </a>
         </div>
 
         <!-- Temas Visuales - ELIMINADO -->
-      </div>
     </div>
+  </div>
 
-    <!-- Sistema de fondos bg-wrap eliminado - ahora se usa animated-backgrounds.js -->
+  <!-- Sistema de fondos bg-wrap eliminado - ahora se usa animated-backgrounds.js -->
   </div>
 
   <!-- Panel de Calculadora de Promedio Ponderado -->
   <div class="container" id="calc-panel" style="display: none;">
-    <h1>Calculadora de Promedio Ponderado</h1>
-    
-    <!-- Panel superior con plantillas -->
-    <div class="top-panel">
-      <select id="tplSelect"><option value="">Seleccionar ramo</option></select>
-      <button id="show-ramo-panel" class="add-ramo-btn">+ Agregar Ramo</button>
-    </div>
-
-    <!-- Panel de guardado de ramos -->
-    <div class="template-controls" id="ramo-panel" style="display:none;">
-      <input type="text" id="tplName" placeholder="Nombre de ramo">
-      <div class="template-buttons">
-        <button id="delTpl">Eliminar</button>
-        <button id="saveTpl">Guardar</button>
+      <h1>Calculadora de Promedio Ponderado</h1>
+      
+      <!-- Panel superior con plantillas -->
+      <div class="top-panel">
+        <select id="tplSelect"><option value="">Seleccionar ramo</option></select>
+        <button id="show-ramo-panel" class="add-ramo-btn">+ Agregar Ramo</button>
       </div>
-      <button id="hide-ramo-panel">Cerrar</button>
-    </div>
 
-    <div class="main">
-      <!-- Panel de notas -->
-      <div class="grades-panel">
-        <!-- Campo para respuestas correctas PAES -->
-        <div id="paes-input" style="display: none;" class="paes-input-container">
-          <label for="respuestas-correctas">Respuestas Correctas</label>
-          <input type="number" id="respuestas-correctas" min="0" max="60" placeholder="0-60">
-          <button onclick="calcularPuntajePAES()">Calcular Puntaje PAES</button>
+      <!-- Panel de guardado de ramos -->
+      <div class="template-controls" id="ramo-panel" style="display:none;">
+        <input type="text" id="tplName" placeholder="Nombre de ramo">
+        <div class="template-buttons">
+          <button id="delTpl">Eliminar</button>
+          <button id="saveTpl">Guardar</button>
+        </div>
+        <button id="hide-ramo-panel">Cerrar</button>
+      </div>
+
+      <div class="main">
+        <!-- Panel de notas -->
+        <div class="grades-panel">
+
+
+          <!-- Panel normal de notas -->
+          <div id="notas-normales">
+            <div class="controls">
+              <button class="btn-add" onclick="addRow()">+</button>
+              <button class="btn-remove" onclick="removeRow()">-</button>
+              <button class="btn-reset" onclick="resetAll()">↻</button>
+            </div>
+            
+            <div class="rows-wrapper">
+              <div class="labels">
+                <div>Notas</div>
+                <div>Ponderaciones</div>
+              </div>
+              <div id="rows-container"></div>
+            </div>
+          </div>
         </div>
 
-        <!-- Panel normal de notas -->
-        <div id="notas-normales">
-          <div class="controls">
-            <button class="btn-add" onclick="addRow()">+</button>
-            <button class="btn-remove" onclick="removeRow()">-</button>
-            <button class="btn-reset" onclick="resetAll()">↻</button>
+        <!-- Panel de resultados -->
+        <div class="results-panel" style="display: flex; flex-direction: column; gap: 15px;">
+          <div id="result-panel" class="result-panel red" style="display: block; opacity: 1; visibility: visible;">
+            <div id="result-title">Promedio ponderado</div>
+            <div id="result-value">0.00</div>
+            <div id="result-status">Reprobado</div>
           </div>
           
-          <div class="rows-wrapper">
-            <div class="labels">
-              <div>Nota</div>
-              <div>Ponderación</div>
-            </div>
-            <div id="rows-container"></div>
+          <div id="needed-panel" class="result-panel" style="display: none; opacity: 1; visibility: visible;">
+            <div id="needed-title">Nota mínima necesaria</div>
+            <div id="needed-value">-</div>
           </div>
-        </div>
-      </div>
 
-      <!-- Panel de resultados -->
-      <div class="results-panel">
-        <div id="result-panel" class="result-panel red">
-          <div id="result-title">Promedio ponderado</div>
-          <div id="result-value">0.00</div>
-          <div id="result-status">Reprobado</div>
+          <!-- Botón calcular -->
+          <button id="calcBtn" onclick="calculateAverage()" style="display: block; opacity: 1; visibility: visible;">Calcular Promedio</button>
         </div>
-        
-        <div id="needed-panel" class="result-panel" style="display:none;">
-          <div id="needed-title">Nota mínima necesaria</div>
-          <div id="needed-value">-</div>
-        </div>
-
-        <!-- Botón calcular -->
-        <button id="calcBtn" onclick="calculateAverage()">Calcular Promedio</button>
       </div>
     </div>
   </div>
@@ -266,7 +300,8 @@
   <script src="multi-panel-functions.js"></script>
   <script src="rubricas.js"></script>
   <script src="rubrica-config.js"></script>
-  <script src="calendario.js"></script>
+
+  <script src="matematicas-rapidas.js"></script>
   
 
   
@@ -278,7 +313,6 @@
   <div id="escala-panel" style="display:none;max-width:900px;margin:40px auto 0 auto;">
     <div class="container" style="background: var(--card-bg);">
       <h2>Generador de Escala de Notas</h2>
-      <div id="modo-actual" class="modo-actual hidden">Modo PAES: <span id="modo-paes-texto"></span></div>
       
       <!-- Panel de edición -->
       <div class="inputs">
@@ -307,17 +341,6 @@
       <!-- Botones de modo -->
       <div class="tabla-controls">
         <button class="tabla-mode-btn active" data-mode="normal">Normal</button>
-        <button class="tabla-mode-btn" data-mode="simce">SIMCE</button>
-        <div class="paes-container">
-          <button class="tabla-mode-btn has-dropdown" data-mode="paes">PAES</button>
-          <div class="paes-dropdown">
-            <button class="paes-dropdown-item" data-paes-mode="competencia-lectora">Competencia Lectora</button>
-            <button class="paes-dropdown-item" data-paes-mode="m1">M1 Matemáticas</button>
-            <button class="paes-dropdown-item" data-paes-mode="m2">M2 Matemáticas</button>
-            <button class="paes-dropdown-item" data-paes-mode="ciencias">Ciencias</button>
-            <button class="paes-dropdown-item" data-paes-mode="historia">Historia</button>
-          </div>
-        </div>
       </div>
 
       <!-- Conversor de puntaje a nota -->
@@ -335,20 +358,7 @@
         </div>
       </div>
 
-      <!-- Conversor de respuestas a puntaje PAES -->
-      <div class="conversor-container" id="conversor-paes">
-        <div class="conversor-title">Conversor de Respuestas a Puntaje PAES</div>
-        <div class="conversor-inputs">
-          <div class="conversor-group">
-            <label class="conversor-label">Respuestas Correctas</label>
-            <input type="number" class="conversor-input" id="respuestas-input" min="0" max="60" placeholder="0-60">
-          </div>
-          <div class="conversor-group">
-            <label class="conversor-label">Puntaje PAES</label>
-            <div class="conversor-result" id="puntaje-paes-result">-</div>
-          </div>
-        </div>
-      </div>
+
 
       <!-- Control de visibilidad de columnas -->
       <div class="columnas-control">
@@ -416,112 +426,7 @@
     </div>
   </div>
 
-  <div id="calendario-panel" style="display:none;">
-    <div class="container">
-      <h1>Calendario de Eventos</h1>
-      
-      <div class="calendario-container">
-        <div class="calendario-wrapper">
-          <div class="calendario-header">
-            <button id="prev-month">←</button>
-            <h2 id="month-year">Mes Año</h2>
-            <button id="next-month">→</button>
-          </div>
-          
-          <div class="calendario-dias">
-            <div class="dia-semana">Dom</div>
-            <div class="dia-semana">Lun</div>
-            <div class="dia-semana">Mar</div>
-            <div class="dia-semana">Mié</div>
-            <div class="dia-semana">Jue</div>
-            <div class="dia-semana">Vie</div>
-            <div class="dia-semana">Sáb</div>
-          </div>
-          
-          <div id="calendario-grid" class="calendario-grid">
-            <!-- Los días se generarán dinámicamente -->
-          </div>
-        </div>
 
-        <div class="eventos-panel">
-          <h3>Próximos Eventos</h3>
-          <div class="eventos-filtro">
-            <select id="filtro-eventos">
-              <option value="todos">Todos los eventos</option>
-              <option value="hoy">Hoy</option>
-              <option value="semana">Esta semana</option>
-              <option value="mes">Este mes</option>
-            </select>
-            <div style="display:flex;gap:4px;margin-top:6px;">
-              <select id="filtro-ramo" style="font-size:0.95em;padding:2px 6px;"><option value="">Ramo</option></select>
-              <select id="filtro-curso" style="font-size:0.95em;padding:2px 6px;"><option value="">Curso</option></select>
-              <select id="filtro-sala" style="font-size:0.95em;padding:2px 6px;"><option value="">Sala</option></select>
-            </div>
-          </div>
-          <div id="lista-eventos" class="lista-eventos">
-            <!-- Los eventos se generarán dinámicamente -->
-          </div>
-          <button id="btn-cargar-excel" class="btn-agregar" style="margin-top:10px;">Cargar desde Excel</button>
-          <input type="file" id="input-cargar-excel" accept=".xls,.xlsx" style="display:none;" />
-          <button id="btn-descargar-plantilla-excel" class="btn-agregar" style="margin-top:10px;">Descargar plantilla Excel</button>
-          <button id="btn-exportar-eventos-excel" class="btn-agregar" style="margin-top:10px;">Exportar eventos a Excel</button>
-        </div>
-      </div>
-
-      <!-- Modal para agregar eventos -->
-      <div id="evento-modal" class="modal">
-        <div class="modal-content">
-          <span class="close">&times;</span>
-          <h3 class="modal-title">Agregar Evento</h3>
-          <form id="evento-form">
-            <div class="form-group">
-              <label for="evento-titulo">Título</label>
-              <input type="text" id="evento-titulo" required>
-            </div>
-            <div class="form-group">
-              <label for="evento-fecha">Fecha</label>
-              <input type="date" id="evento-fecha" required>
-            </div>
-            <div class="form-group">
-              <label for="evento-hora">Hora</label>
-              <input type="time" id="evento-hora" required>
-            </div>
-            <div class="form-group">
-              <label for="evento-tipo">Tipo de Evento</label>
-              <select id="evento-tipo" required>
-                <option value="">Seleccionar tipo</option>
-                <option value="prueba">Prueba</option>
-                <option value="feria">Feria</option>
-                <option value="celebracion">Celebración</option>
-                <option value="feriado">Feriado</option>
-                <option value="dia-institucional">Día Institucional</option>
-                <option value="aniversario">Aniversario</option>
-                <option value="reunion">Reunión</option>
-                <option value="ceremonia">Ceremonia</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="evento-ramo">Ramo</label>
-              <input type="text" id="evento-ramo" required>
-            </div>
-            <div class="form-group">
-              <label for="evento-curso">Curso</label>
-              <input type="text" id="evento-curso" required>
-            </div>
-            <div class="form-group">
-              <label for="evento-lugar">Lugar</label>
-              <input type="text" id="evento-lugar" required>
-            </div>
-            <div class="form-group">
-              <label for="evento-descripcion">Descripción</label>
-              <textarea id="evento-descripcion"></textarea>
-            </div>
-            <button type="submit">Guardar Evento</button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
 
 
 
@@ -555,115 +460,72 @@
         </div>
       </div>
       
+      <!-- Botones de control para modo edición -->
       <div class="rubricas-controls">
-        <div class="rubricas-selector">
-          <label for="rubricas-guardadas-select">Usar Rúbrica Guardada:</label>
-          <select id="rubricas-guardadas-select">
-            <option value="">Seleccionar rúbrica guardada...</option>
-          </select>
-          <button id="cargar-rubrica-guardada" class="btn-secondary" disabled>
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-              <circle cx="12" cy="12" r="3"></circle>
+        <button type="button" id="nueva-rubrica" class="btn-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
             </svg>
-            Cargar
+          Nueva Rúbrica
           </button>
-        </div>
-        
-        <div class="rubricas-actions">
-          <button id="cargar-rubrica" class="btn-primary">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <button type="button" id="cargar-rubrica" class="btn-secondary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
               <polyline points="17 8 12 3 7 8"></polyline>
               <line x1="12" y1="3" x2="12" y2="15"></line>
             </svg>
             Cargar Rúbrica
           </button>
-          <button id="nueva-rubrica" class="btn-secondary">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="12" y1="5" x2="12" y2="19"></line>
-              <line x1="5" y1="12" x2="19" y2="12"></line>
-            </svg>
-            Nueva Rúbrica
-          </button>
         </div>
+
+      <!-- Contenido principal de la rúbrica -->
+      <div id="rubrica-content" class="rubrica-content">
+        <!-- Aquí se mostrará el formulario de nueva rúbrica o la rúbrica cargada -->
       </div>
       
-      <!-- Panel de evaluación (solo visible en modo evaluación) -->
+      <!-- Panel de evaluación -->
       <div id="evaluacion-panel" class="evaluacion-panel" style="display: none;">
         <div class="evaluacion-controls">
           <div class="estudiante-selection">
             <div class="form-group">
-              <label for="eval-curso-select">Curso:</label>
-              <select id="eval-curso-select">
+              <label for="eval-curso-select">Curso</label>
+              <select id="eval-curso-select" required>
                 <option value="">Seleccionar curso...</option>
               </select>
             </div>
             <div class="form-group">
-              <label for="eval-estudiante-select">Estudiante:</label>
-              <select id="eval-estudiante-select" disabled>
-                <option value="">Primero selecciona un curso</option>
+              <label for="eval-estudiante-select">Estudiante</label>
+              <select id="eval-estudiante-select" required disabled>
+                <option value="">Seleccionar estudiante...</option>
               </select>
             </div>
             <div class="form-group">
-              <label for="eval-rubrica-select">Rúbrica:</label>
-              <select id="eval-rubrica-select">
+              <label for="eval-rubrica-select">Rúbrica</label>
+              <select id="eval-rubrica-select" required disabled>
                 <option value="">Seleccionar rúbrica...</option>
               </select>
             </div>
           </div>
           <div class="evaluacion-actions">
-            <button id="iniciar-evaluacion" class="btn-primary" disabled>
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polygon points="5 3 19 12 5 21 5 3"></polygon>
-              </svg>
-              Iniciar Evaluación
-            </button>
-            <button id="exportar-curso-pdf" class="btn-export" disabled>
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <button type="button" id="iniciar-evaluacion" class="btn-primary">Iniciar Evaluación</button>
+            <button type="button" id="cargar-rubrica-evaluacion" class="btn-secondary">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2-2V8z"></path>
                 <polyline points="14 2 14 8 20 8"></polyline>
                 <line x1="16" y1="13" x2="8" y2="13"></line>
                 <line x1="16" y1="17" x2="8" y2="17"></line>
                 <line x1="10" y1="9" x2="8" y2="9"></line>
               </svg>
-              Exportar Curso PDF
+              Ver Rúbrica
             </button>
-            <button id="guardar-evaluacion" class="btn-success" style="display: none;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                <polyline points="17 21 17 13 7 13 7 21"></polyline>
-                <polyline points="7 3 7 8 15 8"></polyline>
-              </svg>
-              Guardar Evaluación
-            </button>
-            <button id="limpiar-evaluacion" class="btn-secondary" style="display: none;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="3 6 5 6 21 6"></polyline>
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-              </svg>
-              Limpiar
-            </button>
+            <button type="button" id="guardar-evaluacion" class="btn-success" style="display: none;">Guardar Evaluación</button>
+            <button type="button" id="limpiar-evaluacion" class="btn-danger" style="display: none;">Limpiar</button>
           </div>
         </div>
-        
-        <!-- Panel de resultados de evaluación -->
         <div id="evaluacion-resultado" class="evaluacion-resultado" style="display: none;">
-          <div class="resultado-header">
-            <h3 id="estudiante-evaluado">Evaluando a: </h3>
-            <div class="puntaje-total">
-              <span>Puntaje: </span>
-              <span id="puntaje-actual">0</span>
-              <span>/</span>
-              <span id="puntaje-maximo">0</span>
-              <span class="nota-final">Nota: <span id="nota-final">1.0</span></span>
+          <!-- Aquí se mostrará el resultado de la evaluación -->
             </div>
-          </div>
-        </div>
-      </div>
-      
-      <div id="rubrica-content" class="rubrica-content">
-        <!-- Aquí se mostrará la rúbrica cargada o el formulario para crear una nueva -->
       </div>
     </div>
   </div>
@@ -794,10 +656,8 @@
       document.body.className = savedTheme;
       
       // Asegurar que el scroll funcione correctamente
-      document.documentElement.style.overflowY = 'auto';
-      document.body.style.overflowY = 'auto';
       document.body.style.overflowX = 'hidden';
-      console.log('✅ Scroll vertical habilitado');
+      console.log('✅ Scroll configurado correctamente');
     })();
 
     // Inicializar fondos animados cuando esté listo
@@ -867,17 +727,15 @@
       // Cerrar modal de créditos
       function closeCreditsModal() {
         creditsModal.classList.remove('show');
-        // Restaurar scroll normal - no bloquear el scroll de la página
-        document.body.style.overflow = 'auto';
-        document.body.style.overflowY = 'auto';
+        // Restaurar scroll normal - solo configurar overflow horizontal
+        document.body.style.overflowX = 'hidden';
       }
 
       // Abrir modal de créditos
       creditsBtn.addEventListener('click', () => {
         creditsModal.classList.add('show');
-        // Solo prevenir scroll horizontal, mantener scroll vertical
+        // Solo prevenir scroll horizontal
         document.body.style.overflowX = 'hidden';
-        document.body.style.overflowY = 'auto';
       });
 
       // Event listeners para cerrar el modal
@@ -950,6 +808,157 @@
           <p>💻 Desarrollado con ❤️ para la educación</p>
           <p><small>Versión 2024 - Sistema de Fondos Animados</small></p>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel de Matemáticas Rápidas -->
+  <div id="matematicas-rapidas-panel" style="display: none;">
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <h1 class="title">🧠 Matemáticas Rápidas</h1>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-container">
+        <div class="calculator-container">
+            <!-- Game Setup Panel -->
+            <div class="setup-panel" id="math-setup-panel">
+                <div class="calculator-display config-text">
+                    Configurar Juego
+                </div>
+                
+                <div class="game-setup">
+                    <div class="config-item">
+                        <label class="config-label" for="math-num-count">Cantidad de números:</label>
+                        <input type="range" id="math-num-count" min="3" max="15" value="5" class="config-slider">
+                        <span class="slider-value" id="math-num-count-display">5</span>
+                    </div>
+
+                    <div class="config-item">
+                        <label class="config-label" for="math-interval">Intervalo (segundos):</label>
+                        <input type="range" id="math-interval" min="1" max="10" value="3" class="config-slider">
+                        <span class="slider-value" id="math-interval-display">3</span>
+                    </div>
+
+                    <div class="config-item">
+                        <label class="config-label">Rango de números:</label>
+                        <div class="calculator-grid">
+                            <input type="number" id="math-min-number" value="1" min="-100" max="100" placeholder="Mín" class="config-input">
+                            <input type="number" id="math-max-number" value="50" min="-100" max="100" placeholder="Máx" class="config-input">
+                        </div>
+                    </div>
+
+                    <div class="checkbox-container">
+                        <div class="custom-checkbox" id="math-checkbox">
+                            <span style="display: none;">✓</span>
+                        </div>
+                        <input type="checkbox" id="math-include-negatives" style="display: none;">
+                        <label class="config-label" for="math-include-negatives">Incluir números negativos</label>
+                    </div>
+
+                    <div class="checkbox-container">
+                        <div class="custom-checkbox" id="math-sound-checkbox">
+                            <span style="display: none;">✓</span>
+                        </div>
+                        <input type="checkbox" id="math-sound-enabled" checked style="display: none;">
+                        <label class="config-label" for="math-sound-enabled">🔊 Sonidos activados</label>
+                    </div>
+                </div>
+
+                <div class="calculator-grid">
+                    <button class="calc-button primary" id="math-start-btn">�� Comenzar</button>
+                </div>
+            </div>
+
+            <!-- Game Panel -->
+            <div class="game-panel" id="math-game-panel" style="display: none;">
+                <div class="calculator-display" id="math-display-number">0</div>
+                
+                <div class="game-display">
+                    <div class="game-progress">
+                        <div class="progress-fill" id="math-progress-fill"></div>
+                    </div>
+                    <div class="game-stats">
+                        <span>Número: <span id="math-current-number">1</span>/<span id="math-total-numbers">5</span></span>
+                        <span>Tiempo: <span id="math-countdown">3</span>s</span>
+                    </div>
+                    <p style="text-align: center; margin: 1rem 0; color: var(--calc-text-light);">Suma mentalmente este número</p>
+                </div>
+
+                <div class="calculator-grid">
+                    <button class="calc-button warning" id="math-pause-btn">⏸️ Pausar</button>
+                    <button class="calc-button danger" id="math-stop-btn">⏹️ Detener</button>
+                </div>
+            </div>
+
+            <!-- Results Panel -->
+            <div class="results-panel" id="math-results-panel" style="display: none;">
+                <div class="calculator-display config-text">
+                    📊 Resultados
+                </div>
+                
+                <div class="result-summary">
+                    <h3 style="margin-bottom: 1rem; color: var(--calc-text);">Números mostrados:</h3>
+                    <div class="numbers-grid" id="math-numbers-list"></div>
+                </div>
+
+                <div style="margin: 1.5rem 0;">
+                    <div style="background: var(--calc-border); padding: 1rem; border-radius: var(--calc-radius); text-align: center; margin-bottom: 1rem;">
+                        <span id="math-calculation-display" style="color: var(--calc-text); font-weight: 600;">Cálculo</span>
+                    </div>
+                    
+                    <input type="number" id="math-user-answer" placeholder="Tu respuesta" class="answer-input">
+                    
+                    <div id="math-result-display" style="display: none; text-align: center; margin: 1rem 0; padding: 1rem; border-radius: var(--calc-radius); background: var(--calc-border);">
+                        <div style="margin-bottom: 0.5rem;">
+                            <span>Respuesta correcta: <strong id="math-correct-answer">0</strong></span>
+                        </div>
+                        <div id="math-result-status" style="font-weight: 600;"></div>
+                    </div>
+                </div>
+
+                <div class="calculator-grid">
+                    <button class="calc-button success" id="math-reveal-btn">🎯 Revelar</button>
+                    <button class="calc-button primary" id="math-play-again-btn">🔄 De Nuevo</button>
+                </div>
+                
+                <button class="calc-button" id="math-new-config-btn" style="width: 100%; margin-top: 1rem;">⚙️ Nueva Configuración</button>
+            </div>
+
+            <!-- Pause Overlay -->
+            <div class="pause-overlay" id="math-pause-overlay" style="display: none;">
+                <div class="pause-card">
+                    <h2 style="margin-bottom: 1rem; color: var(--calc-text);">⏸️ Pausado</h2>
+                    <p style="margin-bottom: 1.5rem; color: var(--calc-text-light);">El juego está pausado. Presiona continuar cuando estés listo.</p>
+                    <button class="calc-button success" id="math-resume-btn">▶️ Continuar</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© 2024 ProfeNinja - Matemáticas Rápidas</p>
+    </footer>
+
+    <!-- Fondos animados para matemáticas rápidas -->
+    <div id="bg-wrap-math" class="bg-wrap"></div>
+    <div id="bg-wrap-dark-math" class="bg-wrap-dark"></div>
+    <div id="bg-wrap-rosa-math" class="bg-wrap-rosa"></div>
+    <div id="bg-wrap-neon-math" class="bg-wrap-neon"></div>
+  </div>
+
+  <!-- Barra de Carga Global -->
+  <div id="loading-overlay" class="loading-overlay">
+    <div class="loading-container">
+      <div class="loading-spinner"></div>
+      <h3 class="loading-text" id="loading-text">Cargando aplicación...</h3>
+      <p class="loading-subtext" id="loading-subtext">Por favor espera un momento</p>
+      <div class="loading-progress">
+        <div class="loading-progress-bar" id="loading-progress-bar"></div>
       </div>
     </div>
   </div>

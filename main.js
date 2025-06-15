@@ -189,7 +189,7 @@ function setTheme(theme) {
   const normalizedTheme = theme.startsWith('theme-') ? theme : `theme-${theme}`;
   
   // Cambiar clase del body
-  document.body.classList.remove('theme-light', 'theme-dark', 'theme-rosa', 'theme-oscuro', 'theme-neon');
+          document.body.classList.remove('theme-light', 'theme-dark', 'theme-rosa', 'theme-neon');
   document.body.classList.add(normalizedTheme);
   localStorage.setItem('theme', normalizedTheme);
 
@@ -200,14 +200,14 @@ function setTheme(theme) {
     console.log(`✅ Fondo animado activado para ${normalizedTheme}`);
   } else {
     // Si el sistema de fondos animados no está disponible aún, intentar más tarde
-    setTimeout(() => {
+  setTimeout(() => {
       if (window.animatedBackgrounds) {
         const themeKey = normalizedTheme.replace('theme-', '');
         window.animatedBackgrounds.switchTheme(themeKey);
         console.log(`✅ Fondo animado activado para ${normalizedTheme} (retry)`);
-      } else {
+    } else {
         console.warn(`⚠️ Sistema de fondos animados no disponible para ${normalizedTheme}`);
-      }
+    }
     }, 100);
   }
 }
@@ -430,10 +430,7 @@ document.addEventListener('DOMContentLoaded', function() {
   initRows();
   loadTemplates();
   
-  // Inicializar el calendario si existe
-  if (typeof initCalendario === 'function') {
-  initCalendario();
-  }
+  
 
   // No mostrar ningún panel por defecto, solo el dashboard
 
@@ -783,13 +780,6 @@ const configuracionesModo = {
     notaMax: 7.0,
     notaAprob: 4.0
   },
-  simce: {
-    puntajeMax: 400,
-    exigencia: 60,
-    notaMin: 1.0,
-    notaMax: 7.0,
-    notaAprob: 4.0
-  },
   paes: {
     'competencia-lectora': {
       puntajeMax: 1000,
@@ -838,7 +828,8 @@ const modosPaesNombres = {
   'historia': 'Historia'
 };
 
-// Función para manejar el menú desplegable de PAES
+// Función para manejar el menú desplegable de PAES - DESHABILITADA
+/*
 function togglePaesDropdown(event) {
   const dropdown = document.querySelector('.paes-dropdown');
   const button = document.querySelector('.tabla-mode-btn.has-dropdown');
@@ -851,6 +842,7 @@ function togglePaesDropdown(event) {
     button.classList.remove('active');
   }
 }
+*/
 
 // Modificar la función cambiarModoTabla
 function cambiarModoTabla(modo, submodo = null) {
@@ -862,7 +854,8 @@ function cambiarModoTabla(modo, submodo = null) {
     btn.classList.toggle('active', btn.dataset.mode === modo);
   });
 
-  // Actualizar el subtítulo del modo PAES
+  // Actualizar el subtítulo del modo PAES - DESHABILITADO
+  /*
   const modoActualElement = document.getElementById('modo-actual');
   const modoPaesTexto = document.getElementById('modo-paes-texto');
   
@@ -881,6 +874,7 @@ function cambiarModoTabla(modo, submodo = null) {
       item.classList.toggle('active', item.dataset.paesMode === submodo);
     });
   }
+  */
   
   // Valores por defecto
   const defaultConfig = {
@@ -965,7 +959,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // Event listener específico para el botón PAES con dropdown (con soporte táctil)
+  // Event listener específico para el botón PAES con dropdown - DESHABILITADO
+  /*
   const paesButton = document.querySelector('.tabla-mode-btn.has-dropdown');
   if (paesButton) {
     function togglePaesDropdownHandler(event) {
@@ -1001,6 +996,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Cerrar dropdown al hacer click/touch fuera
   document.addEventListener('click', togglePaesDropdown);
   document.addEventListener('touchend', togglePaesDropdown);
+  */
 });
 
 // Conversor de puntaje a nota
@@ -1031,29 +1027,28 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function convertirPuntajeANota(puntaje) {
-    // Obtener configuración según el modo actual
-    const config = obtenerConfiguracionModo();
-    
     // Obtener valores actuales de los inputs (si están modificados por el usuario)
-    const puntajeMax = document.getElementById('puntajeMax').value ? parseFloat(document.getElementById('puntajeMax').value) : 100;
-    const exigencia = (document.getElementById('exigencia').value ? parseFloat(document.getElementById('exigencia').value) : 60) / 100;
-    
-    // Para las notas, verificar si hay valores y si son de doble dígito
+    let puntajeMax = document.getElementById('puntajeMax').value ? parseFloat(document.getElementById('puntajeMax').value) : null;
+    let exigencia = document.getElementById('exigencia').value ? parseFloat(document.getElementById('exigencia').value) : null;
     let notaMin = document.getElementById('notaMin').value ? parseFloat(document.getElementById('notaMin').value) : null;
     let notaMax = document.getElementById('notaMax').value ? parseFloat(document.getElementById('notaMax').value) : null;
     let notaAprob = document.getElementById('notaAprob').value ? parseFloat(document.getElementById('notaAprob').value) : null;
 
-    // Si alguna nota está vacía, usar valores por defecto
-    if (notaMin === null || notaMax === null || notaAprob === null) {
-      return 'Completa las notas';
+    // Si algún campo necesario está vacío, retornar mensaje
+    if (puntajeMax === null || exigencia === null || notaMin === null || notaMax === null || notaAprob === null) {
+      return 'Completa todos los campos';
     }
 
+    // Validar y ajustar valores EXACTAMENTE igual que en generarTablaEscala
+    puntajeMax = Math.max(1, puntajeMax);
+    exigencia = Math.min(100, Math.max(1, exigencia));
+    
     // Ajustar notas si son de doble dígito
     if (notaMin >= 10) notaMin = notaMin / 10;
     if (notaMax >= 10) notaMax = notaMax / 10;
     if (notaAprob >= 10) notaAprob = notaAprob / 10;
 
-    // Validar rangos de notas
+    // Validar rangos de notas (EXACTAMENTE igual que en generarTablaEscala)
     notaMin = Math.max(1, Math.min(7, notaMin));
     notaMax = Math.max(notaMin + 0.1, Math.min(7, notaMax));
     notaAprob = Math.max(notaMin, Math.min(notaMax, notaAprob));
@@ -1062,16 +1057,21 @@ document.addEventListener('DOMContentLoaded', function() {
       return 'Inválido';
     }
     
-    const puntajeAprobacion = puntajeMax * exigencia;
+    // Calcular puntaje de aprobación según la fórmula (EXACTAMENTE igual que en generarTablaEscala)
+    const puntajeAprob = puntajeMax * (exigencia / 100);
     let nota;
     
-    if (puntaje >= puntajeAprobacion) {
-      nota = notaAprob + ((puntaje - puntajeAprobacion) * (notaMax - notaAprob)) / (puntajeMax - puntajeAprobacion);
+    // Usar la MISMA lógica que en generarTablaEscala
+    if (puntaje < puntajeAprob) {
+      nota = notaMin + (puntaje * (notaAprob - notaMin)) / puntajeAprob;
     } else {
-      nota = notaMin + (puntaje * (notaAprob - notaMin)) / puntajeAprobacion;
+      nota = notaAprob + ((puntaje - puntajeAprob) * (notaMax - notaAprob)) / (puntajeMax - puntajeAprob);
     }
     
+    // APLICAR EL MISMO REDONDEO que en generarTablaEscala
+    nota = Math.round(nota * 10) / 10;
     nota = Math.max(notaMin, Math.min(notaMax, nota));
+    
     return nota.toFixed(1);
   }
 
@@ -2003,7 +2003,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else { // exigencia
               this.value = '60';
             }
-  } else {
+          } else {
             // Si hay un valor, validarlo
             let valor = parseFloat(this.value);
             if (!isNaN(valor)) {

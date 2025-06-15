@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="es" style="/* background-color: #0f172a !important; - COMENTADO para fondos animados */">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0f172a">
+    <title>Preguntas Rápidas - ProfeNinja</title>
+    <link rel="stylesheet" href="preguntas-rapidas.css">
+    <link rel="stylesheet" href="animated-backgrounds.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <style>
+        /* Prevenir destello blanco al cargar - CRÍTICO: debe estar antes que otros CSS */
+        html {
+            /* background-color: #0f172a !important; - COMENTADO para fondos animados */
+            color: #f8fafc !important;
+        }
+        
+        body {
+            /* background-color: #0f172a !important; - COMENTADO para permitir fondos animados */
+            color: #f8fafc !important;
+            transition: background-color 0.2s ease;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Prevenir destello durante la carga de CSS */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            /* background-color: #0f172a; - COMENTADO para fondos animados */
+            z-index: -2;
+            pointer-events: none;
+        }
+        
+        /* Solo estilos para asegurar que el contenido esté sobre los fondos */
+        .header, .main-container, .footer {
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* Prevenir destello en elementos que se cargan */
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Permitir selección de texto en inputs y elementos de contenido */
+        input, textarea, .menu-btn-content, .question-text {
+            -webkit-user-select: text;
+            -khtml-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+        
+        /* Asegurar que los botones sean clickeables */
+        button, .menu-btn {
+            pointer-events: auto !important;
+            cursor: pointer !important;
+        }
+        
+        /* Asegurar que los botones sean clickeables */
+        button, .menu-btn {
+            pointer-events: auto !important;
+            cursor: pointer !important;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        /* Suavizar transiciones de fondos */
+        .animated-background {
+            transition: opacity 0.4s ease-in-out !important;
+        }
+        
+        /* Prevenir parpadeo en botones */
+        button, .menu-btn {
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+        }
+        
+        button:focus, .menu-btn:focus {
+            outline: 2px solid var(--primary-color, #6366f1);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body style="/* background-color: #0f172a !important; - COMENTADO para fondos animados */">
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <button class="back-btn" onclick="window.location.href='index.html'">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Volver
+            </button>
+            <h1 class="title">❓ Preguntas Rápidas</h1>
+            <div class="theme-selector">
+                <button class="theme-btn" data-theme="theme-dark" title="Oscuro">🌙</button>
+                <button class="theme-btn" data-theme="theme-light" title="Claro">🌞</button>
+                <button class="theme-btn" data-theme="theme-rosa" title="Rosa">🌸</button>
+
+                <button class="theme-btn" data-theme="theme-neon" title="Neón">🎇</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-container">
+        <!-- Menu Principal -->
+        <div class="menu-panel" id="menu-panel">
+            <div class="menu-card">
+                <h2>🎯 Preguntas Rápidas</h2>
+                <p class="menu-description">Crea y gestiona cuestionarios interactivos con temporizador</p>
+                
+                <div class="menu-options">
+                    <button class="menu-btn" id="new-quiz-btn">
+                        <div class="menu-btn-icon">📝</div>
+                        <div class="menu-btn-content">
+                            <h3>Nuevo Cuestionario</h3>
+                            <p>Crear un nuevo cuestionario desde Excel</p>
+                        </div>
+                    </button>
+
+                    <button class="menu-btn" id="manage-decks-btn">
+                        <div class="menu-btn-icon">📚</div>
+                        <div class="menu-btn-content">
+                            <h3>Gestionar Mazos</h3>
+                            <p>Ver, editar y eliminar mazos guardados</p>
+                        </div>
+                    </button>
+
+                    <button class="menu-btn" id="play-quiz-btn">
+                        <div class="menu-btn-icon">🎮</div>
+                        <div class="menu-btn-content">
+                            <h3>Jugar Cuestionario</h3>
+                            <p>Iniciar un cuestionario existente</p>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel de Configuración de Cuestionario -->
+        <div class="setup-panel" id="setup-panel" style="display: none;">
+            <div class="setup-card">
+                <h2>⚙️ Configuración del Cuestionario</h2>
+                
+                <!-- Carga de archivo Excel -->
+                <div class="config-group">
+                    <label for="excel-file">Cargar preguntas desde Excel:</label>
+                    <div class="file-input-container">
+                        <input type="file" id="excel-file" accept=".xlsx,.xls" class="file-input">
+                        <label for="excel-file" class="file-label">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14,2 14,8 20,8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                                <polyline points="10,9 9,9 8,9"/>
+                            </svg>
+                            Seleccionar archivo Excel
+                        </label>
+                        <button class="download-template-btn" id="download-template-btn" title="Descargar plantilla Excel">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7,10 12,15 17,10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                            Descargar Plantilla
+                        </button>
+                    </div>
+                    <div class="file-info" id="file-info" style="display: none;"></div>
+                </div>
+
+                <!-- Configuración de tiempo -->
+                <div class="config-group">
+                    <label for="question-time">Tiempo por pregunta (segundos):</label>
+                    <div class="input-group">
+                        <input type="range" id="question-time" min="5" max="120" value="30" class="slider">
+                        <span class="value-display" id="time-display">30</span>
+                    </div>
+                </div>
+
+                <!-- Nombre del mazo -->
+                <div class="config-group">
+                    <label for="deck-name">Nombre del mazo:</label>
+                    <input type="text" id="deck-name" class="text-input" placeholder="Ej: Matemáticas Básicas">
+                </div>
+
+                <div class="setup-actions">
+                    <button class="save-deck-btn" id="save-deck-btn">💾 Guardar Mazo</button>
+                    <button class="start-quiz-btn" id="start-quiz-btn">🚀 Iniciar Cuestionario</button>
+                    <button class="back-menu-btn" id="back-menu-btn">⬅️ Volver al Menú</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel de Gestión de Mazos -->
+        <div class="decks-panel" id="decks-panel" style="display: none;">
+            <div class="panel-card">
+                <h2>📚 Gestión de Mazos</h2>
+                
+                <div class="decks-list" id="decks-list">
+                    <!-- Los mazos se cargarán dinámicamente -->
+                </div>
+
+                <div class="panel-actions">
+                    <button class="back-btn" id="back-from-decks-btn">⬅️ Volver al Menú</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel de Juego -->
+        <div class="game-panel" id="game-panel" style="display: none;">
+            <div class="game-container">
+                <div class="game-header">
+                    <div class="game-info">
+
+                        <span id="question-counter">Pregunta 1 de 10</span>
+                    </div>
+                    <div class="game-timer">
+                        <div class="timer-circle" id="timer-circle">
+                            <span id="timer-text">30</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question-container">
+                    <div class="question-text" id="question-text">
+                        <!-- La pregunta se cargará dinámicamente -->
+                    </div>
+                </div>
+
+                <div class="answer-buttons">
+                    <button class="answer-btn correct-btn" id="correct-btn">✅ Correcta</button>
+                    <button class="answer-btn incorrect-btn" id="incorrect-btn">❌ Incorrecta</button>
+                </div>
+
+                <div class="game-controls">
+                    <button class="control-btn" id="pause-btn">⏸️ Pausar</button>
+                    <button class="control-btn" id="stop-btn">⏹️ Detener</button>
+                    <button class="control-btn" id="next-question-btn" style="display: none;">➡️ Siguiente</button>
+                </div>
+
+                <!-- Overlay de pausa -->
+                <div class="pause-overlay" id="pause-overlay" style="display: none;">
+                    <div class="pause-content">
+                        <h3>⏸️ Juego Pausado</h3>
+                        <button class="resume-btn" id="resume-btn">▶️ Continuar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel de Resultados -->
+        <div class="results-panel" id="results-panel" style="display: none;">
+            <div class="panel-card">
+                <h2>📊 Resultados del Cuestionario</h2>
+                
+                <div class="results-summary" id="results-summary">
+                    <!-- Resumen se cargará dinámicamente -->
+                </div>
+
+                <div class="results-details" id="results-details">
+                    <!-- Detalles se cargarán dinámicamente -->
+                </div>
+
+                <div class="panel-actions">
+                    <button class="export-btn" id="export-results-btn">📤 Exportar Resultados</button>
+                    <button class="new-quiz-btn" id="new-quiz-results-btn">🆕 Nuevo Cuestionario</button>
+                    <button class="back-btn" id="back-menu-results-btn">⬅️ Volver al Menú</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de Confirmación -->
+    <div class="modal-overlay" id="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Confirmar</h3>
+                <button class="modal-close" id="modal-close">✕</button>
+            </div>
+            <div class="modal-body">
+                <p id="modal-message">¿Estás seguro?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn cancel-btn" id="modal-cancel">Cancelar</button>
+                <button class="modal-btn confirm-btn" id="modal-confirm">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© 2024 ProfeNinja - Preguntas Rápidas</p>
+    </footer>
+
+    <!-- Fondos animados -->
+    <div id="bg-wrap" class="bg-wrap"></div>
+    <div id="bg-wrap-dark" class="bg-wrap-dark"></div>
+    <div id="bg-wrap-rosa" class="bg-wrap-rosa"></div>
+    
+    <div id="bg-wrap-neon" class="bg-wrap-neon"></div>
+
+    <!-- Theme Manager con fondos animados -->
+    <script>
+        // Usar el mismo sistema que Matemáticas Rápidas
+        // El theme-manager.js y animated-backgrounds.js se encargarán de todo
+    </script>
+    
+    <script src="external-theme-manager.js"></script>
+    <script src="animated-backgrounds.js"></script>
+    <script>
+        // Preguntas Rápidas - JavaScript Integrado
+
+        // Función auxiliar para agregar event listeners de forma segura
+        function addEventListenerSafe(elementId, event, handler) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.addEventListener(event, handler);
+            } else {
+                console.warn(`⚠️ Elemento no encontrado: ${elementId}`);
+            }
+        }
+
+        class PreguntasRapidas {
+            constructor() {
+                this.currentPanel = 'menu';
+                this.questions = [];
+                this.questionTime = 30;
+                this.currentQuestionIndex = 0;
+                this.gameTimer = null;
+                this.timeLeft = 0;
+                this.isPaused = false;
+                this.gameResults = {
+                    totalQuestions: 0,
+                    correctAnswers: 0,
+                    incorrectAnswers: 0,
+                    startTime: null,
+                    endTime: null,
+                    questionResults: []
+                };
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.showPanel('menu');
+            }
+
+            setupEventListeners() {
+                console.log('🔧 Configurando event listeners...');
+                
+                // Menú principal
+                addEventListenerSafe('new-quiz-btn', 'click', () => this.showPanel('setup'));
+                addEventListenerSafe('manage-decks-btn', 'click', () => this.showPanel('decks'));
+                addEventListenerSafe('play-quiz-btn', 'click', () => this.showPanel('game'));
+
+                // Panel de configuración
+                addEventListenerSafe('excel-file', 'change', (e) => this.handleFileUpload(e));
+                addEventListenerSafe('question-time', 'input', (e) => this.updateTimeDisplay(e));
+                addEventListenerSafe('download-template-btn', 'click', () => this.downloadTemplate());
+                addEventListenerSafe('save-deck-btn', 'click', () => this.saveDeck());
+                addEventListenerSafe('start-quiz-btn', 'click', () => this.startQuiz());
+                addEventListenerSafe('back-menu-btn', 'click', () => this.showPanel('menu'));
+
+                // Panel de mazos
+                addEventListenerSafe('back-from-decks-btn', 'click', () => this.showPanel('menu'));
+
+                // Panel de juego
+                addEventListenerSafe('correct-btn', 'click', () => this.answerQuestion(true));
+                addEventListenerSafe('incorrect-btn', 'click', () => this.answerQuestion(false));
+                addEventListenerSafe('pause-btn', 'click', () => this.pauseGame());
+                addEventListenerSafe('resume-btn', 'click', () => this.resumeGame());
+                addEventListenerSafe('stop-btn', 'click', () => this.stopGame());
+                addEventListenerSafe('next-question-btn', 'click', () => this.nextQuestion());
+
+                // Panel de resultados
+                addEventListenerSafe('export-results-btn', 'click', () => this.exportResults());
+                addEventListenerSafe('new-quiz-results-btn', 'click', () => this.showPanel('setup'));
+                addEventListenerSafe('back-menu-results-btn', 'click', () => this.showPanel('menu'));
+
+                console.log('✅ Event listeners configurados');
+            }
+
+            showPanel(panelName) {
+                console.log(`🔄 Cambiando a panel: ${panelName}`);
+                
+                const panels = ['menu-panel', 'setup-panel', 'decks-panel', 'game-panel', 'results-panel'];
+                panels.forEach(panel => {
+                    const element = document.getElementById(panel);
+                    if (element) {
+                        element.style.display = 'none';
+                    }
+                });
+
+                const targetPanel = document.getElementById(`${panelName}-panel`);
+                if (targetPanel) {
+                    targetPanel.style.display = 'flex';
+                    this.currentPanel = panelName;
+                    
+                    // Cargar datos específicos del panel
+                    if (panelName === 'setup') {
+                        this.loadSetupPanel();
+                    } else if (panelName === 'decks') {
+                        this.loadDecksManagement();
+                    } else if (panelName === 'game') {
+                        this.loadGamePanel();
+                    }
+                } else {
+                    console.warn(`⚠️ Panel no encontrado: ${panelName}-panel`);
+                }
+            }
+
+            loadSetupPanel() {
+                console.log('⚙️ Cargando panel de configuración...');
+                // Resetear valores
+                const timeSlider = document.getElementById('question-time');
+                if (timeSlider) {
+                    timeSlider.value = 30;
+                    this.updateTimeDisplay({ target: timeSlider });
+                }
+            }
+
+            // === MANEJO DE ARCHIVOS ===
+            handleFileUpload(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                console.log('📁 Procesando archivo:', file.name);
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        const sheetName = workbook.SheetNames[0];
+                        const worksheet = workbook.Sheets[sheetName];
+                        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+                        this.questions = jsonData.map((row, index) => ({
+                            id: index + 1,
+                            question: row.Pregunta || row.pregunta || row.Question || row.question || '',
+                            category: row.Categoría || row.categoria || row.Category || row.category || 'General',
+                            difficulty: row.Dificultad || row.dificultad || row.Difficulty || row.difficulty || 'Media'
+                        })).filter(q => q.question.trim() !== '');
+
+                        console.log(`✅ ${this.questions.length} preguntas cargadas`);
+                        this.showFileInfo(file.name, this.questions.length);
+                        
+                    } catch (error) {
+                        console.error('❌ Error al procesar archivo:', error);
+                        this.showNotification('Error al procesar el archivo Excel', 'error');
+                    }
+                };
+                
+                reader.readAsArrayBuffer(file);
+            }
+
+            showFileInfo(fileName, questionCount) {
+                const fileInfo = document.getElementById('file-info');
+                if (fileInfo) {
+                    fileInfo.innerHTML = `
+                        <div style="padding: 1rem; background: var(--success-color); color: white; border-radius: 0.5rem; margin-top: 0.5rem;">
+                            <strong>✅ Archivo cargado:</strong> ${fileName}<br>
+                            <strong>📝 Preguntas encontradas:</strong> ${questionCount}
+                        </div>
+                    `;
+                    fileInfo.style.display = 'block';
+                }
+            }
+
+            updateTimeDisplay(event) {
+                const value = event.target.value;
+                this.questionTime = parseInt(value);
+                const display = document.getElementById('time-display');
+                if (display) {
+                    display.textContent = value;
+                }
+            }
+
+            downloadTemplate() {
+                console.log('📥 Generando plantilla Excel...');
+                
+                const templateData = [
+                    { Pregunta: "¿Cuál es la capital de Francia?", Categoría: "Geografía", Dificultad: "Fácil" },
+                    { Pregunta: "¿Quién escribió 'Don Quijote de la Mancha'?", Categoría: "Literatura", Dificultad: "Media" },
+                    { Pregunta: "¿Cuál es la fórmula química del agua?", Categoría: "Química", Dificultad: "Fácil" },
+                    { Pregunta: "¿En qué año llegó el hombre a la Luna?", Categoría: "Historia", Dificultad: "Media" },
+                    { Pregunta: "¿Cuál es el resultado de 15 × 8?", Categoría: "Matemáticas", Dificultad: "Fácil" },
+                    { Pregunta: "¿Quién pintó 'La Gioconda'?", Categoría: "Arte", Dificultad: "Media" },
+                    { Pregunta: "¿Cuál es el planeta más grande del sistema solar?", Categoría: "Astronomía", Dificultad: "Fácil" },
+                    { Pregunta: "¿Qué significa 'www' en una dirección web?", Categoría: "Tecnología", Dificultad: "Media" },
+                    { Pregunta: "¿Cuál es la moneda de Japón?", Categoría: "Geografía", Dificultad: "Fácil" },
+                    { Pregunta: "¿Quién desarrolló la teoría de la relatividad?", Categoría: "Ciencia", Dificultad: "Difícil" }
+                ];
+
+                const worksheet = XLSX.utils.json_to_sheet(templateData);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, "Preguntas");
+
+                // Ajustar ancho de columnas
+                const colWidths = [
+                    { wch: 50 }, // Pregunta
+                    { wch: 15 }, // Categoría
+                    { wch: 12 }  // Dificultad
+                ];
+                worksheet['!cols'] = colWidths;
+
+                const fileName = `Plantilla_Preguntas_${new Date().toISOString().split('T')[0]}.xlsx`;
+                XLSX.writeFile(workbook, fileName);
+                
+                this.showNotification('Plantilla descargada correctamente', 'success');
+                console.log('✅ Plantilla generada:', fileName);
+            }
+
+            saveDeck() {
+                console.log('💾 Guardando mazo...');
+                
+                const deckNameInput = document.getElementById('deck-name');
+                const deckName = deckNameInput ? deckNameInput.value.trim() : '';
+                
+                if (!deckName) {
+                    this.showNotification('Por favor ingresa un nombre para el mazo', 'error');
+                    return;
+                }
+
+                if (this.questions.length === 0) {
+                    this.showNotification('Por favor carga un archivo Excel con preguntas', 'error');
+                    return;
+                }
+
+                // Guardar mazo
+                const deck = {
+                    id: Date.now(),
+                    name: deckName,
+                    questions: this.questions,
+                    questionTime: this.questionTime,
+                    createdAt: new Date().toISOString()
+                };
+
+                const savedDecks = JSON.parse(localStorage.getItem('preguntasRapidas_decks') || '[]');
+                savedDecks.push(deck);
+                localStorage.setItem('preguntasRapidas_decks', JSON.stringify(savedDecks));
+
+                this.showNotification('Mazo guardado correctamente', 'success');
+                console.log('✅ Mazo guardado:', deck.name);
+                
+                // Limpiar formulario
+                if (deckNameInput) deckNameInput.value = '';
+                this.questions = [];
+                
+                const fileInfo = document.getElementById('file-info');
+                if (fileInfo) fileInfo.style.display = 'none';
+                
+                const fileInput = document.getElementById('excel-file');
+                if (fileInput) fileInput.value = '';
+            }
+
+            // === GESTIÓN DE MAZOS ===
+            loadDecksManagement() {
+                console.log('📚 Cargando panel de gestión de mazos...');
+                const decksList = document.getElementById('decks-list');
+                if (!decksList) {
+                    console.warn('⚠️ Lista de mazos no encontrada');
+                    return;
+                }
+
+                const savedDecks = JSON.parse(localStorage.getItem('preguntasRapidas_decks') || '[]');
+                
+                if (savedDecks.length === 0) {
+                    decksList.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 2rem;">No hay mazos guardados.</p>';
+                    return;
+                }
+
+                const decksHtml = savedDecks.map(deck => `
+                    <div class="deck-item" style="border: 1px solid var(--border); border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1rem; background: var(--surface-light);">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                            <div>
+                                <h3 style="margin: 0 0 0.5rem 0; color: var(--text-primary);">${deck.name}</h3>
+                                <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">
+                                    📝 ${deck.questions.length} preguntas • ⏱️ ${deck.questionTime}s por pregunta
+                                </p>
+                                <p style="margin: 0.25rem 0 0 0; color: var(--text-secondary); font-size: 0.8rem;">
+                                    Creado: ${new Date(deck.createdAt).toLocaleDateString()}
+                                </p>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button onclick="window.app.playDeck(${deck.id})" style="background: var(--primary-color); color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.25rem; cursor: pointer; font-size: 0.9rem;">
+                                    ▶️ Jugar
+                                </button>
+                                <button onclick="window.app.deleteDeck(${deck.id})" style="background: var(--danger-color); color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.25rem; cursor: pointer; font-size: 0.9rem;">
+                                    🗑️
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                decksList.innerHTML = decksHtml;
+            }
+
+            playDeck(deckId) {
+                const savedDecks = JSON.parse(localStorage.getItem('preguntasRapidas_decks') || '[]');
+                const deck = savedDecks.find(d => d.id === deckId);
+                
+                if (!deck) {
+                    this.showNotification('Mazo no encontrado', 'error');
+                    return;
+                }
+
+                // Configurar el juego con el mazo seleccionado
+                this.currentDeck = deck;
+                this.questions = [...deck.questions];
+                this.questionTime = deck.questionTime;
+                
+                this.startQuiz();
+            }
+
+            deleteDeck(deckId) {
+                const savedDecks = JSON.parse(localStorage.getItem('preguntasRapidas_decks') || '[]');
+                const deck = savedDecks.find(d => d.id === deckId);
+                
+                if (!deck) return;
+
+                if (confirm(`¿Estás seguro de eliminar el mazo "${deck.name}"?`)) {
+                    const updatedDecks = savedDecks.filter(d => d.id !== deckId);
+                    localStorage.setItem('preguntasRapidas_decks', JSON.stringify(updatedDecks));
+                    this.loadDecksManagement();
+                    this.showNotification('Mazo eliminado', 'success');
+                    console.log('✅ Mazo eliminado:', deck.name);
+                }
+            }
+
+            // === JUEGO ===
+            loadGamePanel() {
+                console.log('🎮 Cargando panel de juego...');
+                // Verificar si hay mazos disponibles
+                const savedDecks = JSON.parse(localStorage.getItem('preguntasRapidas_decks') || '[]');
+                
+                if (savedDecks.length === 0) {
+                    this.showNotification('No hay mazos disponibles. Crea uno primero.', 'warning');
+                    this.showPanel('setup');
+                    return;
+                }
+
+                // Mostrar selector de mazos
+                this.showDeckSelector(savedDecks);
+            }
+
+            showDeckSelector(decks) {
+                const gamePanel = document.getElementById('game-panel');
+                if (!gamePanel) return;
+
+                gamePanel.innerHTML = `
+                    <div class="game-container" style="max-width: 800px; margin: 0 auto; padding: 2rem;">
+                        <h2 style="text-align: center; margin-bottom: 2rem; color: var(--text-primary);">🎮 Seleccionar Mazo</h2>
+                        <div class="deck-selector" style="display: grid; gap: 1rem;">
+                            ${decks.map(deck => `
+                                <button onclick="window.app.playDeck(${deck.id})" style="
+                                    padding: 1.5rem; 
+                                    border: 2px solid var(--border); 
+                                    border-radius: 0.75rem; 
+                                    background: var(--surface-light); 
+                                    cursor: pointer; 
+                                    text-align: left;
+                                    transition: all 0.3s ease;
+                                " onmouseover="this.style.borderColor='var(--primary-color)'" onmouseout="this.style.borderColor='var(--border)'">
+                                    <h3 style="margin: 0 0 0.5rem 0; color: var(--text-primary);">${deck.name}</h3>
+                                    <p style="margin: 0; color: var(--text-secondary);">
+                                        📝 ${deck.questions.length} preguntas • ⏱️ ${deck.questionTime}s por pregunta
+                                    </p>
+                                </button>
+                            `).join('')}
+                        </div>
+                        <div style="text-align: center; margin-top: 2rem;">
+                            <button onclick="window.app.showPanel('menu')" style="
+                                padding: 0.75rem 1.5rem; 
+                                background: var(--text-secondary); 
+                                color: white; 
+                                border: none; 
+                                border-radius: 0.5rem; 
+                                cursor: pointer;
+                            ">⬅️ Volver al Menú</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            startQuiz() {
+                console.log('🚀 Iniciando cuestionario...');
+                
+                if (this.questions.length === 0) {
+                    this.showNotification('No hay preguntas cargadas', 'error');
+                    return;
+                }
+
+                // Inicializar estado del juego
+                this.currentQuestionIndex = 0;
+                this.gameResults = {
+                    totalQuestions: this.questions.length,
+                    correctAnswers: 0,
+                    incorrectAnswers: 0,
+                    startTime: new Date(),
+                    endTime: null,
+                    questionResults: []
+                };
+
+                // Mezclar preguntas
+                this.questions = this.shuffleArray([...this.questions]);
+                
+                this.showPanel('game');
+                this.setupGameInterface();
+                this.showCurrentQuestion();
+            }
+
+            setupGameInterface() {
+                const gamePanel = document.getElementById('game-panel');
+                if (!gamePanel) return;
+
+                gamePanel.innerHTML = `
+                    <div class="game-container" style="max-width: 800px; margin: 0 auto; padding: 2rem;">
+                        <div class="game-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding: 1rem; background: var(--surface-light); border-radius: 0.75rem;">
+                            <div class="game-info">
+                                <span id="question-counter" style="color: var(--text-primary); font-weight: 600; font-size: 1.1rem;">Pregunta 1 de ${this.questions.length}</span>
+                            </div>
+                            <div class="game-timer">
+                                <div id="timer-circle" style="
+                                    width: 60px; 
+                                    height: 60px; 
+                                    border-radius: 50%; 
+                                    background: var(--primary-color); 
+                                    display: flex; 
+                                    align-items: center; 
+                                    justify-content: center; 
+                                    color: white; 
+                                    font-weight: bold; 
+                                    font-size: 1.2rem;
+                                ">
+                                    <span id="timer-text">${this.questionTime}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="question-container" style="
+                            background: var(--surface); 
+                            padding: 2rem; 
+                            border-radius: 1rem; 
+                            margin-bottom: 2rem; 
+                            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+                            border: 2px solid var(--border);
+                        ">
+                            <div class="question-text" id="question-text" style="
+                                font-size: 1.8rem; 
+                                line-height: 1.5; 
+                                color: var(--text-primary) !important; 
+                                text-align: center; 
+                                font-weight: 600;
+                                opacity: 1 !important;
+                                background: rgba(255, 255, 255, 0.05);
+                                padding: 1.5rem;
+                                border-radius: 0.75rem;
+                                border: 1px solid var(--border);
+                                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+                                min-height: 80px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                            ">
+                                <!-- La pregunta se cargará dinámicamente -->
+                            </div>
+                        </div>
+
+                        <div class="answer-buttons" style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 2rem;">
+                            <button class="answer-btn correct-btn" id="correct-btn" style="
+                                background: var(--success-color); 
+                                color: white; 
+                                border: none; 
+                                padding: 1rem 2rem; 
+                                border-radius: 0.75rem; 
+                                font-size: 1.1rem; 
+                                font-weight: 600; 
+                                cursor: pointer; 
+                                min-width: 150px;
+                                transition: all 0.3s ease;
+                            " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.2)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                                ✅ Correcta
+                            </button>
+                            <button class="answer-btn incorrect-btn" id="incorrect-btn" style="
+                                background: var(--danger-color); 
+                                color: white; 
+                                border: none; 
+                                padding: 1rem 2rem; 
+                                border-radius: 0.75rem; 
+                                font-size: 1.1rem; 
+                                font-weight: 600; 
+                                cursor: pointer; 
+                                min-width: 150px;
+                                transition: all 0.3s ease;
+                            " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.2)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                                ❌ Incorrecta
+                            </button>
+                        </div>
+
+                        <div class="game-controls" style="display: flex; gap: 1rem; justify-content: center;">
+                            <button class="control-btn" id="pause-btn" style="
+                                background: var(--warning-color); 
+                                color: white; 
+                                border: none; 
+                                padding: 0.75rem 1.5rem; 
+                                border-radius: 0.5rem; 
+                                cursor: pointer;
+                                transition: all 0.3s ease;
+                            " onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">⏸️ Pausar</button>
+                            <button class="control-btn" id="stop-btn" style="
+                                background: var(--danger-color); 
+                                color: white; 
+                                border: none; 
+                                padding: 0.75rem 1.5rem; 
+                                border-radius: 0.5rem; 
+                                cursor: pointer;
+                                transition: all 0.3s ease;
+                            " onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">⏹️ Detener</button>
+                            <button class="control-btn" id="next-question-btn" style="display: none; background: var(--primary-color); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer;">➡️ Siguiente</button>
+                        </div>
+
+                        <!-- Overlay de pausa -->
+                        <div class="pause-overlay" id="pause-overlay" style="
+                            display: none; 
+                            position: fixed; 
+                            top: 0; 
+                            left: 0; 
+                            width: 100%; 
+                            height: 100%; 
+                            background: rgba(0,0,0,0.8); 
+                            z-index: 1000;
+                            justify-content: center;
+                            align-items: center;
+                        ">
+                            <div class="pause-content" style="
+                                background: var(--surface); 
+                                padding: 3rem; 
+                                border-radius: 1rem; 
+                                text-align: center; 
+                                box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+                                border: 2px solid var(--border);
+                            ">
+                                <h3 style="margin: 0 0 2rem 0; color: var(--text-primary); font-size: 1.5rem;">⏸️ Juego Pausado</h3>
+                                <button class="resume-btn" id="resume-btn" style="
+                                    background: var(--success-color); 
+                                    color: white; 
+                                    border: none; 
+                                    padding: 1rem 2rem; 
+                                    border-radius: 0.75rem; 
+                                    font-size: 1.1rem; 
+                                    cursor: pointer;
+                                    transition: all 0.3s ease;
+                                " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">▶️ Continuar</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Reconfigurar event listeners para los nuevos elementos
+                this.setupGameEventListeners();
+            }
+
+            setupGameEventListeners() {
+                addEventListenerSafe('correct-btn', 'click', () => this.answerQuestion(true));
+                addEventListenerSafe('incorrect-btn', 'click', () => this.answerQuestion(false));
+                addEventListenerSafe('pause-btn', 'click', () => this.pauseGame());
+                addEventListenerSafe('resume-btn', 'click', () => this.resumeGame());
+                addEventListenerSafe('stop-btn', 'click', () => this.stopGame());
+                addEventListenerSafe('next-question-btn', 'click', () => this.nextQuestion());
+            }
+
+            showCurrentQuestion() {
+                if (this.currentQuestionIndex >= this.questions.length) {
+                    this.endQuiz();
+                    return;
+                }
+
+                const question = this.questions[this.currentQuestionIndex];
+                const questionText = document.getElementById('question-text');
+                const questionCounter = document.getElementById('question-counter');
+
+                if (questionText) {
+                    questionText.textContent = question.question;
+                }
+
+                if (questionCounter) {
+                    questionCounter.textContent = `Pregunta ${this.currentQuestionIndex + 1} de ${this.questions.length}`;
+                }
+
+                this.startTimer();
+            }
+
+            startTimer() {
+                this.timeLeft = this.questionTime;
+                this.updateTimerDisplay();
+
+                this.gameTimer = setInterval(() => {
+                    if (!this.isPaused) {
+                        this.timeLeft--;
+                        this.updateTimerDisplay();
+
+                        if (this.timeLeft <= 0) {
+                            this.timeUp();
+                        }
+                    }
+                }, 1000);
+            }
+
+            updateTimerDisplay() {
+                const timerText = document.getElementById('timer-text');
+                const timerCircle = document.getElementById('timer-circle');
+                
+                if (timerText) {
+                    timerText.textContent = this.timeLeft;
+                }
+
+                if (timerCircle) {
+                    const percentage = this.timeLeft / this.questionTime;
+                    if (percentage > 0.6) {
+                        timerCircle.style.background = 'var(--success-color)';
+                    } else if (percentage > 0.3) {
+                        timerCircle.style.background = 'var(--warning-color)';
+                    } else {
+                        timerCircle.style.background = 'var(--danger-color)';
+                    }
+                }
+            }
+
+            answerQuestion(isCorrect) {
+                if (this.gameTimer) {
+                    clearInterval(this.gameTimer);
+                    this.gameTimer = null;
+                }
+
+                // Registrar resultado
+                const questionResult = {
+                    question: this.questions[this.currentQuestionIndex].question,
+                    category: this.questions[this.currentQuestionIndex].category,
+                    isCorrect: isCorrect,
+                    timeUsed: this.questionTime - this.timeLeft,
+                    timestamp: new Date()
+                };
+
+                this.gameResults.questionResults.push(questionResult);
+
+                if (isCorrect) {
+                    this.gameResults.correctAnswers++;
+                } else {
+                    this.gameResults.incorrectAnswers++;
+                }
+
+                // Mostrar feedback visual
+                this.showAnswerFeedback(isCorrect);
+
+                // Avanzar a la siguiente pregunta después de un breve delay
+                setTimeout(() => {
+                    this.currentQuestionIndex++;
+                    this.showCurrentQuestion();
+                }, 1500);
+            }
+
+            showAnswerFeedback(isCorrect) {
+                const questionContainer = document.querySelector('.question-container');
+                if (questionContainer) {
+                    questionContainer.style.background = isCorrect ? 'var(--success-color)' : 'var(--danger-color)';
+                    questionContainer.style.color = 'white';
+                    
+                    setTimeout(() => {
+                        questionContainer.style.background = 'var(--surface)';
+                        questionContainer.style.color = 'var(--text-primary)';
+                    }, 1500);
+                }
+            }
+
+            timeUp() {
+                this.answerQuestion(false); // Tiempo agotado = respuesta incorrecta
+            }
+
+            pauseGame() {
+                this.isPaused = true;
+                const pauseOverlay = document.getElementById('pause-overlay');
+                if (pauseOverlay) {
+                    pauseOverlay.style.display = 'flex';
+                }
+            }
+
+            resumeGame() {
+                this.isPaused = false;
+                const pauseOverlay = document.getElementById('pause-overlay');
+                if (pauseOverlay) {
+                    pauseOverlay.style.display = 'none';
+                }
+            }
+
+            stopGame() {
+                if (confirm('¿Estás seguro de detener el juego?')) {
+                    if (this.gameTimer) {
+                        clearInterval(this.gameTimer);
+                        this.gameTimer = null;
+                    }
+                    this.endQuiz();
+                }
+            }
+
+            nextQuestion() {
+                this.currentQuestionIndex++;
+                this.showCurrentQuestion();
+            }
+
+            endQuiz() {
+                console.log('🏁 Finalizando cuestionario...');
+                
+                if (this.gameTimer) {
+                    clearInterval(this.gameTimer);
+                    this.gameTimer = null;
+                }
+
+                this.gameResults.endTime = new Date();
+                this.showResults();
+            }
+
+            showResults() {
+                console.log('📊 Mostrando resultados...');
+                this.showPanel('results');
+                
+                const resultsSummary = document.getElementById('results-summary');
+                const resultsDetails = document.getElementById('results-details');
+                
+                if (!resultsSummary || !resultsDetails) return;
+
+                const totalTime = Math.round((this.gameResults.endTime - this.gameResults.startTime) / 1000);
+                const accuracy = Math.round((this.gameResults.correctAnswers / this.gameResults.totalQuestions) * 100);
+
+                // Resumen general
+                resultsSummary.innerHTML = `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                        <div style="background: var(--success-color); color: white; padding: 1.5rem; border-radius: 0.75rem; text-align: center;">
+                            <h3 style="margin: 0 0 0.5rem 0; font-size: 2rem;">✅</h3>
+                            <p style="margin: 0; font-size: 1.5rem; font-weight: bold;">${this.gameResults.correctAnswers}</p>
+                            <p style="margin: 0; opacity: 0.9;">Correctas</p>
+                        </div>
+                        <div style="background: var(--danger-color); color: white; padding: 1.5rem; border-radius: 0.75rem; text-align: center;">
+                            <h3 style="margin: 0 0 0.5rem 0; font-size: 2rem;">❌</h3>
+                            <p style="margin: 0; font-size: 1.5rem; font-weight: bold;">${this.gameResults.incorrectAnswers}</p>
+                            <p style="margin: 0; opacity: 0.9;">Incorrectas</p>
+                        </div>
+                        <div style="background: var(--primary-color); color: white; padding: 1.5rem; border-radius: 0.75rem; text-align: center;">
+                            <h3 style="margin: 0 0 0.5rem 0; font-size: 2rem;">📊</h3>
+                            <p style="margin: 0; font-size: 1.5rem; font-weight: bold;">${accuracy}%</p>
+                            <p style="margin: 0; opacity: 0.9;">Precisión</p>
+                        </div>
+                        <div style="background: var(--warning-color); color: white; padding: 1.5rem; border-radius: 0.75rem; text-align: center;">
+                            <h3 style="margin: 0 0 0.5rem 0; font-size: 2rem;">⏱️</h3>
+                            <p style="margin: 0; font-size: 1.5rem; font-weight: bold;">${Math.floor(totalTime / 60)}:${(totalTime % 60).toString().padStart(2, '0')}</p>
+                            <p style="margin: 0; opacity: 0.9;">Tiempo Total</p>
+                        </div>
+                    </div>
+                `;
+
+                // Detalles por pregunta
+                const detailsHtml = this.gameResults.questionResults.map((result, index) => `
+                    <div style="border: 1px solid var(--border); border-radius: 0.5rem; padding: 1rem; margin-bottom: 0.5rem; background: var(--surface-light);">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div style="flex: 1;">
+                                <p style="margin: 0 0 0.5rem 0; font-weight: 500;">${index + 1}. ${result.question}</p>
+                                <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">
+                                    📂 ${result.category} • ⏱️ ${result.timeUsed}s
+                                </p>
+                            </div>
+                            <div style="margin-left: 1rem;">
+                                <span style="
+                                    background: ${result.isCorrect ? 'var(--success-color)' : 'var(--danger-color)'}; 
+                                    color: white; 
+                                    padding: 0.25rem 0.75rem; 
+                                    border-radius: 1rem; 
+                                    font-size: 0.8rem; 
+                                    font-weight: bold;
+                                ">
+                                    ${result.isCorrect ? '✅ Correcta' : '❌ Incorrecta'}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                resultsDetails.innerHTML = `
+                    <h3 style="margin: 0 0 1rem 0; color: var(--text-primary);">📝 Detalle por Pregunta</h3>
+                    ${detailsHtml}
+                `;
+            }
+
+            exportResults() {
+                console.log('📤 Exportando resultados...');
+                
+                const exportData = [
+                    {
+                        'Resumen': 'Estadísticas Generales',
+                        'Total Preguntas': this.gameResults.totalQuestions,
+                        'Respuestas Correctas': this.gameResults.correctAnswers,
+                        'Respuestas Incorrectas': this.gameResults.incorrectAnswers,
+                        'Precisión (%)': Math.round((this.gameResults.correctAnswers / this.gameResults.totalQuestions) * 100),
+                        'Tiempo Total (min)': Math.round((this.gameResults.endTime - this.gameResults.startTime) / 60000),
+                        'Fecha': this.gameResults.startTime.toLocaleDateString(),
+                        'Hora Inicio': this.gameResults.startTime.toLocaleTimeString(),
+                        'Hora Fin': this.gameResults.endTime.toLocaleTimeString()
+                    },
+                    ...this.gameResults.questionResults.map((result, index) => ({
+                        'Pregunta #': index + 1,
+                        'Pregunta': result.question,
+                        'Categoría': result.category,
+                        'Resultado': result.isCorrect ? 'Correcta' : 'Incorrecta',
+                        'Tiempo Usado (s)': result.timeUsed,
+                        'Timestamp': result.timestamp.toLocaleString()
+                    }))
+                ];
+
+                const worksheet = XLSX.utils.json_to_sheet(exportData);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, "Resultados");
+
+                const fileName = `Resultados_Cuestionario_${new Date().toISOString().split('T')[0]}_${new Date().toTimeString().split(' ')[0].replace(/:/g, '-')}.xlsx`;
+                XLSX.writeFile(workbook, fileName);
+                
+                this.showNotification('Resultados exportados correctamente', 'success');
+                console.log('✅ Resultados exportados:', fileName);
+            }
+
+            // === UTILIDADES ===
+            shuffleArray(array) {
+                const shuffled = [...array];
+                for (let i = shuffled.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                }
+                return shuffled;
+            }
+
+            showNotification(message, type = 'info') {
+                console.log(`📢 ${type.toUpperCase()}: ${message}`);
+                
+                // Crear elemento de notificación
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    padding: 1rem 1.5rem;
+                    border-radius: 0.5rem;
+                    color: white;
+                    font-weight: 500;
+                    z-index: 10000;
+                    max-width: 300px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                    animation: slideIn 0.3s ease-out;
+                `;
+
+                // Colores según tipo
+                const colors = {
+                    success: 'var(--success-color)',
+                    error: 'var(--danger-color)',
+                    warning: 'var(--warning-color)',
+                    info: 'var(--primary-color)'
+                };
+
+                notification.style.background = colors[type] || colors.info;
+                notification.textContent = message;
+
+                document.body.appendChild(notification);
+
+                // Remover después de 4 segundos
+                setTimeout(() => {
+                    notification.style.animation = 'slideOut 0.3s ease-in';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 300);
+                }, 4000);
+            }
+        }
+
+        // Inicializar la aplicación cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🌟 DOM cargado, inicializando aplicación...');
+            
+            // Verificar que XLSX esté disponible
+            if (typeof XLSX === 'undefined') {
+                console.error('❌ XLSX no está disponible');
+                return;
+            }
+            
+            window.app = new PreguntasRapidas();
+            window.app.init();
+            console.log('🎉 Aplicación lista para usar');
+        });
+    </script>
+</body>
+</html>

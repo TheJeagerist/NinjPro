@@ -1,7 +1,7 @@
-// Theme Manager para NinjPro
-// ========================
+// Theme Manager Simplificado para Aplicaciones Externas
+// =====================================================
 
-// Función principal para cambiar temas
+// Función principal para cambiar temas (versión simplificada)
 function setTheme(theme) {
   console.log(`🎨 Cambiando al tema: ${theme}`);
   
@@ -9,41 +9,13 @@ function setTheme(theme) {
   const normalizedTheme = theme.startsWith('theme-') ? theme : `theme-${theme}`;
   
   // Cambiar clase del body
-      document.body.classList.remove('theme-light', 'theme-dark', 'theme-rosa', 'theme-neon');
+  document.body.classList.remove('theme-light', 'theme-dark', 'theme-rosa', 'theme-neon', 'theme-custom');
   document.body.classList.add(normalizedTheme);
   localStorage.setItem('theme', normalizedTheme);
 
-  // Obtener todos los elementos de fondo
-  const backgrounds = {
-    'theme-light': document.getElementById('bg-wrap'),
-    'theme-dark': document.getElementById('bg-wrap-dark'),
-    'theme-rosa': document.getElementById('bg-wrap-rosa'),
-    
-    'theme-neon': document.getElementById('bg-wrap-neon')
-  };
+  console.log(`✅ Tema aplicado: ${normalizedTheme}`);
 
-  // Ocultar todos los fondos primero
-  Object.values(backgrounds).forEach(bg => {
-    if (bg) {
-      bg.style.opacity = '0';
-      bg.style.transition = 'opacity 0.6s ease';
-    }
-  });
-
-  // Mostrar el fondo del tema activo con un pequeño retraso
-  setTimeout(() => {
-    const activeBg = backgrounds[normalizedTheme];
-    if (activeBg) {
-      activeBg.style.opacity = '1';
-      console.log(`✅ Fondo activado para ${normalizedTheme}`);
-    } else {
-      console.warn(`⚠️ No se encontró el fondo para ${normalizedTheme}`);
-      console.log('🔍 Fondos disponibles:', Object.keys(backgrounds));
-      console.log('🔍 Elementos encontrados:', Object.values(backgrounds).map(bg => bg ? bg.id : 'null'));
-    }
-  }, 50);
-
-  // Notificar al sistema de fondos animados sobre el cambio
+  // Notificar al sistema de fondos animados sobre el cambio (si existe)
   if (window.animatedBackgrounds && window.animatedBackgrounds.switchTheme) {
     window.animatedBackgrounds.switchTheme(normalizedTheme);
   }
@@ -56,24 +28,30 @@ function setTheme(theme) {
 function updateActiveThemeButtons(theme) {
   const themeBtns = document.querySelectorAll('.theme-btn');
   themeBtns.forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.theme === theme);
+    if (btn.dataset && btn.dataset.theme) {
+      btn.classList.toggle('active', btn.dataset.theme === theme);
+    }
   });
 }
 
-// Función para inicializar el sistema de temas
+// Función para inicializar el sistema de temas (versión simplificada)
 function initializeThemeSystem() {
   // Cargar tema guardado o usar tema por defecto
   const savedTheme = localStorage.getItem('theme') || 'theme-dark';
   setTheme(savedTheme);
   
-  // Configurar event listeners para botones de tema
+  // Configurar event listeners para botones de tema (si existen)
   const themeBtns = document.querySelectorAll('.theme-btn');
   themeBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       const selectedTheme = btn.dataset.theme;
-      setTheme(selectedTheme);
+      if (selectedTheme) {
+        setTheme(selectedTheme);
+      }
     });
   });
+  
+  console.log('🎨 Theme Manager Externo inicializado');
 }
 
 // Función para obtener el tema actual
@@ -112,10 +90,25 @@ if (window.matchMedia) {
   });
 }
 
+// Listener para cambios de tema desde otras ventanas/pestañas
+window.addEventListener('storage', function(e) {
+  if (e.key === 'theme' && e.newValue) {
+    // Solo cambiar la clase del body, sin buscar elementos de fondo
+    document.body.classList.remove('theme-light', 'theme-dark', 'theme-rosa', 'theme-neon', 'theme-custom');
+    document.body.classList.add(e.newValue);
+    
+    // Notificar al sistema de fondos animados si existe
+    if (window.animatedBackgrounds && window.animatedBackgrounds.switchTheme) {
+      window.animatedBackgrounds.switchTheme(e.newValue);
+    }
+    
+    console.log(`🔄 Tema sincronizado desde otra ventana: ${e.newValue}`);
+  }
+});
+
 // Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {
   initializeThemeSystem();
-  console.log('🎨 Theme Manager inicializado');
 });
 
 // Exportar funciones para uso global
@@ -125,4 +118,4 @@ window.isThemeActive = isThemeActive;
 window.toggleDarkMode = toggleDarkMode;
 window.applySystemTheme = applySystemTheme;
 
-console.log('📦 Theme Manager cargado'); 
+console.log('📦 Theme Manager Externo cargado'); 

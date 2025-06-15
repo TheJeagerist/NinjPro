@@ -442,7 +442,6 @@
    TEMA ESPECÍFICO MÓVIL
    =================================== */
 
-/* Tema Oscuro Móvil */
 @media (max-width: 768px) {
   body.theme-dark .input-group input:focus {
     box-shadow: 0 0 0 3px rgba(158, 147, 246, 0.4);
@@ -475,13 +474,10 @@
   }
 }
 
-/* Tema Oscuro Profundo Móvil */
 @media (max-width: 768px) {
-  body.theme-oscuro .input-group input:focus {
     box-shadow: 0 0 0 3px rgba(122, 162, 255, 0.4);
   }
 
-  body.theme-oscuro .tabla-mode-btn:focus {
     outline-color: rgba(122, 162, 255, 0.8);
   }
 }

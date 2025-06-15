@@ -41,32 +41,23 @@ if (typeof aplicandoPorcentaje === 'undefined') {
 
 // Función para agregar sección con nombre específico
 function addSectionWithName(nombre) {
-  if (typeof sectionCounter === 'undefined') {
-    window.sectionCounter = 0;
-  }
-  window.sectionCounter++;
+  const nombreSinEspacios = nombre ? nombre.replace(/\s+/g, '-').toLowerCase() : `estudiante-${++window.sectionCounter}`;
   
   const section = document.createElement('div');
   section.className = 'section-panel';
-  section.id = `section-${window.sectionCounter}`;
-  
   section.innerHTML = `
     <div class="section-header">
-      <div class="section-title">${nombre}</div>
-      <div class="section-result" id="result-${window.sectionCounter}">
-        <span class="section-result-value">0.00</span>
-        <span class="section-result-status">-</span>
+      <h3 class="section-title">${nombre || `Estudiante ${window.sectionCounter}`}</h3>
+      <div class="section-controls">
+        <button class="btn-add" onclick="addRowToSection(this)">+</button>
+        <button class="btn-remove" onclick="removeRowFromSection(this)">-</button>
+        <button class="btn-reset" onclick="resetSection(this)">Reset</button>
       </div>
-    </div>
-    <div class="section-controls">
-      <button class="btn-add" onclick="addRowToSection(this)">+</button>
-      <button class="btn-remove" onclick="removeRowFromSection(this)">-</button>
-      <button class="btn-reset" onclick="resetSection(this)">↻</button>
     </div>
     <div class="section-rows-container">
       <div class="section-row">
-        <input type="number" class="grade" step="0.1" min="1" max="7" placeholder="Nota">
-        <input type="number" class="weight" min="1" max="100" placeholder="Ponderación">
+        <input type="number" class="grade" step="0.1" min="1" max="7">
+        <input type="number" class="weight" min="1" max="100">
         <div class="percent">%</div>
       </div>
     </div>
@@ -454,7 +445,6 @@ function updateActiveMenuItem(activeMenuId) {
     'menu-calculadora',
     'menu-escala', 
     'menu-multi',
-    'menu-calendario',
     'menu-word-counter',
     'menu-rubricas',
     'menu-config'
@@ -894,8 +884,8 @@ function aplicarCantidadNotas() {
                 const existingWeight = (i < existingData.length) ? existingData[i].weight : '';
                 
                 row.innerHTML = `
-                    <input type="number" class="grade" step="0.1" min="1" max="7" placeholder="Nota" value="${existingGrade}">
-                    <input type="number" class="weight" min="1" max="100" placeholder="Ponderación" value="${existingWeight}">
+                    <input type="number" class="grade" step="0.1" min="1" max="7" value="${existingGrade}">
+                    <input type="number" class="weight" min="1" max="100" value="${existingWeight}">
                     <div class="percent">%</div>
                 `;
                 

@@ -1,47 +1,242 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Referencias a elementos del DOM
-    const cargarRubricaBtn = document.getElementById('cargar-rubrica');
-    const nuevaRubricaBtn = document.getElementById('nueva-rubrica');
-    const rubricaContent = document.getElementById('rubrica-content');
-    
-    // Referencias para modo evaluación
-    const modoNormalBtn = document.getElementById('tab-normal');
-    const modoEvaluacionBtn = document.getElementById('tab-evaluacion');
-    const evaluacionPanel = document.getElementById('evaluacion-panel');
-    const evalCursoSelect = document.getElementById('eval-curso-select');
-    const evalEstudianteSelect = document.getElementById('eval-estudiante-select');
-    const evalRubricaSelect = document.getElementById('eval-rubrica-select');
-    const iniciarEvaluacionBtn = document.getElementById('iniciar-evaluacion');
-    const guardarEvaluacionBtn = document.getElementById('guardar-evaluacion');
-    const limpiarEvaluacionBtn = document.getElementById('limpiar-evaluacion');
-    const exportarCursoPdfBtn = document.getElementById('exportar-curso-pdf');
-    const evaluacionResultado = document.getElementById('evaluacion-resultado');
-    
-    // Variables para el modo evaluación
-    let modoActual = 'normal';
+// Variables globales
+let rubricaContent = null;
+let evaluacionPanel = null;
+let modoNormalBtn = null;
+let modoEvaluacionBtn = null;
     let rubricaActual = null;
+let modoActual = 'normal';
+let botonesModoInicializados = false;
+let rubricasGuardadas = [];
+let selectorRubricasGuardadas = null;
+let fileInput = null;
+let currentRubricaId = null;
     let evaluacionEnCurso = null;
+let botonesInicializados = false;
+let evalCursoSelect = null;
+let evalEstudianteSelect = null;
+let evalRubricaSelect = null;
+let iniciarEvaluacionBtn = null;
+let guardarEvaluacionBtn = null;
+let limpiarEvaluacionBtn = null;
+let exportarCursoPdfBtn = null;
+let evaluacionResultado = null;
+let nuevaRubricaBtn = null;
+let cargarRubricaBtn = null;
+let cargarRubricaEvaluacionBtn = null;
 
-    // Crear un único input de archivo oculto para reutilizar
-    let fileInput = document.createElement('input');
+// Funciones generadoras de HTML
+function generarNivelVacioEditable() {
+    return `
+        <th>
+            <div class="nivel-header">
+                <div class="nivel-info">
+                    <input type="text" class="nivel-titulo-input" placeholder="Nivel" value="Nivel 1">
+                    <input type="number" class="nivel-puntos" value="1" min="0" max="100">
+                </div>
+                <button type="button" class="btn-eliminar-columna" title="Eliminar nivel">×</button>
+            </div>
+        </th>
+    `;
+}
+
+function generarFilaVaciaEditable() {
+    return `
+        <tr>
+            <td>
+                <div class="criterio-container">
+                    <input type="text" class="criterio-input" placeholder="Criterio" value="Criterio 1">
+                    <button type="button" class="btn-eliminar-fila" title="Eliminar criterio">×</button>
+                </div>
+            </td>
+            <td>
+                <textarea class="nivel-descripcion" placeholder="Descripción del nivel"></textarea>
+            </td>
+        </tr>
+    `;
+}
+
+function generarColumnasNiveles(niveles) {
+    return niveles.map((nivel, index) => `
+        <th>
+            <div class="nivel-header">
+                <div class="nivel-info">
+                    <input type="text" class="nivel-titulo-input" value="${nivel.nivel}">
+                    <input type="number" class="nivel-puntos" value="${nivel.puntos}" min="0" max="100">
+                </div>
+                <button type="button" class="btn-eliminar-columna" title="Eliminar nivel">×</button>
+            </div>
+        </th>
+    `).join('');
+}
+
+function generarFilasCriterios(criterios) {
+    return criterios.map((criterio, index) => `
+        <tr>
+            <td>
+                <div class="criterio-container">
+                    <input type="text" class="criterio-input" value="${criterio.titulo}">
+                    <button type="button" class="btn-eliminar-fila" title="Eliminar criterio">×</button>
+                </div>
+            </td>
+            ${criterio.niveles.map(nivel => `
+                <td>
+                    <textarea class="nivel-descripcion">${nivel.descripcion}</textarea>
+                </td>
+            `).join('')}
+        </tr>
+    `).join('');
+}
+
+// Función para inicializar los elementos del DOM
+function inicializarElementos() {
+    console.log('Inicializando elementos...');
+    
+    // Inicializar elementos del DOM
+    console.log('Buscando elementos del DOM...');
+    rubricaContent = document.getElementById('rubrica-content');
+    console.log('Contenedor de rúbrica:', rubricaContent ? 'encontrado' : 'no encontrado');
+    
+    evaluacionPanel = document.getElementById('evaluacion-panel');
+    console.log('Panel de evaluación:', evaluacionPanel ? 'encontrado' : 'no encontrado');
+    
+    modoNormalBtn = document.getElementById('modo-normal');
+    modoEvaluacionBtn = document.getElementById('modo-evaluacion');
+    
+    evalCursoSelect = document.getElementById('eval-curso-select');
+    evalEstudianteSelect = document.getElementById('eval-estudiante-select');
+    evalRubricaSelect = document.getElementById('eval-rubrica-select');
+    iniciarEvaluacionBtn = document.getElementById('iniciar-evaluacion');
+    guardarEvaluacionBtn = document.getElementById('guardar-evaluacion');
+    limpiarEvaluacionBtn = document.getElementById('limpiar-evaluacion');
+    exportarCursoPdfBtn = document.getElementById('exportar-curso-pdf');
+    evaluacionResultado = document.getElementById('evaluacion-resultado');
+    
+    // Buscar botones de rúbrica
+    nuevaRubricaBtn = document.getElementById('nueva-rubrica');
+    console.log('Botón nueva rúbrica:', nuevaRubricaBtn ? 'encontrado' : 'no encontrado');
+    
+    cargarRubricaBtn = document.getElementById('cargar-rubrica');
+    console.log('Botón cargar rúbrica:', cargarRubricaBtn ? 'encontrado' : 'no encontrado');
+
+    cargarRubricaEvaluacionBtn = document.getElementById('cargar-rubrica-evaluacion');
+    console.log('Botón cargar rúbrica evaluación:', cargarRubricaEvaluacionBtn ? 'encontrado' : 'no encontrado');
+
+    // Crear input de archivo si no existe
+    if (!fileInput) {
+        console.log('Creando input de archivo...');
+        fileInput = document.createElement('input');
     fileInput.type = 'file';
-    fileInput.style.display = 'none'; // Ocultarlo
+        fileInput.style.display = 'none';
     fileInput.accept = '.docx,.xlsx,.xls,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel';
-    document.body.appendChild(fileInput); // Añadirlo al DOM para que funcione
+        document.body.appendChild(fileInput);
+    }
+    
+    // Verificar si el panel de rúbricas está visible
+    const rubricasPanel = document.getElementById('rubricas-panel');
+    console.log('Estado inicial del panel de rúbricas:', rubricasPanel ? rubricasPanel.style.display : 'no encontrado');
+}
 
-    // Event Listeners para modo evaluación
-    if (modoNormalBtn) {
-        modoNormalBtn.addEventListener('click', function() {
-            cambiarModo('normal');
+// Función para inicializar los event listeners
+function inicializarEventListeners() {
+    console.log('Inicializando event listeners...');
+    
+    // Event listeners para botones de rúbrica
+    if (nuevaRubricaBtn) {
+        console.log('Botón nueva rúbrica encontrado, agregando event listener');
+        nuevaRubricaBtn.addEventListener('click', function() {
+            console.log('Click en nueva rúbrica');
+            // Verificar si el panel de rúbricas está visible
+            const rubricasPanel = document.getElementById('rubricas-panel');
+            console.log('Estado del panel antes de mostrar rúbrica:', rubricasPanel ? rubricasPanel.style.display : 'no encontrado');
+            
+            // Asegurarse de que el panel esté visible
+            if (rubricasPanel && rubricasPanel.style.display === 'none') {
+                console.log('Haciendo visible el panel de rúbricas...');
+                rubricasPanel.style.display = 'block';
+            }
+            
+            // Limpiar rúbrica actual
+            currentRubricaId = null;
+            rubricaActual = null;
+            
+            // Esperar un momento para que el DOM se actualice
+            setTimeout(() => {
+                console.log('Llamando a mostrarRubrica...');
+                mostrarRubrica();
+            }, 100);
+        });
+    } else {
+        console.error('No se encontró el botón nueva rúbrica');
+    }
+
+    if (cargarRubricaBtn) {
+        cargarRubricaBtn.addEventListener('click', function() {
+            console.log('Click en cargar rúbrica');
+            if (fileInput) {
+                fileInput.click();
+            }
         });
     }
-    
-    if (modoEvaluacionBtn) {
-        modoEvaluacionBtn.addEventListener('click', function() {
-            cambiarModo('evaluacion');
+
+    // Event listener para el input de archivo
+    if (fileInput) {
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            console.log('Archivo seleccionado:', file.name, file.type);
+
+            const reader = new FileReader();
+            
+            if (file.name.endsWith('.docx') || file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+                reader.onload = function(e) {
+                    try {
+                        mammoth.convertToHtml({arrayBuffer: e.target.result})
+                            .then(function(result) {
+                                const rubrica = procesarDocx(result.value);
+                                if (rubrica) {
+                                    mostrarRubrica(rubrica);
+                                    alert('Rúbrica cargada exitosamente desde Word');
+                                }
+                            })
+                            .catch(function(error) {
+                                console.error('Error al procesar archivo Word:', error);
+                                alert('Error al procesar el archivo Word');
+                            });
+                    } catch (error) {
+                        console.error('Error al leer archivo Word:', error);
+                        alert('Error al leer el archivo Word');
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            } else if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls') || 
+                      file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+                      file.type === 'application/vnd.ms-excel') {
+                reader.onload = function(e) {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, {type: 'array'});
+                        const rubrica = procesarExcel(workbook);
+                        if (rubrica) {
+                            mostrarRubrica(rubrica);
+                            alert('Rúbrica cargada exitosamente desde Excel');
+                        }
+                    } catch (error) {
+                        console.error('Error al procesar archivo Excel:', error);
+                        alert('Error al procesar el archivo Excel');
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            } else {
+                alert('Formato de archivo no soportado. Use archivos .docx o .xlsx');
+            }
+
+            // Limpiar el input para permitir cargar el mismo archivo nuevamente
+            this.value = '';
         });
     }
-    
+
+    // Event listeners para modo evaluación
     if (evalCursoSelect) {
         evalCursoSelect.addEventListener('change', function() {
             cargarEstudiantesCurso(this.value);
@@ -70,38 +265,152 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     if (exportarCursoPdfBtn) {
-        exportarCursoPdfBtn.addEventListener('click', exportarCursoPdf);
+        exportarCursoPdfBtn.addEventListener('click', function() {
+            // Implementar exportación a PDF
+            console.log('Exportar curso a PDF - función por implementar');
+        });
     }
+
+    if (cargarRubricaEvaluacionBtn) {
+        cargarRubricaEvaluacionBtn.addEventListener('click', function() {
+            const rubricaId = evalRubricaSelect?.value;
+            if (!rubricaId) {
+                alert('Por favor selecciona una rúbrica primero');
+                return;
+            }
+
+            // Obtener la rúbrica seleccionada
+            const rubricas = JSON.parse(localStorage.getItem('rubricasGuardadas') || '[]');
+            const rubrica = rubricas.find(r => r.id === rubricaId);
+
+            if (!rubrica) {
+                alert('Rúbrica no encontrada');
+                return;
+            }
+
+            // Cambiar a modo edición temporalmente para mostrar la rúbrica
+            const modoAnterior = modoActual;
+            modoActual = 'normal';
+            
+            // Mostrar el contenedor de rúbrica
+            if (rubricaContent) rubricaContent.style.display = 'block';
+            
+            // Mostrar la rúbrica en modo solo lectura
+            mostrarRubricaEnModoLectura(rubrica);
+            
+            // Restaurar el modo anterior
+            modoActual = modoAnterior;
+        });
+    }
+}
+
+// Inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM cargado, iniciando inicialización...');
+    
+    // Asegurarse de que el panel de rúbricas esté visible temporalmente para inicializar
+    const rubricasPanel = document.getElementById('rubricas-panel');
+    if (rubricasPanel) {
+        console.log('Panel de rúbricas encontrado, haciendo visible temporalmente...');
+        const displayOriginal = rubricasPanel.style.display;
+        rubricasPanel.style.display = 'block';
+        
+        // Inicializar elementos mientras el panel está visible
+        inicializarElementos();
+        inicializarEventListeners();
+        
+        // Restaurar el estado original del panel
+        rubricasPanel.style.display = displayOriginal;
+        
+        // Configurar el observador
+        observer.observe(rubricasPanel, {
+            attributes: true,
+            attributeFilter: ['style']
+        });
+    } else {
+        console.error('No se encontró el panel de rúbricas');
+    }
+    
+    // Event listener para cargar rúbrica guardada desde el selector
+    document.addEventListener('cargarRubricaGuardada', function(event) {
+        const rubrica = event.detail;
+        if (rubrica) {
+            mostrarRubrica(rubrica);
+        }
+    });
+    
+    // Hacer la función mostrarRubrica disponible globalmente
+    window.mostrarRubrica = mostrarRubrica;
+    
+    // Al inicializar, actualizar el selector de rúbricas guardadas
+    if (window.RubricaConfig) {
+        window.RubricaConfig.actualizarSelectorRubricas();
+    }
+});
     
     // Función para cambiar modo
     function cambiarModo(modo) {
-        modoActual = modo;
-        
-        // Actualizar botones
+    console.log('Cambiando a modo:', modo);
+    
+    // Verificar que los botones estén inicializados
+    if (!modoNormalBtn || !modoEvaluacionBtn) {
+        console.error('Los botones de modo no están inicializados');
+        return;
+    }
+    
+    // Actualizar modo actual y estado de los botones
+    modoActual = modo;
         modoNormalBtn.classList.toggle('active', modo === 'normal');
         modoEvaluacionBtn.classList.toggle('active', modo === 'evaluacion');
         
-        // Mostrar/ocultar paneles
-        if (evaluacionPanel) {
-            evaluacionPanel.style.display = modo === 'evaluacion' ? 'block' : 'none';
-        }
+    // Obtener elementos del panel
+    const rubricasPanel = document.getElementById('rubricas-panel');
+    const rubricaContent = document.getElementById('rubrica-content');
+    const evaluacionPanel = document.getElementById('evaluacion-panel');
+    const selectorRubricas = document.getElementById('selector-rubricas-guardadas');
+    
+    // Asegurarse de que el panel de rúbricas esté visible
+    if (rubricasPanel) {
+        rubricasPanel.style.display = 'block';
+    }
+    
+    if (modo === 'normal') {
+        // En modo normal:
+        // - Mostrar el editor de rúbricas
+        // - Ocultar el panel de evaluación
+        // - Ocultar el selector de rúbricas guardadas
+        if (rubricaContent) rubricaContent.style.display = 'block';
+        if (evaluacionPanel) evaluacionPanel.style.display = 'none';
+        if (selectorRubricas) selectorRubricas.style.display = 'none';
         
-        // Mostrar/ocultar selector de rúbricas guardadas
-        const rubricasSelector = document.querySelector('.rubricas-selector');
-        if (rubricasSelector) {
-            rubricasSelector.style.display = modo === 'evaluacion' ? 'none' : 'block';
-        }
-        
-        if (modo === 'evaluacion') {
-            inicializarModoEvaluacion();
-        } else {
-            // Limpiar evaluación si se sale del modo
+        // Limpiar evaluación si existe
+        if (evaluacionEnCurso) {
             limpiarEvaluacion();
         }
         
-        // Ajustar contenido de rúbrica según el modo
+        // Mostrar la rúbrica actual o un formulario vacío
         if (rubricaActual) {
             mostrarRubrica(rubricaActual);
+        } else {
+            mostrarRubrica();
+        }
+    } else {
+        // En modo evaluación:
+        // - Ocultar solo el editor de rúbricas
+        // - Mostrar el panel de evaluación
+        // - Mostrar el selector de rúbricas guardadas
+        if (rubricaContent) rubricaContent.style.display = 'none';
+        if (evaluacionPanel) evaluacionPanel.style.display = 'block';
+        if (selectorRubricas) selectorRubricas.style.display = 'block';
+        
+        // Inicializar modo evaluación y actualizar rúbricas
+        inicializarModoEvaluacion();
+        
+        // Asegurarse de que las rúbricas estén actualizadas
+        setTimeout(() => {
+            cargarRubricasEvaluacion();
+            verificarDatosEvaluacion();
+        }, 100);
         }
     }
     
@@ -219,15 +528,27 @@ document.addEventListener('DOMContentLoaded', function() {
     function cargarRubricasEvaluacion() {
         if (!evalRubricaSelect) return;
         
-        const rubricas = JSON.parse(localStorage.getItem('rubricas_guardadas') || '[]');
+        const rubricas = JSON.parse(localStorage.getItem('rubricasGuardadas') || '[]');
         evalRubricaSelect.innerHTML = '<option value="">Seleccionar rúbrica...</option>';
         
+        if (rubricas.length === 0) {
+            const option = document.createElement('option');
+            option.value = '';
+            option.textContent = 'No hay rúbricas guardadas';
+            option.disabled = true;
+            evalRubricaSelect.appendChild(option);
+            evalRubricaSelect.disabled = true;
+        } else {
         rubricas.forEach(rubrica => {
             const option = document.createElement('option');
             option.value = rubrica.id;
             option.textContent = rubrica.titulo;
             evalRubricaSelect.appendChild(option);
         });
+            evalRubricaSelect.disabled = false;
+        }
+        
+        console.log('Rúbricas cargadas para evaluación:', rubricas.length);
     }
     
     // Función para verificar si se pueden habilitar los botones
@@ -263,7 +584,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Obtener la rúbrica seleccionada
-        const rubricas = JSON.parse(localStorage.getItem('rubricas_guardadas') || '[]');
+        const rubricas = JSON.parse(localStorage.getItem('rubricasGuardadas') || '[]');
         const rubrica = rubricas.find(r => r.id === rubricaId);
         
         if (!rubrica) {
@@ -612,115 +933,227 @@ document.addEventListener('DOMContentLoaded', function() {
         verificarDatosEvaluacion();
     }
 
-    // Asignar el evento onchange una sola vez
-    fileInput.onchange = function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            if (file.name.endsWith('.docx')) {
-                mammoth.convertToHtml({arrayBuffer: file})
-                    .then(function(result) {
-                        const html = result.value;
-                        const rubrica = procesarDocx(html);
-                        mostrarRubrica(rubrica);
-                    })
-                    .catch(function(error) {
-                        alert('Error al cargar el archivo Word: ' + error.message);
-                    });
-            } else if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
-                reader.onload = function(event) {
-                    try {
-                        const data = new Uint8Array(event.target.result);
-                        const workbook = XLSX.read(data, { type: 'array' });
-                        const rubrica = procesarExcel(workbook);
-                        mostrarRubrica(rubrica);
-                    } catch (error) {
-                        alert('Error al cargar el archivo Excel: ' + error.message);
-                    }
-                };
-                reader.readAsArrayBuffer(file);
-            }
-        }
-        // Limpiar el valor del input para permitir cargar el mismo archivo nuevamente
-        e.target.value = null;
+// Función para procesar archivo Word
+function procesarDocx(html) {
+    console.log('Procesando archivo Word...');
+    // Crear un elemento temporal para parsear el HTML
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    
+    // Extraer el contenido de las tablas
+    const tablas = tempDiv.getElementsByTagName('table');
+    if (tablas.length === 0) {
+        throw new Error('No se encontraron tablas en el documento');
+    }
+    
+    const tabla = tablas[0];
+    const filas = tabla.getElementsByTagName('tr');
+    
+    // Crear estructura de rúbrica
+    const rubrica = {
+        id: generarId(),
+        titulo: 'Rúbrica Importada de Word',
+        descripcion: 'Rúbrica importada desde archivo Word',
+        fechaCreacion: new Date().toISOString(),
+        criterios: []
     };
+    
+    // Procesar filas (ignorar la primera que suele ser el encabezado)
+    for (let i = 1; i < filas.length; i++) {
+        const celdas = filas[i].getElementsByTagName('td');
+        if (celdas.length < 2) continue;
+        
+        const criterio = {
+            titulo: celdas[0].textContent.trim(),
+            niveles: []
+        };
+        
+        // Procesar niveles (columnas)
+        for (let j = 1; j < celdas.length; j++) {
+            const contenido = celdas[j].textContent.trim();
+            const [nivel, descripcion] = contenido.split('\n').map(s => s.trim());
+            
+            criterio.niveles.push({
+                nivel: nivel || `Nivel ${j}`,
+                descripcion: descripcion || '',
+                puntos: j
+            });
+        }
+        
+        rubrica.criterios.push(criterio);
+    }
+    
+    return rubrica;
+}
 
     // Función para procesar archivo Excel
     function procesarExcel(workbook) {
-        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-        const data = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+    console.log('Procesando archivo Excel...');
+    const primeraHoja = workbook.Sheets[workbook.SheetNames[0]];
+    const datos = XLSX.utils.sheet_to_json(primeraHoja, { header: 1 });
+    
+    if (datos.length < 2) {
+        throw new Error('El archivo Excel no contiene suficientes datos');
+    }
+    
+    // Crear estructura de rúbrica
+    const rubrica = {
+        id: generarId(),
+        titulo: datos[0][0] || 'Rúbrica Importada de Excel',
+        descripcion: datos[0][1] || 'Rúbrica importada desde archivo Excel',
+        fechaCreacion: new Date().toISOString(),
+        criterios: []
+    };
+    
+    // Procesar filas (ignorar la primera que suele ser el encabezado)
+    for (let i = 1; i < datos.length; i++) {
+        const fila = datos[i];
+        if (!fila || fila.length < 2) continue;
         
-        // Validar estructura del Excel
-        if (data.length < 2) {
-            throw new Error('El archivo Excel debe contener al menos un criterio además del encabezado');
-        }
-
-        // Verificar el encabezado
-        const headers = data[0];
-        const puntajes = data[1]; // La segunda fila contiene los puntajes
-        if (!headers || headers.length < 2 || !puntajes || puntajes.length < 2) {
-            throw new Error('El archivo no tiene el formato correcto de encabezados y puntajes');
-        }
-
-        const criterios = [];
-        
-        // Procesar cada fila (excepto el encabezado y puntajes)
-        for (let i = 2; i < data.length; i++) {
-            const row = data[i];
-            if (row && row[0]) { // Si la fila tiene un criterio
                 const criterio = {
-                    titulo: row[0],
+            titulo: fila[0] || `Criterio ${i}`,
                     niveles: []
                 };
                 
-                // Procesar cada nivel (columna)
-                for (let j = 1; j < headers.length - 1; j++) { // -1 para excluir "No presente"
-                    if (row[j]) {
+        // Procesar niveles (columnas)
+        for (let j = 1; j < fila.length; j++) {
+            const valor = fila[j];
+            if (!valor) continue;
+            
+            const [nivel, descripcion, puntos] = String(valor).split('\n').map(s => s.trim());
+            
                         criterio.niveles.push({
-                            nivel: headers[j],
-                            puntos: parseInt(puntajes[j]) || 0,
-                            descripcion: row[j] || ''
-                        });
-                    }
-                }
-                
-                criterios.push(criterio);
-            }
+                nivel: nivel || `Nivel ${j}`,
+                descripcion: descripcion || '',
+                puntos: parseInt(puntos) || j
+            });
         }
         
-        return {
-            titulo: 'Rúbrica Importada',
-            descripcion: 'Rúbrica importada desde Excel',
-            criterios,
-            fechaCreacion: new Date().toISOString()
-        };
+        rubrica.criterios.push(criterio);
+    }
+    
+    return rubrica;
+}
+
+// Función auxiliar para generar IDs únicos
+function generarId() {
+    return 'rubrica_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     }
 
     // Función para mostrar una rúbrica cargada
     function mostrarRubrica(rubrica = null) {
-        // Almacenar la rúbrica actual
-        rubricaActual = rubrica;
-        
-        const container = document.querySelector('.rubrica-content');
-        if (!container) {
+    console.log('Mostrando rúbrica...', rubrica);
+    
+    // Verificar si el panel de rúbricas está visible
+    const rubricasPanel = document.getElementById('rubricas-panel');
+    console.log('Estado del panel de rúbricas:', rubricasPanel ? rubricasPanel.style.display : 'no encontrado');
+    
+    // Verificar que el contenedor existe
+    if (!rubricaContent) {
             console.error('No se encontró el contenedor de la rúbrica');
+        rubricaContent = document.getElementById('rubrica-content');
+        console.log('Búsqueda del contenedor:', rubricaContent ? 'encontrado' : 'no encontrado');
+        if (!rubricaContent) {
+            console.error('No se pudo encontrar el contenedor de la rúbrica después de reintentar');
+            // Intentar hacer visible el panel de rúbricas si está oculto
+            if (rubricasPanel && rubricasPanel.style.display === 'none') {
+                console.log('Intentando hacer visible el panel de rúbricas...');
+                rubricasPanel.style.display = 'block';
+                // Reintentar obtener el contenedor después de hacer visible el panel
+                rubricaContent = document.getElementById('rubrica-content');
+                if (!rubricaContent) {
+                    console.error('Aún no se pudo encontrar el contenedor después de hacer visible el panel');
+            return;
+        }
+            } else {
+            return;
+            }
+        }
+    }
+
+    // Si estamos en modo evaluación, mostrar la rúbrica en ese modo
+    if (modoActual === 'evaluacion' && rubrica) {
+        mostrarRubricaEvaluacion(rubrica);
             return;
         }
 
-        // Si estamos en modo evaluación y hay una evaluación en curso, mostrar la rúbrica de evaluación
-        if (modoActual === 'evaluacion' && evaluacionEnCurso && evaluacionEnCurso.rubrica) {
-            mostrarRubricaEvaluacion(evaluacionEnCurso.rubrica);
-            return;
-        }
-        
-        // Si estamos en modo evaluación pero no hay evaluación en curso, mostrar mensaje
-        if (modoActual === 'evaluacion') {
-            container.innerHTML = '<p style="text-align: center; color: #6c757d; padding: 40px;">Selecciona curso, estudiante y rúbrica para comenzar la evaluación.</p>';
-            return;
+        // Actualizar ID de rúbrica actual
+        currentRubricaId = rubrica ? rubrica.id : null;
+
+        // Generar contenido de la tabla
+        let headerContent = '<th>Criterio</th>';
+        let bodyContent = '';
+
+        if (rubrica && rubrica.criterios && rubrica.criterios.length > 0) {
+            // Rúbrica existente
+            const primeraFila = rubrica.criterios[0];
+            if (primeraFila.niveles) {
+                headerContent += primeraFila.niveles.map(nivel => `
+                    <th>
+                        <div class="nivel-header">
+                            <div class="nivel-info">
+                                <input type="text" class="nivel-titulo-input" value="${nivel.nivel}">
+                                <input type="number" class="nivel-puntos" value="${nivel.puntos}" min="0" max="100">
+                            </div>
+                            <button type="button" class="btn-eliminar-columna" title="Eliminar nivel">×</button>
+                        </div>
+                    </th>
+                `).join('');
+            }
+
+            bodyContent = rubrica.criterios.map(criterio => `
+                <tr>
+                    <td>
+                        <div class="criterio-container">
+                            <input type="text" class="criterio-input" value="${criterio.titulo}">
+                            <button type="button" class="btn-eliminar-fila" title="Eliminar criterio">×</button>
+                        </div>
+                    </td>
+                    ${criterio.niveles.map(nivel => `
+                        <td>
+                            <textarea class="nivel-descripcion">${nivel.descripcion}</textarea>
+                        </td>
+                    `).join('')}
+                </tr>
+            `).join('');
+        } else {
+            // Nueva rúbrica - crear estructura básica con 4 niveles
+            for (let i = 1; i <= 4; i++) {
+                headerContent += `
+                    <th>
+                        <div class="nivel-header">
+                            <div class="nivel-info">
+                                <input type="text" class="nivel-titulo-input" value="Nivel ${i}">
+                                <input type="number" class="nivel-puntos" value="${i}" min="0" max="100">
+                            </div>
+                            <button type="button" class="btn-eliminar-columna" title="Eliminar nivel">×</button>
+                        </div>
+                    </th>
+                `;
+            }
+
+            // Crear 2 criterios por defecto
+            for (let i = 1; i <= 2; i++) {
+                bodyContent += `
+                    <tr>
+                        <td>
+                            <div class="criterio-container">
+                                <input type="text" class="criterio-input" value="Criterio ${i}">
+                                <button type="button" class="btn-eliminar-fila" title="Eliminar criterio">×</button>
+                            </div>
+                        </td>
+                        <td><textarea class="nivel-descripcion" placeholder="Descripción del nivel 1"></textarea></td>
+                        <td><textarea class="nivel-descripcion" placeholder="Descripción del nivel 2"></textarea></td>
+                        <td><textarea class="nivel-descripcion" placeholder="Descripción del nivel 3"></textarea></td>
+                        <td><textarea class="nivel-descripcion" placeholder="Descripción del nivel 4"></textarea></td>
+                    </tr>
+                `;
+            }
         }
 
         // Modo normal - mostrar formulario de rúbrica
-        container.innerHTML = `
+        console.log('Mostrando formulario de rúbrica en el contenedor:', rubricaContent);
+        rubricaContent.innerHTML = `
             <form id="nueva-rubrica-form" class="rubrica-form">
                 <div class="form-group">
                     <label for="rubrica-titulo">Título de la Rúbrica</label>
@@ -736,18 +1169,14 @@ document.addEventListener('DOMContentLoaded', function() {
                             <table id="rubrica-table" class="rubrica-table">
                                 <thead>
                                     <tr id="header-row">
-                                        <th>Criterio</th>
-                                        ${rubrica ? generarColumnasNiveles(rubrica.criterios[0].niveles) : generarNivelVacioEditable()}
+                                        ${headerContent}
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    ${rubrica ? generarFilasCriterios(rubrica.criterios) : generarFilaVacia()}
+                                    ${bodyContent}
                                 </tbody>
                             </table>
                         </div>
-                    </div>
-                    <div class="rubrica-slider">
-                        <div class="rubrica-slider-handle"></div>
                     </div>
                 </div>
                 <div class="rubricas-controls">
@@ -773,17 +1202,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         </svg>
                         Plantilla Excel
                     </button>
-                    <button type="button" id="descargar-plantilla-word">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="17 8 12 3 7 8"></polyline>
-                            <line x1="12" y1="3" x2="12" y2="15"></line>
-                        </svg>
-                        Plantilla Word
-                    </button>
                     <button type="button" id="exportar-excel">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2-2V8z"></path>
                             <polyline points="14 2 14 8 20 8"></polyline>
                             <line x1="12" y1="18" x2="12" y2="12"></line>
                             <line x1="8" y1="15" x2="16" y2="15"></line>
@@ -797,932 +1218,757 @@ document.addEventListener('DOMContentLoaded', function() {
             </form>
         `;
 
-        // Funciones auxiliares para generar el HTML
-        function generarColumnasNiveles(niveles) {
-            return niveles.map((nivel, index) => `
-                <th>
-                    <div class="nivel-header">
-                        <div class="nivel-info">
-                            <input type="text" class="nivel-titulo-input" id="nivel-titulo-${index}" 
-                                   name="nivel-titulo-${index}" value="${nivel.nivel}" 
-                                   placeholder="Nombre del nivel" title="Nombre del nivel">
-                            <input type="number" class="nivel-puntos" id="nivel-puntos-${index}" 
-                                   name="nivel-puntos-${index}" value="${nivel.puntos}" min="0" max="10" 
-                                   title="Puntos para este nivel">
-                        </div>
-                        <div class="btn-controls">
-                            <button type="button" class="btn-eliminar-columna" data-index="${index}">×</button>
-                        </div>
-                    </div>
-                </th>
-            `).join('');
-        }
+    // Inicializar event listeners para el formulario
+    inicializarEventListenersRubrica();
+    
+    // Agregar event listeners para eliminar columnas y filas
+    agregarEventListenersEliminacion();
+}
 
-        function generarFilasCriterios(criterios) {
-            return criterios.map((criterio, criterioIndex) => `
-                <tr>
-                    <td>
-                        <input type="text" class="criterio-input" id="criterio-input-${criterioIndex}" 
-                               name="criterio-input-${criterioIndex}" placeholder="Nombre del criterio" 
-                               required value="${criterio.titulo}">
-                        <button type="button" class="btn-eliminar-fila">×</button>
-                    </td>
-                    ${criterio.niveles.map((nivel, nivelIndex) => `
-                        <td>
-                            <textarea class="nivel-descripcion" id="nivel-desc-${nivelIndex}-${criterioIndex}" 
-                                      name="nivel-desc-${nivelIndex}-${criterioIndex}" rows="3" 
-                                      placeholder="Descripción del nivel">${nivel.descripcion}</textarea>
-                        </td>
-                    `).join('')}
-                </tr>
-            `).join('');
-        }
+// Función para agregar event listeners de eliminación
+function agregarEventListenersEliminacion() {
+    // Event listeners para eliminar columnas
+    document.querySelectorAll('.btn-eliminar-columna').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const columna = this.closest('th');
+            eliminarColumna(columna);
+        });
+    });
 
-        function generarFilaVacia() {
-            return `
-                <tr>
-                    <td>
-                        <input type="text" class="criterio-input" id="criterio-input-0" 
-                               name="criterio-input-0" placeholder="Nombre del criterio" required>
-                        <button type="button" class="btn-eliminar-fila">×</button>
-                    </td>
-                    <td>
-                        <textarea class="nivel-descripcion" id="nivel-desc-0-0" 
-                                  name="nivel-desc-0-0" rows="3" 
-                                  placeholder="Descripción del nivel"></textarea>
-                    </td>
-                </tr>
-            `;
-        }
+    // Event listeners para eliminar filas
+    document.querySelectorAll('.btn-eliminar-fila').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const fila = this.closest('tr');
+            eliminarFila(fila);
+        });
+    });
+}
 
-        function generarNivelVacioEditable() {
-            return `
-                <th>
-                    <div class="nivel-header">
-                        <div class="nivel-info">
-                            <input type="text" class="nivel-titulo-input" id="nivel-titulo-0" 
-                                   name="nivel-titulo-0" value="Nivel 1" 
-                                   placeholder="Nombre del nivel" title="Nombre del nivel">
-                            <input type="number" class="nivel-puntos" id="nivel-puntos-0" 
-                                   name="nivel-puntos-0" value="1" min="0" max="10" 
-                                   title="Puntos para este nivel">
-                        </div>
-                        <div class="btn-controls">
-                            <button type="button" class="btn-eliminar-columna" data-index="0">×</button>
-                        </div>
-                    </div>
-                </th>
-            `;
-        }
-
-        inicializarEventosFormulario();
-    }
-
-    // Función para inicializar los eventos del formulario
-    function inicializarEventosFormulario() {
+// Función para inicializar los event listeners de la rúbrica
+function inicializarEventListenersRubrica() {
         const form = document.getElementById('nueva-rubrica-form');
-        const agregarColumnaBtn = document.getElementById('agregar-columna');
-        const agregarFilaBtn = document.getElementById('agregar-fila');
-        const exportarExcelBtn = document.getElementById('exportar-excel');
-        const tabla = document.getElementById('rubrica-table');
-        
-        if (!form || !agregarColumnaBtn || !agregarFilaBtn || !exportarExcelBtn || !tabla) {
-            console.error('No se encontraron todos los elementos necesarios');
-            return;
-        }
+    if (!form) return;
 
-        // Agregar eventos directamente sin intentar removerlos primero
-        form.addEventListener('submit', manejarSubmitFormulario);
-        agregarColumnaBtn.addEventListener('click', manejarAgregarColumna);
-        agregarFilaBtn.addEventListener('click', manejarAgregarFila);
-        exportarExcelBtn.addEventListener('click', manejarExportarExcel);
-        tabla.addEventListener('click', manejarEventosTabla);
-
-        const slider = document.querySelector('.rubrica-slider');
-        const handle = document.querySelector('.rubrica-slider-handle');
-        const tableWrapper = document.querySelector('.rubrica-table-wrapper');
-        const tableContainer = document.querySelector('.rubrica-table-container');
-        
-        if (!slider || !handle || !tableWrapper || !tableContainer) {
-            console.error('No se encontraron los elementos del slider');
-            return;
-        }
-
-        let isDragging = false;
-        let startX;
-        let sliderLeft;
-        
-        function actualizarPosicionTabla(handlePosition) {
-            const tabla = document.getElementById('rubrica-table');
-            const containerWidth = tableContainer.offsetWidth;
-            const tableWidth = tabla.offsetWidth;
-            
-            if (tableWidth <= containerWidth) {
-                tableWrapper.style.transform = 'translateX(0)';
-                handle.style.display = 'none';
-                slider.style.display = 'none';
-                return;
-            }
-            
-            slider.style.display = 'block';
-            handle.style.display = 'block';
-            
-            const maxScroll = tableWidth - containerWidth;
-            const scrollPercentage = handlePosition / (slider.offsetWidth - handle.offsetWidth);
-            const translateX = -maxScroll * scrollPercentage;
-            
-            tableWrapper.style.transform = `translateX(${translateX}px)`;
-        }
-        
-        function iniciarArrastre(e) {
-            isDragging = true;
-            handle.classList.add('grabbing');
-            
-            startX = e.pageX - slider.getBoundingClientRect().left;
-            sliderLeft = handle.offsetLeft;
-            
-            e.preventDefault();
-        }
-        
-        function realizarArrastre(e) {
-            if (!isDragging) return;
-            
-            const x = e.pageX - slider.getBoundingClientRect().left;
-            const walk = x - startX;
-            
-            let newLeft = sliderLeft + walk;
-            const maxLeft = slider.offsetWidth - handle.offsetWidth;
-            
-            newLeft = Math.max(0, Math.min(newLeft, maxLeft));
-            handle.style.left = `${newLeft}px`;
-            
-            actualizarPosicionTabla(newLeft);
-        }
-        
-        function finalizarArrastre() {
-            isDragging = false;
-            handle.classList.remove('grabbing');
-        }
-        
-        // Inicializar posición del handle
-        function inicializarSlider() {
-            const tabla = document.getElementById('rubrica-table');
-            if (tabla.offsetWidth <= tableContainer.offsetWidth) {
-                slider.style.display = 'none';
-                handle.style.display = 'none';
-                return;
-            }
-            
-            handle.style.left = '0';
-            actualizarPosicionTabla(0);
-        }
-        
-        // Eventos del slider
-        handle.addEventListener('mousedown', iniciarArrastre);
-        document.addEventListener('mousemove', realizarArrastre);
-        document.addEventListener('mouseup', finalizarArrastre);
-        document.addEventListener('mouseleave', finalizarArrastre);
-        
-        // Click directo en el slider
-        slider.addEventListener('click', (e) => {
-            if (e.target === handle) return;
-            
-            const clickX = e.pageX - slider.getBoundingClientRect().left;
-            const handleCenter = handle.offsetWidth / 2;
-            let newLeft = clickX - handleCenter;
-            
-            const maxLeft = slider.offsetWidth - handle.offsetWidth;
-            newLeft = Math.max(0, Math.min(newLeft, maxLeft));
-            
-            handle.style.left = `${newLeft}px`;
-            actualizarPosicionTabla(newLeft);
-        });
-        
-        // Observar cambios en el tamaño
-        const observer = new ResizeObserver(() => {
-            inicializarSlider();
-        });
-        observer.observe(tabla);
-        
-        // Inicializar slider
-        inicializarSlider();
-
-        const descargarPlantillaExcelBtn = document.getElementById('descargar-plantilla-excel');
-        const descargarPlantillaWordBtn = document.getElementById('descargar-plantilla-word');
-
-        if (descargarPlantillaExcelBtn) {
-            descargarPlantillaExcelBtn.addEventListener('click', descargarPlantillaExcel);
-        }
-        if (descargarPlantillaWordBtn) {
-            descargarPlantillaWordBtn.addEventListener('click', descargarPlantillaWord);
-        }
-    }
-
-    // Manejadores de eventos
-    function manejarSubmitFormulario(e) {
+    // Event listener para el formulario
+    form.addEventListener('submit', function(e) {
         e.preventDefault();
         guardarRubrica();
+    });
+
+    // Event listeners para los botones de control
+        const agregarColumnaBtn = document.getElementById('agregar-columna');
+        const agregarFilaBtn = document.getElementById('agregar-fila');
+    const descargarExcelBtn = document.getElementById('descargar-plantilla-excel');
+    const descargarWordBtn = document.getElementById('descargar-plantilla-word');
+        const exportarExcelBtn = document.getElementById('exportar-excel');
+
+    if (agregarColumnaBtn) {
+        agregarColumnaBtn.addEventListener('click', agregarColumna);
     }
-
-    function manejarExportarExcel() {
-        const rubrica = obtenerDatosRubrica();
-        exportarAExcel(rubrica);
+    if (agregarFilaBtn) {
+        agregarFilaBtn.addEventListener('click', agregarFila);
     }
+    if (descargarExcelBtn) {
+        descargarExcelBtn.addEventListener('click', descargarPlantillaExcel);
+    }
+    if (descargarWordBtn) {
+        descargarWordBtn.addEventListener('click', descargarPlantillaWord);
+    }
+    if (exportarExcelBtn) {
+        exportarExcelBtn.addEventListener('click', exportarRubricaExcel);
+    }
+}
 
-    function manejarEventosTabla(e) {
-        if (e.target.classList.contains('btn-eliminar-columna')) {
-            const index = parseInt(e.target.dataset.index) + 1;
-            const tabla = document.getElementById('rubrica-table');
-            const filas = tabla.querySelectorAll('tr');
-            filas.forEach(fila => {
-                fila.deleteCell(index);
-            });
+// Función para inicializar los botones de modo
+function inicializarBotonesModo() {
+    console.log('Inicializando botones de modo...');
+    
+    // Si ya están inicializados, no hacer nada
+    if (botonesModoInicializados) {
+        console.log('Los botones ya están inicializados');
+                return;
+            }
             
-            // Actualizar índices de los botones de eliminar y los IDs
-            const encabezados = tabla.querySelectorAll('th');
-            encabezados.forEach((th, i) => {
-                if (i > 0) {
-                    th.innerHTML = `
-                        <div class="nivel-header">
-                            <div class="nivel-info">
-                                <input type="text" class="nivel-titulo-input" id="nivel-titulo-${i-1}" 
-                                       name="nivel-titulo-${i-1}" value="Nivel ${i}" 
-                                       placeholder="Nombre del nivel" title="Nombre del nivel">
-                                <input type="number" class="nivel-puntos" id="nivel-puntos-${i-1}" 
-                                       name="nivel-puntos-${i-1}" value="${5-i}" min="0" max="10" 
-                                       title="Puntos para este nivel">
-                            </div>
-                            <div class="btn-controls">
-                                <button type="button" class="btn-eliminar-columna" data-index="${i-1}">×</button>
-                            </div>
-                        </div>
-                    `;
-                }
-            });
+    // Buscar los botones
+    modoNormalBtn = document.getElementById('tab-normal');
+    modoEvaluacionBtn = document.getElementById('tab-evaluacion');
+    
+    console.log('Botones encontrados:', {
+        modoNormal: modoNormalBtn ? 'sí' : 'no',
+        modoEvaluacion: modoEvaluacionBtn ? 'sí' : 'no'
+    });
+    
+    if (modoNormalBtn && modoEvaluacionBtn) {
+        console.log('Agregando event listeners a los botones...');
+        
+        // Remover event listeners existentes para evitar duplicados
+        modoNormalBtn.replaceWith(modoNormalBtn.cloneNode(true));
+        modoEvaluacionBtn.replaceWith(modoEvaluacionBtn.cloneNode(true));
+        
+        // Obtener las nuevas referencias después de clonar
+        modoNormalBtn = document.getElementById('tab-normal');
+        modoEvaluacionBtn = document.getElementById('tab-evaluacion');
+        
+        // Agregar event listeners
+        modoNormalBtn.addEventListener('click', () => {
+            console.log('Click en modo normal');
+            cambiarModo('normal');
+        });
+        
+        modoEvaluacionBtn.addEventListener('click', () => {
+            console.log('Click en modo evaluación');
+            cambiarModo('evaluacion');
+        });
+        
+        botonesModoInicializados = true;
+        console.log('Botones inicializados correctamente');
+        
+        // Asegurarse de que el modo actual esté activo
+        cambiarModo(modoActual);
+    } else {
+        console.error('No se encontraron los botones de modo');
+    }
+}
 
-            // Actualizar IDs de las descripciones
-            const filasTbody = tabla.querySelectorAll('tbody tr');
-            filasTbody.forEach((fila, filaIndex) => {
-                const celdas = fila.querySelectorAll('.nivel-descripcion');
-                celdas.forEach((celda, celdaIndex) => {
-                    celda.id = `nivel-desc-${celdaIndex}-${filaIndex}`;
-                    celda.name = `nivel-desc-${celdaIndex}-${filaIndex}`;
-                });
-            });
-        } else if (e.target.classList.contains('btn-eliminar-fila')) {
-            const fila = e.target.closest('tr');
-            fila.remove();
-            
-            // Actualizar IDs de las filas restantes
-            const tabla = document.getElementById('rubrica-table');
-            const filas = tabla.querySelectorAll('tbody tr');
-            filas.forEach((fila, filaIndex) => {
-                const criterioInput = fila.querySelector('.criterio-input');
-                criterioInput.id = `criterio-input-${filaIndex}`;
-                criterioInput.name = `criterio-input-${filaIndex}`;
-                
-                const descripciones = fila.querySelectorAll('.nivel-descripcion');
-                descripciones.forEach((desc, descIndex) => {
-                    desc.id = `nivel-desc-${descIndex}-${filaIndex}`;
-                    desc.name = `nivel-desc-${descIndex}-${filaIndex}`;
-                });
-            });
+// Observador para detectar cuando el panel de rúbricas se muestra
+const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+        if (mutation.target.id === 'rubricas-panel' && 
+            mutation.type === 'attributes' && 
+            mutation.attributeName === 'style') {
+            const display = mutation.target.style.display;
+            if (display === 'block') {
+                console.log('Panel de rúbricas visible, inicializando botones...');
+                inicializarBotonesModo();
+            }
         }
-    }
+    });
+});
 
-    function manejarAgregarColumna() {
-        const headerRow = document.getElementById('header-row');
-        const numColumnas = headerRow.cells.length;
-        
-        // Agregar encabezado
-        const th = document.createElement('th');
-        th.innerHTML = `
-            <div class="nivel-header">
-                <div class="nivel-info">
-                    <input type="text" class="nivel-titulo-input" id="nivel-titulo-${numColumnas-1}" 
-                           name="nivel-titulo-${numColumnas-1}" value="Nivel ${numColumnas}" 
-                           placeholder="Nombre del nivel" title="Nombre del nivel">
-                    <input type="number" class="nivel-puntos" id="nivel-puntos-${numColumnas-1}" 
-                           name="nivel-puntos-${numColumnas-1}" value="${Math.max(1, 5-numColumnas+1)}" 
-                           min="0" max="10" title="Puntos para este nivel">
-                </div>
-                <div class="btn-controls">
-                    <button type="button" class="btn-eliminar-columna" data-index="${numColumnas - 1}">×</button>
-                </div>
-            </div>
-        `;
-        headerRow.appendChild(th);
-        
-        // Agregar celda a cada fila existente
-        const tabla = document.getElementById('rubrica-table');
-        const filas = tabla.querySelectorAll('tbody tr');
-        filas.forEach((fila, filaIndex) => {
-            const td = document.createElement('td');
-            td.innerHTML = `<textarea class="nivel-descripcion" id="nivel-desc-${numColumnas-1}-${filaIndex}" name="nivel-desc-${numColumnas-1}-${filaIndex}" rows="3" placeholder="Descripción del nivel"></textarea>`;
-            fila.appendChild(td);
+// Iniciar observación del panel de rúbricas
+document.addEventListener('DOMContentLoaded', function() {
+    const rubricasPanel = document.getElementById('rubricas-panel');
+    if (rubricasPanel) {
+        observer.observe(rubricasPanel, {
+            attributes: true,
+            attributeFilter: ['style']
         });
     }
+    
+    // Inicializar otros elementos
+    inicializarElementos();
+    inicializarEventListeners();
+});
 
-    function manejarAgregarFila() {
-        const tabla = document.getElementById('rubrica-table');
+// Funciones para manejar la estructura de la rúbrica
+function agregarColumna() {
+    const tabla = document.querySelector('.rubrica-table');
+    if (!tabla) return;
+
+    const headerRow = tabla.querySelector('thead tr');
+    const bodyRows = tabla.querySelectorAll('tbody tr');
+    
+    // Contar niveles existentes para el nuevo número
+    const numNiveles = headerRow.children.length;
+    
+    // Agregar nueva columna al encabezado
+    const nuevaColumna = document.createElement('th');
+    nuevaColumna.innerHTML = `
+            <div class="nivel-header">
+                <div class="nivel-info">
+                <input type="text" class="nivel-titulo-input" value="Nivel ${numNiveles}">
+                <input type="number" class="nivel-puntos" value="${numNiveles}" min="0" max="100">
+                </div>
+            <button type="button" class="btn-eliminar-columna" title="Eliminar nivel">×</button>
+            </div>
+        `;
+    headerRow.appendChild(nuevaColumna);
+    
+    // Agregar celda a cada fila del cuerpo
+    bodyRows.forEach(row => {
+        const nuevaCelda = document.createElement('td');
+        nuevaCelda.innerHTML = `<textarea class="nivel-descripcion" placeholder="Descripción del nivel ${numNiveles}"></textarea>`;
+        row.appendChild(nuevaCelda);
+    });
+
+    // Reinicializar event listeners
+    agregarEventListenersEliminacion();
+}
+
+function agregarFila() {
+    const tabla = document.querySelector('.rubrica-table');
+    if (!tabla) return;
+
         const tbody = tabla.querySelector('tbody');
-        const numFilas = tbody.querySelectorAll('tr').length;
-        const numColumnas = document.getElementById('header-row').cells.length;
-        const tr = document.createElement('tr');
-        
-        // Crear celda para el criterio
-        let html = `
-            <td>
-                <input type="text" class="criterio-input" id="criterio-input-${numFilas}" name="criterio-input-${numFilas}" placeholder="Nombre del criterio" required>
-                <button type="button" class="btn-eliminar-fila">×</button>
+    const numColumnas = tabla.querySelector('thead tr').children.length;
+    const numCriterios = tbody.children.length + 1;
+    
+    // Crear nueva fila
+    const nuevaFila = document.createElement('tr');
+    
+    // Crear celda de criterio
+    let filaCells = `
+        <td>
+            <div class="criterio-container">
+                <input type="text" class="criterio-input" value="Criterio ${numCriterios}">
+                <button type="button" class="btn-eliminar-fila" title="Eliminar criterio">×</button>
+            </div>
             </td>
         `;
         
-        // Crear celdas para cada nivel
+    // Agregar celdas para cada nivel (excluyendo la primera columna que es "Criterio")
         for (let i = 1; i < numColumnas; i++) {
-            html += `
-                <td>
-                    <textarea class="nivel-descripcion" id="nivel-desc-${i-1}-${numFilas}" name="nivel-desc-${i-1}-${numFilas}" rows="3" placeholder="Descripción del nivel"></textarea>
-                </td>
-            `;
+        filaCells += `<td><textarea class="nivel-descripcion" placeholder="Descripción del nivel ${i}"></textarea></td>`;
+    }
+    
+    nuevaFila.innerHTML = filaCells;
+    tbody.appendChild(nuevaFila);
+    
+    // Reinicializar event listeners
+    agregarEventListenersEliminacion();
+}
+
+function eliminarColumna(columna) {
+    const tabla = document.querySelector('.rubrica-table');
+    if (!tabla) return;
+
+    const headerRow = tabla.querySelector('thead tr');
+    const bodyRows = tabla.querySelectorAll('tbody tr');
+    
+    // Verificar que queden al menos 2 columnas (Criterio + 1 nivel)
+    if (headerRow.children.length <= 2) {
+        alert('La rúbrica debe tener al menos 1 nivel');
+        return;
+    }
+    
+    // Obtener el índice de la columna a eliminar
+    const columnIndex = Array.from(headerRow.children).indexOf(columna);
+    
+    // Eliminar columna del encabezado
+    headerRow.removeChild(columna);
+    
+    // Eliminar celda correspondiente de cada fila
+    bodyRows.forEach(row => {
+        if (row.children[columnIndex]) {
+            row.removeChild(row.children[columnIndex]);
+        }
+    });
+
+    // Actualizar los números de nivel
+    actualizarNumerosNivel();
+    
+    // Reinicializar event listeners
+    agregarEventListenersEliminacion();
+}
+
+function eliminarFila(fila) {
+    const tabla = document.querySelector('.rubrica-table');
+    if (!tabla) return;
+
+    const tbody = tabla.querySelector('tbody');
+    
+    // Verificar que queden al menos 1 fila
+    if (tbody.children.length <= 1) {
+        alert('La rúbrica debe tener al menos 1 criterio');
+        return;
+    }
+    
+    tbody.removeChild(fila);
+    actualizarNumerosCriterio();
+    
+    // Reinicializar event listeners
+    agregarEventListenersEliminacion();
+}
+
+function actualizarNumerosNivel() {
+    const tabla = document.querySelector('.rubrica-table');
+    if (!tabla) return;
+
+    const headerRow = tabla.querySelector('thead tr');
+    const inputs = headerRow.querySelectorAll('.nivel-titulo-input');
+    
+    inputs.forEach((input, index) => {
+        input.value = `Nivel ${index + 1}`;
+    });
+}
+
+function actualizarNumerosCriterio() {
+    const tabla = document.querySelector('.rubrica-table');
+    if (!tabla) return;
+
+    const inputs = tabla.querySelectorAll('.criterio-input');
+    
+    inputs.forEach((input, index) => {
+        input.value = `Criterio ${index + 1}`;
+    });
+}
+
+// Funciones para descargar plantillas
+async function descargarPlantillaWord() {
+    try {
+        // Crear un documento de Word usando mammoth
+        const docx = await mammoth.createDocument({
+            title: "Plantilla de Rúbrica",
+            sections: [{
+                properties: {},
+                children: [{
+                    type: "paragraph",
+                    children: [{
+                        type: "text",
+                        text: "Plantilla de Rúbrica",
+                        bold: true,
+                        size: 24
+                    }]
+                }, {
+                    type: "table",
+                    rows: [
+                        // Fila de encabezado
+                        {
+                            cells: [
+                                { text: "Criterio" },
+                                { text: "Nivel 1 (1 punto)" },
+                                { text: "Nivel 2 (2 puntos)" },
+                                { text: "Nivel 3 (3 puntos)" },
+                                { text: "Nivel 4 (4 puntos)" }
+                            ]
+                        },
+                        // Filas de ejemplo
+                        {
+                            cells: [
+                                { text: "Criterio 1" },
+                                { text: "Descripción del nivel 1 para criterio 1" },
+                                { text: "Descripción del nivel 2 para criterio 1" },
+                                { text: "Descripción del nivel 3 para criterio 1" },
+                                { text: "Descripción del nivel 4 para criterio 1" }
+                            ]
+                        },
+                        {
+                            cells: [
+                                { text: "Criterio 2" },
+                                { text: "Descripción del nivel 1 para criterio 2" },
+                                { text: "Descripción del nivel 2 para criterio 2" },
+                                { text: "Descripción del nivel 3 para criterio 2" },
+                                { text: "Descripción del nivel 4 para criterio 2" }
+                            ]
+                        }
+                    ]
+                }]
+            }]
+        });
+
+        // Convertir el documento a blob
+        const blob = await docx.save();
+        
+        // Crear un enlace de descarga
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'plantilla_rubrica.docx';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+    } catch (error) {
+        console.error('Error al generar la plantilla de Word:', error);
+        alert('Error al generar la plantilla de Word. Por favor, intente nuevamente.');
+    }
+}
+
+async function descargarPlantillaExcel() {
+    try {
+        // Crear un libro de Excel
+        const wb = XLSX.utils.book_new();
+        
+        // Crear datos de ejemplo
+        const datos = [
+            ['Criterio', 'Nivel 1 (1 punto)', 'Nivel 2 (2 puntos)', 'Nivel 3 (3 puntos)', 'Nivel 4 (4 puntos)'],
+            ['Criterio 1', 'Descripción del nivel 1 para criterio 1', 'Descripción del nivel 2 para criterio 1', 'Descripción del nivel 3 para criterio 1', 'Descripción del nivel 4 para criterio 1'],
+            ['Criterio 2', 'Descripción del nivel 1 para criterio 2', 'Descripción del nivel 2 para criterio 2', 'Descripción del nivel 3 para criterio 2', 'Descripción del nivel 4 para criterio 2']
+        ];
+        
+        // Crear hoja de cálculo
+        const ws = XLSX.utils.aoa_to_sheet(datos);
+        
+        // Ajustar ancho de columnas
+        const wscols = [
+            {wch: 20}, // Criterio
+            {wch: 40}, // Nivel 1
+            {wch: 40}, // Nivel 2
+            {wch: 40}, // Nivel 3
+            {wch: 40}  // Nivel 4
+        ];
+        ws['!cols'] = wscols;
+        
+        // Agregar hoja al libro
+        XLSX.utils.book_append_sheet(wb, ws, "Rúbrica");
+        
+        // Generar archivo y descargar
+        XLSX.writeFile(wb, 'plantilla_rubrica.xlsx');
+    } catch (error) {
+        console.error('Error al generar la plantilla de Excel:', error);
+        alert('Error al generar la plantilla de Excel. Por favor, intente nuevamente.');
+    }
+}
+
+// Funciones para exportar rúbricas
+async function exportarRubricaExcel() {
+    try {
+        const tabla = document.querySelector('.rubrica-table');
+        if (!tabla) {
+            alert('No hay rúbrica para exportar');
+            return;
         }
         
-        tr.innerHTML = html;
-        tbody.appendChild(tr);
-    }
-
-    // Función para obtener los datos de la rúbrica actual
-    function obtenerDatosRubrica() {
-        const tabla = document.getElementById('rubrica-table');
-        const titulo = document.getElementById('rubrica-titulo').value;
-        const descripcion = document.getElementById('rubrica-descripcion').value;
+        // Obtener datos de la tabla
+        const datos = [];
         
         // Obtener encabezados (niveles)
-        const encabezados = Array.from(tabla.querySelectorAll('th')).slice(1).map(th => {
-            const tituloInput = th.querySelector('.nivel-titulo-input');
-            const puntosInput = th.querySelector('.nivel-puntos');
-            
-            return {
-                titulo: tituloInput ? tituloInput.value.trim() : 'Nivel',
-                puntos: puntosInput ? (parseInt(puntosInput.value) || 0) : 0
-            };
+        const headers = Array.from(tabla.querySelectorAll('thead th')).map(th => {
+            const titulo = th.querySelector('.nivel-titulo-input')?.value || 'Nivel';
+            const puntos = th.querySelector('.nivel-puntos')?.value || '0';
+            return `${titulo} (${puntos} puntos)`;
         });
+        datos.push(headers);
         
         // Obtener filas (criterios)
         const filas = tabla.querySelectorAll('tbody tr');
-        const criterios = Array.from(filas).map(fila => {
-            const celdas = fila.querySelectorAll('td');
-            const criterio = celdas[0].querySelector('.criterio-input').value;
-            const niveles = Array.from(celdas).slice(1).map((celda, index) => ({
-                nivel: encabezados[index].titulo,
-                puntos: encabezados[index].puntos,
-                descripcion: celda.querySelector('.nivel-descripcion').value
-            }));
-            
-            return {
-                titulo: criterio,
-                niveles: niveles
-            };
+            filas.forEach(fila => {
+            const criterio = fila.querySelector('.criterio-input')?.value || 'Criterio';
+            const descripciones = Array.from(fila.querySelectorAll('.nivel-descripcion')).map(td => td.value || '');
+            datos.push([criterio, ...descripciones]);
         });
-        
-        return {
-            titulo,
-            descripcion,
-            criterios,
-            fechaCreacion: new Date().toISOString()
-        };
-    }
 
-    // Función para guardar la rúbrica
-    function guardarRubrica() {
-        try {
-            const rubrica = obtenerDatosRubrica();
-            if (rubrica && rubrica.criterios.length > 0) {
-                // Asegurar que tenga un ID único
-                if (!rubrica.id) {
-                    rubrica.id = generarIdUnico();
-                }
-                
-                // Agregar fecha de creación si no existe
-                if (!rubrica.fechaCreacion) {
-                    rubrica.fechaCreacion = new Date().toISOString();
-                }
-                
-                // Guardar en localStorage
-                let rubricas = JSON.parse(localStorage.getItem('rubricas_guardadas') || '[]');
-                
-                // Verificar si ya existe una rúbrica con el mismo nombre
-                const indiceExistente = rubricas.findIndex(r => r.titulo === rubrica.titulo);
-                
-                if (indiceExistente !== -1) {
-                    const confirmar = confirm(`Ya existe una rúbrica con el nombre "${rubrica.titulo}". ¿Desea reemplazarla?`);
-                    if (confirmar) {
-                        rubricas[indiceExistente] = rubrica;
-                    } else {
-                        rubrica.titulo = rubrica.titulo + ' (Copia)';
-                        rubrica.id = generarIdUnico(); // Nuevo ID para la copia
-                        rubricas.push(rubrica);
-                    }
-                } else {
-                    rubricas.push(rubrica);
-                }
-                
-                localStorage.setItem('rubricas_guardadas', JSON.stringify(rubricas));
-                
-                // Actualizar lista en configuración si está disponible
-                if (window.RubricaConfig) {
-                    window.RubricaConfig.cargarListaRubricas();
-                    window.RubricaConfig.actualizarSelectorRubricas();
-                }
-                
-                alert('Rúbrica guardada exitosamente: ' + rubrica.titulo);
-            } else {
-                alert('No se puede guardar una rúbrica vacía. Agregue al menos un criterio.');
-            }
-        } catch (error) {
-            console.error('Error al guardar la rúbrica:', error);
-            alert('Error al guardar la rúbrica: ' + error.message);
-        }
-    }
-
-    // Función para exportar a Excel
-    function exportarAExcel(rubrica) {
-        // Crear el encabezado
-        const headers = ['Criterio'];
-        const puntajes = ['Puntaje']; // Nueva fila para puntajes
-        
-        // Obtener los nombres de niveles y puntajes del primer criterio
-        if (rubrica.criterios.length > 0) {
-            rubrica.criterios[0].niveles.forEach(nivel => {
-                headers.push(nivel.nivel);
-                puntajes.push(nivel.puntos);
-            });
-        }
-        headers.push('No presente');
-        puntajes.push(0);
-        
-        // Crear la matriz de datos
-        const data = [headers, puntajes];
-        
-        // Agregar los criterios
-        rubrica.criterios.forEach(criterio => {
-            const row = [
-                criterio.titulo, // Criterio
-                ...criterio.niveles.map(nivel => nivel.descripcion), // Descripciones de niveles
-                '' // No presente
-            ];
-            data.push(row);
-        });
-        
-        // Crear la hoja de trabajo
-        const ws = XLSX.utils.aoa_to_sheet(data);
-        
-        // Dar formato a las celdas
-        const range = XLSX.utils.decode_range(ws['!ref']);
-        for (let R = 0; R <= range.e.r; ++R) {
-            for (let C = 0; C <= range.e.c; ++C) {
-                const cell_address = XLSX.utils.encode_cell({ r: R, c: C });
-                if (!ws[cell_address]) continue;
-                ws[cell_address].s = {
-                    font: { bold: R <= 1 }, // Primeras dos filas en negrita
-                    alignment: { 
-                        vertical: 'top', 
-                        wrapText: true,
-                        horizontal: R <= 1 ? 'center' : 'left' // Centrar encabezados y puntajes
-                    }
-                };
-            }
-        }
+        // Crear libro de Excel
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.aoa_to_sheet(datos);
         
         // Ajustar ancho de columnas
-        ws['!cols'] = [
-            { wch: 30 }, // Criterio
-            { wch: 40 }, // Excelente
-            { wch: 40 }, // Bueno
-            { wch: 40 }, // Satisfactorio
-            { wch: 40 }, // Insuficiente
-            { wch: 20 }  // No presente
-        ];
+        const wscols = datos[0].map(() => ({wch: 40}));
+        ws['!cols'] = wscols;
         
-        // Crear el libro y agregar la hoja
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, 'Rúbrica');
+        // Agregar hoja al libro
+        XLSX.utils.book_append_sheet(wb, ws, "Rúbrica");
         
-        // Guardar archivo
-        XLSX.writeFile(wb, `rubrica_${rubrica.titulo.toLowerCase().replace(/\s+/g, '_')}.xlsx`);
-    }
-
-    // Evento para crear una nueva rúbrica
-    nuevaRubricaBtn.addEventListener('click', function() {
-        mostrarRubrica();
-    });
-
-    // Evento para cargar una rúbrica
-        cargarRubricaBtn.addEventListener('click', function(event) {
-            console.log('Clic en cargarRubricaBtn detectado. Timestamp:', event.timeStamp);
-            event.stopPropagation(); 
-            
-            console.log('Llamando a fileInput.click(). Timestamp:', performance.now());
-            fileInput.click();
-            console.log('Después de llamar a fileInput.click(). Timestamp:', performance.now());
-            
-            if (cargarRubricaBtn && typeof cargarRubricaBtn.blur === 'function') {
-                cargarRubricaBtn.blur();
-                console.log('Foco quitado de cargarRubricaBtn. Timestamp:', performance.now());
-            }
-        });
-
-    // Función para procesar el contenido de un archivo Word
-    function procesarDocx(html) {
-        // Crear un elemento temporal para analizar el HTML
-        const temp = document.createElement('div');
-        temp.innerHTML = html;
+        // Generar nombre del archivo
+        const nombreRubrica = document.querySelector('.rubrica-titulo')?.value || 'rubrica';
+        const nombreArchivo = `${nombreRubrica.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.xlsx`;
         
-        // Inicializar la estructura de la rúbrica
-        const rubrica = {
-            titulo: '',
-            descripcion: 'Rúbrica importada desde Word',
-            criterios: [],
-            fechaCreacion: new Date().toISOString()
-        };
-        
-        // Buscar el título (asumiendo que es el primer encabezado)
-        const titulo = temp.querySelector('h1, h2, h3');
-        if (titulo) {
-            rubrica.titulo = titulo.textContent.trim();
-        }
-        
-        // Buscar tablas en el documento
-        const tablas = temp.getElementsByTagName('table');
-        if (tablas.length > 0) {
-            const tabla = tablas[0]; // Usar la primera tabla encontrada
-            
-            // Procesar encabezados (niveles)
-            const encabezados = tabla.querySelectorAll('tr:first-child td, tr:first-child th');
-            const niveles = [];
-            encabezados.forEach((encabezado, index) => {
-                if (index > 0) { // Ignorar la primera columna (nombres de criterios)
-                    niveles.push({
-                        nivel: encabezado.textContent.trim(),
-                        puntos: 4 - (index - 1) // Asignar puntajes descendentes
-                    });
-                }
-            });
-            
-            // Procesar filas (criterios)
-            const filas = tabla.querySelectorAll('tr:not(:first-child)');
-            filas.forEach(fila => {
-                const celdas = fila.querySelectorAll('td');
-                if (celdas.length > 0) {
-                    const criterio = {
-                        titulo: celdas[0].textContent.trim(),
-                        niveles: []
-                    };
-                    
-                    // Obtener descripciones para cada nivel
-                    for (let i = 1; i < celdas.length && i <= niveles.length; i++) {
-                        criterio.niveles.push({
-                            nivel: niveles[i-1].nivel,
-                            puntos: niveles[i-1].puntos,
-                            descripcion: celdas[i].textContent.trim()
-                        });
-                    }
-                    
-                    rubrica.criterios.push(criterio);
-                }
-            });
-        }
-        
-        return rubrica;
-    }
-
-    // Función para descargar la plantilla de Excel
-    function descargarPlantillaExcel() {
-        // Crear el encabezado - agregando "FIN" al final
-        const headers = ['Criterio', 'Excelente', 'Bueno', 'Regular', 'Deficiente', 'FIN'];
-        const puntajes = ['Puntaje', '4', '3', '2', '1', ''];
-        
-        // Crear datos de ejemplo - agregando columna vacía para "FIN"
-        const data = [
-            headers,
-            puntajes,
-            ['Presentación', 'Muy organizado y claro', 'Organizado', 'Poco organizado', 'Desorganizado', ''],
-            ['Contenido', 'Contenido completo', 'Contenido casi completo', 'Contenido incompleto', 'Contenido muy incompleto', ''],
-            ['Ortografía', 'Sin errores', '1-2 errores', '3-4 errores', '5 o más errores', '']
-        ];
-        
-        // Crear la hoja de trabajo
-        const ws = XLSX.utils.aoa_to_sheet(data);
-        
-        // Dar formato a las celdas
-        const range = XLSX.utils.decode_range(ws['!ref']);
-        for (let R = 0; R <= range.e.r; ++R) {
-            for (let C = 0; C <= range.e.c; ++C) {
-                const cell_address = XLSX.utils.encode_cell({ r: R, c: C });
-                if (!ws[cell_address]) continue;
-                ws[cell_address].s = {
-                    font: { bold: R <= 1 },
-                    alignment: { 
-                        vertical: 'top',
-                        wrapText: true,
-                        horizontal: R <= 1 ? 'center' : 'left'
-                    }
-                };
-            }
-        }
-        
-        // Ajustar ancho de columnas - agregando ancho para columna "FIN"
-        ws['!cols'] = [
-            { wch: 30 }, // Criterio
-            { wch: 40 }, // Excelente
-            { wch: 40 }, // Bueno
-            { wch: 40 }, // Regular
-            { wch: 40 }, // Deficiente
-            { wch: 15 }  // FIN
-        ];
-        
-        // Crear el libro y agregar la hoja
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, 'Plantilla Rúbrica');
-        
-        // Guardar archivo
-        XLSX.writeFile(wb, 'plantilla_rubrica.xlsx');
-    }
-
-    // Función para descargar la plantilla de Word
-    function descargarPlantillaWord() {
-        alert('La funcionalidad de plantilla Word estará disponible próximamente.');
-    }
-    
-    // Función para generar ID único
-    function generarIdUnico() {
-        return 'rubrica_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-    }
-    
-    // Event listener para cargar rúbrica guardada desde el selector
-    document.addEventListener('cargarRubricaGuardada', function(event) {
-        const rubrica = event.detail;
-        if (rubrica) {
-            mostrarRubrica(rubrica);
-        }
-    });
-    
-    // Hacer la función mostrarRubrica disponible globalmente
-    window.mostrarRubrica = mostrarRubrica;
-    
-    // Al inicializar, actualizar el selector de rúbricas guardadas
-    if (window.RubricaConfig) {
-        window.RubricaConfig.actualizarSelectorRubricas();
-    }
-
-    // Función para exportar evaluaciones del curso a PDF
-    function exportarCursoPdf() {
-        const curso = evalCursoSelect?.value;
-        const rubricaId = evalRubricaSelect?.value;
-        
-        if (!curso || !rubricaId) {
-            alert('Por favor selecciona un curso y una rúbrica');
-            return;
-        }
-        
-        // Obtener datos necesarios
-        const cursosData = JSON.parse(localStorage.getItem('cursosData') || '{}');
-        const estudiantes = cursosData[curso] || [];
-        const rubricas = JSON.parse(localStorage.getItem('rubricas_guardadas') || '[]');
-        const rubrica = rubricas.find(r => r.id === rubricaId);
-        const evaluaciones = JSON.parse(localStorage.getItem('evaluaciones_rubricas') || '[]');
-        
-        if (!rubrica) {
-            alert('Rúbrica no encontrada');
-            return;
-        }
-        
-        if (estudiantes.length === 0) {
-            alert('No hay estudiantes en el curso seleccionado');
-            return;
-        }
-        
-        try {
-            // Crear PDF usando jsPDF
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({
-                orientation: 'portrait',
-                unit: 'mm',
-                format: 'a4'
-            });
-            
-            let estudiante_num = 0;
-            
-            estudiantes.forEach((estudiante, index) => {
-                const nombreEstudiante = typeof estudiante === 'object' ? 
-                    (estudiante.nombre || estudiante.Nombre || `Estudiante ${estudiante.id || index + 1}`) : 
-                    estudiante;
-                
-                // Buscar evaluación del estudiante
-                const evaluacionEstudiante = evaluaciones.find(eval => 
-                    eval.curso === curso && 
-                    eval.estudiante === nombreEstudiante && 
-                    eval.rubrica.id === rubricaId
-                );
-                
-                // Nueva página para cada estudiante (excepto el primero)
-                if (index > 0) {
-                    doc.addPage();
-                }
-                
-                estudiante_num++;
-                
-                // Generar página del estudiante
-                generarPaginaEstudiante(doc, rubrica, nombreEstudiante, curso, evaluacionEstudiante, estudiante_num);
-            });
-            
-            // Guardar PDF
-            const fechaHora = new Date().toLocaleString('es-ES').replace(/[/:]/g, '-');
-            doc.save(`Evaluaciones_${curso}_${rubrica.titulo}_${fechaHora}.pdf`);
-            
+        // Descargar archivo
+        XLSX.writeFile(wb, nombreArchivo);
         } catch (error) {
-            console.error('Error al generar PDF:', error);
-            alert('Error al generar el PDF: ' + error.message);
-        }
+        console.error('Error al exportar la rúbrica a Excel:', error);
+        alert('Error al exportar la rúbrica a Excel. Por favor, intente nuevamente.');
     }
-    
-    // Función auxiliar para generar página de estudiante
-    function generarPaginaEstudiante(doc, rubrica, nombreEstudiante, curso, evaluacion, numeroEstudiante) {
-        const pageWidth = doc.internal.pageSize.getWidth();
-        const pageHeight = doc.internal.pageSize.getHeight();
-        let yPosition = 20;
-        
-        // Encabezado del documento
-        doc.setFontSize(18);
-        doc.setFont('helvetica', 'bold');
-        doc.text('EVALUACIÓN DE RÚBRICA', pageWidth / 2, yPosition, { align: 'center' });
-        yPosition += 15;
-        
-        // Información del estudiante
-        doc.setFontSize(12);
-        doc.setFont('helvetica', 'normal');
-        doc.text(`Estudiante: ${nombreEstudiante}`, 20, yPosition);
-        yPosition += 8;
-        doc.text(`Curso: ${curso}`, 20, yPosition);
-        yPosition += 8;
-        doc.text(`Rúbrica: ${rubrica.titulo}`, 20, yPosition);
-        yPosition += 8;
-        doc.text(`Fecha: ${new Date().toLocaleDateString('es-ES')}`, 20, yPosition);
-        yPosition += 15;
-        
-        // Información de evaluación
-        if (evaluacion) {
-            const porcentaje = evaluacion.puntajeMaximo > 0 ? 
-                (evaluacion.puntajeTotal / evaluacion.puntajeMaximo * 100).toFixed(1) : 0;
-            
-            doc.setFont('helvetica', 'bold');
-            doc.text(`Puntaje: ${evaluacion.puntajeTotal}/${evaluacion.puntajeMaximo} (${porcentaje}%)`, 20, yPosition);
-            yPosition += 8;
-            doc.text(`Nota: ${evaluacion.nota}`, 20, yPosition);
-            yPosition += 15;
-        } else {
-            doc.setFont('helvetica', 'italic');
-            doc.text('SIN EVALUAR', 20, yPosition);
-            yPosition += 15;
+}
+
+async function exportarRubricaWord() {
+    try {
+        const tabla = document.querySelector('.rubrica-table');
+        if (!tabla) {
+            alert('No hay rúbrica para exportar');
+            return;
         }
+
+        // Obtener título de la rúbrica
+        const tituloRubrica = document.querySelector('.rubrica-titulo')?.value || 'Rúbrica';
         
-        // Tabla de rúbrica
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(10);
-        doc.text('CRITERIOS Y NIVELES DE DESEMPEÑO', 20, yPosition);
-        yPosition += 10;
+        // Preparar filas para la tabla
+        const rows = [];
         
-        // Calcular anchos de columna dinámicamente
-        const tableWidth = pageWidth - 40;
-        const criterioWidth = tableWidth * 0.25; // 25% para criterio
-        const nivelWidth = (tableWidth - criterioWidth) / rubrica.criterios[0].niveles.length;
+        // Agregar fila de encabezado
+        const headerRow = {
+            cells: Array.from(tabla.querySelectorAll('thead th')).map(th => {
+                const titulo = th.querySelector('.nivel-titulo-input')?.value || 'Nivel';
+                const puntos = th.querySelector('.nivel-puntos')?.value || '0';
+                return { text: `${titulo} (${puntos} puntos)` };
+            })
+        };
+        rows.push(headerRow);
         
-        // Encabezados de la tabla
-        let xPos = 20;
-        const headerHeight = 15;
-        
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(9);
-        
-        // Encabezado criterio
-        doc.rect(xPos, yPosition, criterioWidth, headerHeight);
-        doc.text('CRITERIO', xPos + 2, yPosition + 10);
-        xPos += criterioWidth;
-        
-        // Encabezados de niveles
-        rubrica.criterios[0].niveles.forEach(nivel => {
-            doc.rect(xPos, yPosition, nivelWidth, headerHeight);
-            const headerText = `${nivel.nivel} (${nivel.puntos}pts)`;
-            const headerLines = doc.splitTextToSize(headerText, nivelWidth - 4);
-            doc.text(headerLines, xPos + 2, yPosition + 7);
-            xPos += nivelWidth;
-        });
-        
-        yPosition += headerHeight;
-        
-        // Función para calcular altura necesaria para una fila
-        function calcularAlturaFila(criterio) {
-            doc.setFontSize(8);
-            let maxHeight = 15; // Altura mínima
-            
-            // Calcular altura necesaria para el criterio
-            const criterioLines = doc.splitTextToSize(criterio.titulo, criterioWidth - 4);
-            const criterioHeight = criterioLines.length * 4 + 8;
-            maxHeight = Math.max(maxHeight, criterioHeight);
-            
-            // Calcular altura necesaria para cada nivel
-            criterio.niveles.forEach(nivel => {
-                // Solo usar la descripción del nivel, sin agregar texto de selección
-                const nivelText = nivel.descripcion;
-                const nivelLines = doc.splitTextToSize(nivelText, nivelWidth - 4);
-                const nivelHeight = nivelLines.length * 4 + 8;
-                maxHeight = Math.max(maxHeight, nivelHeight);
+        // Agregar filas de criterios
+        const filas = tabla.querySelectorAll('tbody tr');
+        filas.forEach(fila => {
+            const criterio = fila.querySelector('.criterio-input')?.value || 'Criterio';
+            const descripciones = Array.from(fila.querySelectorAll('.nivel-descripcion')).map(td => td.value || '');
+            rows.push({
+                cells: [
+                    { text: criterio },
+                    ...descripciones.map(text => ({ text }))
+                ]
             });
-            
-            return maxHeight;
+        });
+
+        // Crear documento de Word
+        const docx = await mammoth.createDocument({
+            title: tituloRubrica,
+            sections: [{
+                properties: {},
+                children: [
+                    {
+                        type: "paragraph",
+                        children: [{
+                            type: "text",
+                            text: tituloRubrica,
+                            bold: true,
+                            size: 24
+                        }]
+                    },
+                    {
+                        type: "table",
+                        rows: rows
+                    }
+                ]
+            }]
+        });
+
+        // Convertir el documento a blob
+        const blob = await docx.save();
+        
+        // Generar nombre del archivo
+        const nombreArchivo = `${tituloRubrica.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.docx`;
+        
+        // Crear enlace de descarga
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = nombreArchivo;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+    } catch (error) {
+        console.error('Error al exportar la rúbrica a Word:', error);
+        alert('Error al exportar la rúbrica a Word. Por favor, intente nuevamente.');
+    }
+}
+
+// Función para guardar la rúbrica
+function guardarRubrica() {
+    try {
+        const form = document.getElementById('nueva-rubrica-form');
+        if (!form) {
+            alert('No se encontró el formulario de rúbrica');
+            return;
         }
         
-        // Generar filas de criterios
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(8);
+        // Obtener datos básicos
+        const titulo = document.getElementById('rubrica-titulo').value.trim();
+        const descripcion = document.getElementById('rubrica-descripcion').value.trim();
+
+        if (!titulo) {
+            alert('Por favor, ingrese un título para la rúbrica');
+            return;
+        }
         
-        rubrica.criterios.forEach((criterio, criterioIndex) => {
-            const filaHeight = calcularAlturaFila(criterio);
+        // Obtener datos de la tabla
+        const tabla = document.querySelector('.rubrica-table');
+        if (!tabla) {
+            alert('No se encontró la tabla de rúbrica');
+            return;
+        }
+        
+        // Obtener niveles del encabezado
+        const headerCells = tabla.querySelectorAll('thead th');
+        const niveles = [];
+        
+        // Saltar la primera celda (Criterio)
+        for (let i = 1; i < headerCells.length; i++) {
+            const cell = headerCells[i];
+            const tituloInput = cell.querySelector('.nivel-titulo-input');
+            const puntosInput = cell.querySelector('.nivel-puntos');
             
-            // Verificar si necesitamos nueva página
-            if (yPosition + filaHeight > pageHeight - 30) {
-                doc.addPage();
-                yPosition = 20;
-                
-                // Repetir encabezados en nueva página
-                doc.setFont('helvetica', 'bold');
-                doc.setFontSize(9);
-                xPos = 20;
-                
-                doc.rect(xPos, yPosition, criterioWidth, headerHeight);
-                doc.text('CRITERIO', xPos + 2, yPosition + 10);
-                xPos += criterioWidth;
-                
-                rubrica.criterios[0].niveles.forEach(nivel => {
-                    doc.rect(xPos, yPosition, nivelWidth, headerHeight);
-                    const headerText = `${nivel.nivel} (${nivel.puntos}pts)`;
-                    const headerLines = doc.splitTextToSize(headerText, nivelWidth - 4);
-                    doc.text(headerLines, xPos + 2, yPosition + 7);
-                    xPos += nivelWidth;
+            if (tituloInput && puntosInput) {
+                niveles.push({
+                    nivel: tituloInput.value.trim() || `Nivel ${i}`,
+                    puntos: parseInt(puntosInput.value) || i
                 });
-                
-                yPosition += headerHeight;
-                doc.setFont('helvetica', 'normal');
-                doc.setFontSize(8);
             }
-            
-            xPos = 20;
-            
-            // Celda del criterio
-            doc.rect(xPos, yPosition, criterioWidth, filaHeight);
-            const criterioLines = doc.splitTextToSize(criterio.titulo, criterioWidth - 4);
-            doc.text(criterioLines, xPos + 2, yPosition + 6);
-            xPos += criterioWidth;
-            
-            // Celdas de niveles
-            criterio.niveles.forEach((nivel, nivelIndex) => {
-                doc.rect(xPos, yPosition, nivelWidth, filaHeight);
-                
-                // Verificar si este nivel fue seleccionado
-                const nivelSeleccionado = evaluacion && 
-                    evaluacion.respuestas[criterioIndex] === nivelIndex;
-                
-                if (nivelSeleccionado) {
-                    // Resaltar nivel seleccionado solo con fondo verde
-                    doc.setFillColor(200, 255, 200);
-                    doc.rect(xPos + 1, yPosition + 1, nivelWidth - 2, filaHeight - 2, 'F');
-                    doc.rect(xPos, yPosition, nivelWidth, filaHeight);
-                }
-                
-                // Usar solo la descripción del nivel, sin texto de selección
-                const nivelText = nivel.descripcion;
-                doc.setFont('helvetica', 'normal');
-                
-                // Dividir texto en líneas que quepan en la celda
-                const nivelLines = doc.splitTextToSize(nivelText, nivelWidth - 4);
-                
-                // Dibujar texto línea por línea
-                let textY = yPosition + 6;
-                nivelLines.forEach((line) => {
-                    doc.text(line, xPos + 2, textY);
-                    textY += 4;
-                });
-                
-                xPos += nivelWidth;
-            });
-            
-            yPosition += filaHeight;
-        });
+        }
+
+        // Obtener criterios de las filas
+        const criterios = [];
+        const bodyRows = tabla.querySelectorAll('tbody tr');
         
-        // Pie de página
-        doc.setFontSize(8);
-        doc.setFont('helvetica', 'italic');
-        doc.text(`Página ${numeroEstudiante} - Generado el ${new Date().toLocaleString('es-ES')}`, 
-                 pageWidth / 2, pageHeight - 10, { align: 'center' });
+        bodyRows.forEach((row, index) => {
+            const criterioInput = row.querySelector('.criterio-input');
+            const descripcionCells = row.querySelectorAll('.nivel-descripcion');
+            
+            if (criterioInput) {
+                const criterio = {
+                    titulo: criterioInput.value.trim() || `Criterio ${index + 1}`,
+                    niveles: []
+                };
+
+                descripcionCells.forEach((cell, nivelIndex) => {
+                    criterio.niveles.push({
+                        nivel: niveles[nivelIndex]?.nivel || `Nivel ${nivelIndex + 1}`,
+                        puntos: niveles[nivelIndex]?.puntos || nivelIndex + 1,
+                        descripcion: cell.value.trim() || ''
+                    });
+                });
+
+                criterios.push(criterio);
+            }
+        });
+
+        if (criterios.length === 0) {
+            alert('La rúbrica debe tener al menos un criterio');
+            return;
+        }
+
+        // Crear objeto de rúbrica
+        const rubrica = {
+            id: currentRubricaId || generarId(),
+            titulo: titulo,
+            descripcion: descripcion,
+            criterios: criterios,
+            fechaCreacion: currentRubricaId ? (rubricaActual?.fechaCreacion || new Date().toISOString()) : new Date().toISOString(),
+            fechaModificacion: new Date().toISOString()
+        };
+
+        // Guardar en localStorage
+        let rubricasGuardadas = JSON.parse(localStorage.getItem('rubricasGuardadas') || '[]');
+        
+        // Si es una rúbrica existente, actualizarla
+        if (currentRubricaId) {
+            const index = rubricasGuardadas.findIndex(r => r.id === currentRubricaId);
+            if (index !== -1) {
+                rubricasGuardadas[index] = rubrica;
+            } else {
+                rubricasGuardadas.push(rubrica);
+            }
+        } else {
+            rubricasGuardadas.push(rubrica);
+        }
+
+        localStorage.setItem('rubricasGuardadas', JSON.stringify(rubricasGuardadas));
+        
+        // Actualizar variables globales
+        rubricaActual = rubrica;
+        currentRubricaId = rubrica.id;
+
+        // Actualizar selector de rúbricas en modo evaluación
+        cargarRubricasEvaluacion();
+
+        alert('Rúbrica guardada exitosamente');
+        console.log('Rúbrica guardada:', rubrica);
+
+    } catch (error) {
+        console.error('Error al guardar la rúbrica:', error);
+        alert('Error al guardar la rúbrica. Por favor, intente nuevamente.');
     }
-});
+}
+
+// Función para actualizar las rúbricas en modo evaluación cuando se guarde una nueva
+function actualizarRubricasEvaluacion() {
+    if (modoActual === 'evaluacion') {
+        cargarRubricasEvaluacion();
+        verificarDatosEvaluacion();
+    }
+}
+
+// Función para mostrar rúbrica en modo solo lectura
+function mostrarRubricaEnModoLectura(rubrica) {
+    if (!rubricaContent || !rubrica) return;
+
+    // Generar contenido de la tabla en modo lectura
+    let headerContent = '<th>Criterio</th>';
+    let bodyContent = '';
+
+    if (rubrica.criterios && rubrica.criterios.length > 0) {
+        const primeraFila = rubrica.criterios[0];
+        if (primeraFila.niveles) {
+            headerContent += primeraFila.niveles.map(nivel => `
+                <th>
+                    <div class="nivel-header-readonly">
+                        <div class="nivel-info">
+                            <span class="nivel-titulo">${nivel.nivel}</span>
+                            <span class="nivel-puntos">${nivel.puntos} puntos</span>
+                        </div>
+                    </div>
+                </th>
+            `).join('');
+        }
+
+        bodyContent = rubrica.criterios.map(criterio => `
+            <tr>
+                <td>
+                    <div class="criterio-container-readonly">
+                        <span class="criterio-titulo">${criterio.titulo}</span>
+                    </div>
+                </td>
+                ${criterio.niveles.map(nivel => `
+                    <td>
+                        <div class="nivel-descripcion-readonly">${nivel.descripcion}</div>
+                    </td>
+                `).join('')}
+            </tr>
+        `).join('');
+    }
+
+    rubricaContent.innerHTML = `
+        <div class="rubrica-readonly">
+            <div class="rubrica-header">
+                <h3>${rubrica.titulo}</h3>
+                <p class="rubrica-descripcion">${rubrica.descripcion || ''}</p>
+                <div class="rubrica-info">
+                    <span class="rubrica-fecha">Creada: ${new Date(rubrica.fechaCreacion).toLocaleDateString()}</span>
+                    ${rubrica.fechaModificacion !== rubrica.fechaCreacion ? 
+                        `<span class="rubrica-fecha">Modificada: ${new Date(rubrica.fechaModificacion).toLocaleDateString()}</span>` : ''}
+                </div>
+            </div>
+            <div class="rubrica-container">
+                <div class="rubrica-table-container">
+                    <div class="rubrica-table-wrapper">
+                        <table class="rubrica-table rubrica-table-readonly">
+                            <thead>
+                                <tr>
+                                    ${headerContent}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${bodyContent}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="rubrica-actions-readonly">
+                <button type="button" id="cerrar-vista-rubrica" class="btn-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                    Cerrar
+                </button>
+                <button type="button" id="editar-rubrica-desde-evaluacion" class="btn-primary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                    Editar
+                </button>
+            </div>
+        </div>
+    `;
+
+    // Agregar event listeners para los botones
+    const cerrarBtn = document.getElementById('cerrar-vista-rubrica');
+    const editarBtn = document.getElementById('editar-rubrica-desde-evaluacion');
+
+    if (cerrarBtn) {
+        cerrarBtn.addEventListener('click', function() {
+            // Ocultar el contenedor de rúbrica
+            if (rubricaContent) rubricaContent.style.display = 'none';
+        });
+    }
+
+    if (editarBtn) {
+        editarBtn.addEventListener('click', function() {
+            // Cambiar a modo edición
+            cambiarModo('normal');
+            // Mostrar la rúbrica para edición
+            mostrarRubrica(rubrica);
+        });
+    }
+}

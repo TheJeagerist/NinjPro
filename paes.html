@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación PAES</title>
+    <link rel="stylesheet" href="paes.css">
+    <link rel="stylesheet" href="dashboard-styles.css">
+    <link rel="stylesheet" href="animated-backgrounds.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="loading-handler.js"></script>
+    <script>
+        // Verificar carga de librerías
+        window.addEventListener('load', function() {
+            console.log('🔍 Verificando librerías PAES...');
+            console.log('📊 XLSX cargado:', typeof window.XLSX);
+            console.log('📄 jsPDF cargado:', typeof window.jsPDF);
+        });
+    </script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="header-buttons">
+                        <button type="button" id="volver-launcher" class="btn-back" title="Volver al Launcher">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M19 12H5"></path>
+                                <polyline points="12 19 5 12 12 5"></polyline>
+                            </svg>
+                            Launcher
+                        </button>
+                        <button type="button" id="cambiar-modo-header" class="btn-back" title="Cambiar Modo de Evaluación" style="display: none;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                            </svg>
+                            Cambiar Modo
+                        </button>
+                    </div>
+                    <div class="header-title-section">
+                        <h1 class="app-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <line x1="10" y1="9" x2="8" y2="9"></line>
+                            </svg>
+                            Evaluación PAES
+                        </h1>
+                        <p class="app-subtitle">Sistema de evaluación y conversión de puntajes PAES</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <div class="mode-indicator" id="mode-indicator">
+                        <span class="mode-text">Selecciona un modo</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Mode Selection -->
+            <div class="mode-selection" id="mode-selection">
+                <div class="mode-card">
+                    <h2>Seleccionar Modo de Evaluación PAES</h2>
+                    <div class="mode-buttons">
+                        <button type="button" id="modo-oficial" class="mode-btn oficial">
+                            <div class="mode-icon">📋</div>
+                            <div class="mode-info">
+                                <h3>OFICIAL</h3>
+                                <p>Usa las tablas oficiales PAES para convertir respuestas correctas a puntaje oficial</p>
+                            </div>
+                        </button>
+                        <button type="button" id="modo-ensayo" class="mode-btn ensayo">
+                            <div class="mode-icon">🧪</div>
+                            <div class="mode-info">
+                                <h3>ENSAYO PAES</h3>
+                                <p>Crea evaluaciones personalizadas con conversión proporcional (100-1000 puntos)</p>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modo Oficial -->
+            <div class="modo-oficial-panel" id="modo-oficial-panel" style="display: none;">
+                <div class="config-panel">
+                    <div class="panel-section">
+                        <h3 class="section-title">Configuración PAES Oficial</h3>
+                        
+                        <div class="config-grid">
+                            <div class="config-group">
+                                <label for="paes-tipo">Tipo de Prueba PAES</label>
+                                <select id="paes-tipo" required>
+                                    <option value="">Seleccionar tipo...</option>
+                                    <option value="competencia-lectora">Competencia Lectora</option>
+                                    <option value="m1">M1 Matemáticas</option>
+                                    <option value="m2">M2 Matemáticas</option>
+                                    <option value="ciencias">Ciencias</option>
+                                    <option value="historia">Historia</option>
+                                </select>
+                                <small class="help-text">Selecciona el tipo de prueba PAES oficial</small>
+                            </div>
+                            
+                            <div class="config-group">
+                                <label for="curso-select-oficial">Seleccionar Curso</label>
+                                <select id="curso-select-oficial" required>
+                                    <option value="">Seleccionar curso...</option>
+                                </select>
+                                <small class="help-text">Curso desde gestión de estudiantes</small>
+                            </div>
+                            
+                            <div class="config-actions">
+                                <button type="button" id="cargar-estudiantes-oficial" class="btn btn-primary" disabled>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="8.5" cy="7" r="4"></circle>
+                                        <polyline points="17 11 19 13 23 9"></polyline>
+                                    </svg>
+                                    Cargar Estudiantes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions Oficial -->
+                    <div class="panel-section">
+                        <h3 class="section-title">Acciones</h3>
+                        <div class="quick-actions">
+                            <button type="button" id="exportar-excel-oficial" class="btn btn-outline" disabled>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                Exportar Excel
+                            </button>
+                            <button type="button" id="exportar-pdf-oficial" class="btn btn-outline" disabled>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    <line x1="10" y1="9" x2="8" y2="9"></line>
+                                </svg>
+                                Exportar PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Students Evaluation Area Oficial -->
+                <div class="evaluation-area" id="evaluation-area-oficial" style="display: none;">
+                    <div class="evaluation-header">
+                        <div class="evaluation-info">
+                            <h2 id="curso-nombre-oficial">Curso</h2>
+                            <p id="paes-tipo-info">Tipo de prueba PAES</p>
+                            <p id="total-estudiantes-oficial">0 estudiantes</p>
+                        </div>
+                        <div class="evaluation-progress">
+                            <div class="progress-info">
+                                <span id="estudiantes-evaluados-oficial">0</span> / <span id="total-estudiantes-count-oficial">0</span> evaluados
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progress-fill-oficial" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Students Table Oficial -->
+                    <div class="students-table-container">
+                        <table id="students-table-oficial" class="students-table">
+                            <thead>
+                                <tr>
+                                    <th>Estudiante</th>
+                                    <th>Respuestas Correctas</th>
+                                    <th>Puntaje PAES</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="students-tbody-oficial">
+                                <!-- Los estudiantes se cargarán dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modo Ensayo -->
+            <div class="modo-ensayo-panel" id="modo-ensayo-panel" style="display: none;">
+                <div class="config-panel">
+                    <div class="panel-section">
+                        <h3 class="section-title">Configuración Ensayo PAES</h3>
+                        
+                        <div class="config-grid">
+                            <div class="config-group">
+                                <label for="nombre-prueba">Nombre de la Prueba</label>
+                                <input type="text" id="nombre-prueba" placeholder="Ej: Ensayo PAES Matemáticas" required>
+                                <small class="help-text">Nombre identificativo para la prueba</small>
+                            </div>
+
+                            <div class="config-group">
+                                <label for="total-preguntas-ensayo">Total de Preguntas</label>
+                                <input type="number" id="total-preguntas-ensayo" min="1" max="200" placeholder="Ej: 40" required>
+                                <small class="help-text">Número total de preguntas del ensayo</small>
+                            </div>
+                            
+                            <div class="config-group">
+                                <label for="curso-select-ensayo">Seleccionar Curso</label>
+                                <select id="curso-select-ensayo" required>
+                                    <option value="">Seleccionar curso...</option>
+                                </select>
+                                <small class="help-text">Curso desde gestión de estudiantes</small>
+                            </div>
+                            
+                            <div class="config-actions">
+                                <button type="button" id="cargar-estudiantes-ensayo" class="btn btn-primary" disabled>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="8.5" cy="7" r="4"></circle>
+                                        <polyline points="17 11 19 13 23 9"></polyline>
+                                    </svg>
+                                    Cargar Estudiantes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions Ensayo -->
+                    <div class="panel-section">
+                        <h3 class="section-title">Acciones</h3>
+                        <div class="quick-actions">
+                            <button type="button" id="exportar-excel-ensayo" class="btn btn-outline" disabled>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                                Exportar Excel
+                            </button>
+                            <button type="button" id="exportar-pdf-ensayo" class="btn btn-outline" disabled>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    <line x1="10" y1="9" x2="8" y2="9"></line>
+                                </svg>
+                                Exportar PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Students Evaluation Area Ensayo -->
+                <div class="evaluation-area" id="evaluation-area-ensayo" style="display: none;">
+                    <div class="evaluation-header">
+                        <div class="evaluation-info">
+                            <h2 id="nombre-prueba-display">Ensayo PAES</h2>
+                            <p id="curso-nombre-ensayo">Curso</p>
+                            <p id="preguntas-info-ensayo">0 preguntas totales</p>
+                            <p id="total-estudiantes-ensayo">0 estudiantes</p>
+                        </div>
+                        <div class="evaluation-progress">
+                            <div class="progress-info">
+                                <span id="estudiantes-evaluados-ensayo">0</span> / <span id="total-estudiantes-count-ensayo">0</span> evaluados
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progress-fill-ensayo" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Students Table Ensayo -->
+                    <div class="students-table-container">
+                        <table id="students-table-ensayo" class="students-table">
+                            <thead>
+                                <tr>
+                                    <th>Estudiante</th>
+                                    <th>Respuestas Correctas</th>
+                                    <th>Porcentaje</th>
+                                    <th>Puntaje PAES</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="students-tbody-ensayo">
+                                <!-- Los estudiantes se cargarán dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Summary -->
+            <div class="results-summary" id="results-summary" style="display: none;">
+                <div class="summary-header">
+                    <h3>Resumen de Resultados</h3>
+                </div>
+                <div class="summary-content">
+                    <div class="summary-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Promedio:</span>
+                            <span class="stat-value" id="promedio-paes">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Puntaje Máximo:</span>
+                            <span class="stat-value" id="maximo-paes">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Puntaje Mínimo:</span>
+                            <span class="stat-value" id="minimo-paes">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Estudiantes Evaluados:</span>
+                            <span class="stat-value" id="total-evaluados-paes">0</span>
+                        </div>
+                    </div>
+                    <div class="summary-chart">
+                        <div class="chart-title">Distribución de Puntajes</div>
+                        <div class="chart-bars" id="chart-bars-paes">
+                            <!-- Las barras del gráfico se generarán dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="animated-backgrounds.js"></script>
+    <script src="external-theme-manager.js"></script>
+    <script src="paes.js"></script>
+</body>
+</html> 

@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
         'calc-panel': document.getElementById('calc-panel'),
         'escala-panel': document.getElementById('escala-panel'),
         'multi-panel': document.getElementById('multi-panel'),
-        'calendario-panel': document.getElementById('calendario-panel'),
+      
         'rubricas-panel': document.getElementById('rubricas-panel'),
         'config': document.getElementById('config')
     };
@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
         'menu-calculadora': document.getElementById('menu-calculadora'),
         'menu-escala': document.getElementById('menu-escala'),
         'menu-multi': document.getElementById('menu-multi'),
-        'menu-calendario': document.getElementById('menu-calendario'),
+      
         'menu-rubricas': document.getElementById('menu-rubricas'),
         'menu-config': document.getElementById('menu-config')
     };
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
         'menu-calculadora': 'calc-panel',
         'menu-escala': 'escala-panel',
         'menu-multi': 'multi-panel',
-        'menu-calendario': 'calendario-panel',
+      
         'menu-rubricas': 'rubricas-panel',
         'menu-config': 'config'
     };

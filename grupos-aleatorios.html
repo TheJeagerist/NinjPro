@@ -6,6 +6,7 @@
     <title>Generador de Grupos Aleatorios - NinjPro</title>
     <link rel="stylesheet" href="grupos-aleatorios-styles.css">
     <link rel="stylesheet" href="animated-backgrounds.css">
+    <script src="loading-handler.js"></script>
     <style>
         /* Sobrescribir estilos específicos del styles.css principal */
         body {
@@ -59,7 +60,7 @@
             <h1>🎲 Grupos Aleatorios</h1>
             <p>Organiza estudiantes en grupos</p>
         </div>
-
+        
         <!-- Display principal -->
         <div class="main-display">
             <div class="course-display" id="course-display">
@@ -74,9 +75,9 @@
             <div class="control-section">
                 <label>Curso</label>
                 <select id="course-select-groups" class="modern-select">
-                    <option value="">Seleccionar curso</option>
-                </select>
-            </div>
+                            <option value="">Seleccionar curso</option>
+                        </select>
+                    </div>
 
             <!-- Selector de número de grupos -->
             <div class="control-section">
@@ -89,15 +90,20 @@
                     <option value="6">6</option>
                     <option value="7">7</option>
                     <option value="8">8</option>
-                </select>
-            </div>
-        </div>
+                        </select>
+                    </div>
+                    </div>
 
         <!-- Botones de acción -->
         <div class="action-buttons">
             <button id="generate-groups-btn" class="btn-action btn-primary">
                 <span class="btn-icon">✨</span>
                 <span class="btn-text">Generar</span>
+            </button>
+            
+            <button id="manage-groups-btn" class="btn-action btn-secondary">
+                <span class="btn-icon">📋</span>
+                <span class="btn-text">Gestionar</span>
             </button>
             
             <button id="randomize-groups-btn" class="btn-action btn-secondary" style="display: none;">
@@ -114,8 +120,8 @@
         <!-- Indicador de estado -->
         <div class="status-indicator" id="status-indicator">
             <span id="status-text">Listo para generar grupos</span>
+            </div>
         </div>
-    </div>
 
     <!-- Modal para mostrar grupos generados -->
     <div id="groups-modal" class="groups-modal">
@@ -125,13 +131,16 @@
                 <button class="close-modal" id="close-modal">×</button>
             </div>
             <div class="modal-body">
-                <div id="groups-container" class="groups-container">
-                    <!-- Los grupos se generarán aquí dinámicamente -->
+            <div id="groups-container" class="groups-container">
+                <!-- Los grupos se generarán aquí dinámicamente -->
                 </div>
             </div>
             <div class="modal-footer">
                 <button id="modal-randomize-btn" class="btn-modal btn-secondary">
                     🔄 Reorganizar
+                </button>
+                <button id="modal-save-btn" class="btn-modal btn-primary">
+                    💾 Guardar Grupos
                 </button>
                 <button id="modal-export-btn" class="btn-modal btn-success">
                     📄 Exportar
@@ -140,7 +149,132 @@
         </div>
     </div>
 
-    <script src="theme-manager.js"></script>
+    <!-- Modal para gestionar grupos guardados -->
+    <div id="manage-groups-modal" class="groups-modal">
+        <div class="modal-content manage-modal">
+            <div class="modal-header">
+                <h3>📋 Gestor de Grupos</h3>
+                <button class="close-modal" id="close-manage-modal">×</button>
+            </div>
+            <div class="modal-body">
+                <!-- Tabs de navegación -->
+                <div class="tabs-container">
+                    <button class="tab-btn active" data-tab="saved-groups">Grupos Guardados</button>
+                    <button class="tab-btn" data-tab="load-groups">Cargar Grupos</button>
+                    <button class="tab-btn" data-tab="import-export">Importar/Exportar</button>
+                </div>
+
+                <!-- Tab: Grupos Guardados -->
+                <div id="saved-groups-tab" class="tab-content active">
+                    <div class="saved-groups-header">
+                        <div class="search-container">
+                            <input type="text" id="search-groups" placeholder="Buscar grupos..." class="search-input">
+                            <span class="search-icon">🔍</span>
+                        </div>
+                        <div class="filter-container">
+                            <select id="filter-course" class="filter-select">
+                                <option value="">Todos los cursos</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="saved-groups-list" class="saved-groups-list">
+                        <!-- Los grupos guardados se mostrarán aquí -->
+                    </div>
+                </div>
+
+                <!-- Tab: Cargar Grupos -->
+                <div id="load-groups-tab" class="tab-content">
+                    <div class="load-groups-section">
+                        <h4>Seleccionar Grupos para Usar</h4>
+                        <div id="available-groups-list" class="available-groups-list">
+                            <!-- Lista de grupos disponibles para cargar -->
+                        </div>
+                        <div class="load-actions">
+                            <button id="load-selected-btn" class="btn-modal btn-primary" disabled>
+                                📥 Cargar Seleccionado
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab: Importar/Exportar -->
+                <div id="import-export-tab" class="tab-content">
+                    <div class="import-export-section">
+                        <div class="section-block">
+                            <h4>📤 Exportar Todos los Grupos</h4>
+                            <p>Exporta todos tus grupos guardados a un archivo JSON</p>
+                            <button id="export-all-groups-btn" class="btn-modal btn-success">
+                                📤 Exportar Todo
+                            </button>
+                        </div>
+                        
+                        <div class="section-block">
+                            <h4>📥 Importar Grupos</h4>
+                            <p>Importa grupos desde un archivo JSON</p>
+                            <input type="file" id="import-groups-file" accept=".json" style="display: none;">
+                            <button id="import-groups-btn" class="btn-modal btn-primary">
+                                📥 Seleccionar Archivo
+                            </button>
+                            <div id="import-status" class="import-status"></div>
+                        </div>
+
+                        <div class="section-block">
+                            <h4>🗑️ Gestión de Datos</h4>
+                            <p>Eliminar todos los grupos guardados</p>
+                            <button id="clear-all-groups-btn" class="btn-modal btn-danger">
+                                🗑️ Eliminar Todo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para guardar grupos -->
+    <div id="save-groups-modal" class="groups-modal">
+        <div class="modal-content save-modal">
+            <div class="modal-header">
+                <h3>💾 Guardar Grupos</h3>
+                <button class="close-modal" id="close-save-modal">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="save-form">
+                    <div class="form-group">
+                        <label for="group-name">Nombre del Conjunto de Grupos</label>
+                        <input type="text" id="group-name" placeholder="Ej: Grupos para Proyecto Final" class="form-input">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="group-description">Descripción (opcional)</label>
+                        <textarea id="group-description" placeholder="Describe el propósito de estos grupos..." class="form-textarea"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="group-tags">Etiquetas (separadas por comas)</label>
+                        <input type="text" id="group-tags" placeholder="proyecto, matemáticas, evaluación" class="form-input">
+                    </div>
+
+                    <div class="groups-preview">
+                        <h4>Vista Previa de Grupos</h4>
+                        <div id="save-groups-preview" class="save-preview-container">
+                            <!-- Vista previa de los grupos a guardar -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="cancel-save-btn" class="btn-modal btn-secondary">
+                    ❌ Cancelar
+                </button>
+                <button id="confirm-save-btn" class="btn-modal btn-primary">
+                    💾 Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="external-theme-manager.js"></script>
     <script src="grupos-aleatorios.js"></script>
     <script src="animated-backgrounds.js"></script>
     

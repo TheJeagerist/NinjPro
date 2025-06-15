@@ -1,5 +1,0 @@
-Este es un texto de prueba para el contador de palabras.
-Contiene varias palabras que pueden ser seleccionadas.
-El cronómetro debe funcionar correctamente.
-Y el botón de guardar sesión también debe funcionar.
-Este texto tiene suficientes palabras para hacer una prueba completa. 

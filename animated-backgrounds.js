@@ -83,7 +83,7 @@ class AnimatedBackgrounds {
      * Crea los contenedores para cada tema
      */
     createBackgroundContainers() {
-        const themes = ['dark', 'light', 'rosa', 'oscuro', 'neon'];
+        const themes = ['dark', 'light', 'rosa', 'neon'];
         
         themes.forEach(theme => {
             const container = document.createElement('div');
@@ -114,7 +114,7 @@ class AnimatedBackgrounds {
         this.createDarkThemeElements();
         this.createLightThemeElements();
         this.createRosaThemeElements();
-        this.createOscuroThemeElements();
+        
         this.createNeonThemeElements();
     }
 
@@ -200,42 +200,6 @@ class AnimatedBackgrounds {
     }
 
     /**
-     * Crea elementos para tema oscuro (4 olas animadas)
-     */
-    createOscuroThemeElements() {
-        const container = this.backgrounds.oscuro;
-        
-        // Limpiar cualquier contenido existente
-        container.innerHTML = '';
-        
-        // Crear océano con fondo negro
-        const ocean = document.createElement('div');
-        ocean.className = 'ocean-oscuro';
-        
-        // Crear 4 olas con colores específicos (orden invertido)
-        const wave1 = document.createElement('div');
-        wave1.className = 'wave-oscuro wave-yellow'; // Amarillo #EEB931
-        
-        const wave2 = document.createElement('div');
-        wave2.className = 'wave-oscuro wave-blue'; // Azul #5176BA
-        
-        const wave3 = document.createElement('div');
-        wave3.className = 'wave-oscuro wave-red'; // Rojo #CD2229
-        
-        const wave4 = document.createElement('div');
-        wave4.className = 'wave-oscuro wave-green'; // Verde #5CB49C
-        
-        // Ensamblar la estructura
-        ocean.appendChild(wave1);
-        ocean.appendChild(wave2);
-        ocean.appendChild(wave3);
-        ocean.appendChild(wave4);
-        container.appendChild(ocean);
-        
-        console.log('✅ Tema Oscuro con 4 olas coloridas creado');
-    }
-
-    /**
      * Elimina todos los elementos circulares del documento
      */
     removeAllCircularElements() {
@@ -279,7 +243,7 @@ class AnimatedBackgrounds {
         // Limpiar cualquier contenido existente
         container.innerHTML = '';
         
-        // Crear la estructura de olas estilo GameCube púrpura
+        // Crear la estructura de olas estilo PlayStation 4
         const ocean = document.createElement('div');
         ocean.className = 'ocean-neon';
         
@@ -294,7 +258,7 @@ class AnimatedBackgrounds {
         ocean.appendChild(wave2);
         container.appendChild(ocean);
         
-        console.log('✅ Tema Neon con olas GameCube púrpura creado');
+        console.log('✅ Tema Neon con olas PlayStation 4 creado');
     }
 
     /**
@@ -308,32 +272,78 @@ class AnimatedBackgrounds {
      * Carga Three.js dinámicamente si no está disponible
      */
     loadThreeJS() {
-        // Cargar Three.js desde CDN
-        const threeScript = document.createElement('script');
-        threeScript.type = 'module';
-        threeScript.textContent = `
-            import * as THREE from 'https://cdn.skypack.dev/three@0.136.0/build/three.module.js';
-            import { OrbitControls } from 'https://cdn.skypack.dev/three@0.136.0/examples/jsm/controls/OrbitControls.js';
-            import { FontLoader } from 'https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/FontLoader.js';
-            import { TextGeometry } from 'https://cdn.skypack.dev/three@0.136.0/examples/jsm/geometries/TextGeometry.js';
-            import { EffectComposer } from 'https://cdn.skypack.dev/three@0.136.0/examples/jsm/postprocessing/EffectComposer.js';
-            import { RenderPass } from 'https://cdn.skypack.dev/three@0.136.0/examples/jsm/postprocessing/RenderPass.js';
-            import { UnrealBloomPass } from 'https://cdn.skypack.dev/three@0.136.0/examples/jsm/postprocessing/UnrealBloomPass.js';
-            import { ShaderPass } from 'https://cdn.skypack.dev/three@0.136.0/examples/jsm/postprocessing/ShaderPass.js';
-            
-            window.THREE = THREE;
-            window.OrbitControls = OrbitControls;
-            window.FontLoader = FontLoader;
-            window.TextGeometry = TextGeometry;
-            window.EffectComposer = EffectComposer;
-            window.RenderPass = RenderPass;
-            window.UnrealBloomPass = UnrealBloomPass;
-            window.ShaderPass = ShaderPass;
-            
-            console.log('✅ Three.js y módulos cargados dinámicamente');
-            window.animatedBackgrounds.initNewWaveEffect();
-        `;
-        document.head.appendChild(threeScript);
+        try {
+            return new Promise((resolve, reject) => {
+                // Si Three.js ya está cargado, resolver inmediatamente
+                if (window.THREE) {
+                    console.log('✅ Three.js ya está disponible');
+                    resolve();
+                    return;
+                }
+
+                console.log('📦 Cargando Three.js desde CDN...');
+
+                // Cargar Three.js desde CDN
+                const threeScript = document.createElement('script');
+                threeScript.type = 'module';
+                threeScript.textContent = `
+                    try {
+                        import * as THREE from 'https://cdn.skypack.dev/three@0.136.0/build/three.module.js';
+                        import { OrbitControls } from 'https://cdn.skypack.dev/three@0.136.0/examples/jsm/controls/OrbitControls.js';
+                        import { FontLoader } from 'https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/FontLoader.js';
+                        import { TextGeometry } from 'https://cdn.skypack.dev/three@0.136.0/examples/jsm/geometries/TextGeometry.js';
+                        import { EffectComposer } from 'https://cdn.skypack.dev/three@0.136.0/examples/jsm/postprocessing/EffectComposer.js';
+                        import { RenderPass } from 'https://cdn.skypack.dev/three@0.136.0/examples/jsm/postprocessing/RenderPass.js';
+                        import { UnrealBloomPass } from 'https://cdn.skypack.dev/three@0.136.0/examples/jsm/postprocessing/UnrealBloomPass.js';
+                        import { ShaderPass } from 'https://cdn.skypack.dev/three@0.136.0/examples/jsm/postprocessing/ShaderPass.js';
+                        
+                        window.THREE = THREE;
+                        window.OrbitControls = OrbitControls;
+                        window.FontLoader = FontLoader;
+                        window.TextGeometry = TextGeometry;
+                        window.EffectComposer = EffectComposer;
+                        window.RenderPass = RenderPass;
+                        window.UnrealBloomPass = UnrealBloomPass;
+                        window.ShaderPass = ShaderPass;
+                        
+                        console.log('✅ Three.js y módulos cargados dinámicamente');
+                        
+                        // Resolver la Promise
+                        if (window.animatedBackgrounds && window.animatedBackgrounds.threeJSLoadResolve) {
+                            window.animatedBackgrounds.threeJSLoadResolve();
+                        }
+                    } catch (error) {
+                        console.error('❌ Error al importar Three.js:', error);
+                        if (window.animatedBackgrounds && window.animatedBackgrounds.threeJSLoadReject) {
+                            window.animatedBackgrounds.threeJSLoadReject(error);
+                        }
+                    }
+                `;
+
+                // Configurar callbacks para la Promise
+                this.threeJSLoadResolve = resolve;
+                this.threeJSLoadReject = reject;
+
+                // Manejar errores de carga del script
+                threeScript.onerror = (error) => {
+                    console.error('❌ Error al cargar el script de Three.js:', error);
+                    reject(new Error('Failed to load Three.js script'));
+                };
+
+                document.head.appendChild(threeScript);
+
+                // Timeout de seguridad
+                setTimeout(() => {
+                    if (!window.THREE) {
+                        console.warn('⏰ Timeout al cargar Three.js');
+                        reject(new Error('Three.js load timeout'));
+                    }
+                }, 15000); // Aumentado a 15 segundos
+            });
+        } catch (error) {
+            console.error('❌ Error crítico en loadThreeJS:', error);
+            return Promise.reject(error);
+        }
     }
 
     /**
@@ -361,14 +371,14 @@ class AnimatedBackgrounds {
         this.threeRenderer = renderer;
         this.threeContainer = container;
 
-        // Configurar uniforms para shaders
+        // Configurar uniforms para shaders con colores PlayStation 4
         uniforms = {
             time: { value: 1.0 },
             resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
             opacity: { value: 0.7 },
-            color1: { value: new THREE.Color(0x00ffff) },
-            color2: { value: new THREE.Color(0xff00ff) },
-            color3: { value: new THREE.Color(0xffffff) }
+            color1: { value: new THREE.Color(0x0070D1) }, // Azul PlayStation principal
+            color2: { value: new THREE.Color(0x00439C) }, // Azul PlayStation oscuro
+            color3: { value: new THREE.Color(0x00246E) }  // Azul PlayStation más oscuro
         };
 
         // Crear material shader
@@ -788,17 +798,257 @@ class AnimatedBackgrounds {
      * Destruye el sistema de fondos
      */
     destroy() {
-        Object.values(this.backgrounds).forEach(bg => {
-            if (bg.parentNode) {
-                bg.parentNode.removeChild(bg);
+        this.pauseAnimations();
+        this.cleanupExistingBackgrounds();
+        this.destroyThreeScene();
+        this.isInitialized = false;
+        console.log('🔄 Sistema de fondos destruido');
+    }
+
+    /**
+     * Crea elementos específicos para el panel de matemáticas rápidas
+     */
+    createMathThemeElements() {
+        console.log('🧮 Creando fondos específicos para matemáticas rápidas...');
+        
+        // Crear fondos para cada tema específicamente para el panel de matemáticas
+        this.createMathDarkElements();
+        this.createMathLightElements();
+        this.createMathRosaElements();
+        this.createMathNeonElements();
+    }
+
+    /**
+     * Crea elementos del tema dark para matemáticas rápidas
+     */
+    createMathDarkElements() {
+        const container = document.getElementById('bg-wrap-dark-math');
+        if (!container) return;
+        
+        container.innerHTML = '';
+        
+        const ocean = document.createElement('div');
+        ocean.className = 'ocean ocean-dark';
+        
+        const wave1 = document.createElement('div');
+        wave1.className = 'wave wave-dark';
+        
+        const wave2 = document.createElement('div');
+        wave2.className = 'wave wave-dark';
+        
+        ocean.appendChild(wave1);
+        ocean.appendChild(wave2);
+        container.appendChild(ocean);
+    }
+
+    /**
+     * Crea elementos del tema light para matemáticas rápidas
+     */
+    createMathLightElements() {
+        const container = document.getElementById('bg-wrap-math');
+        if (!container) return;
+        
+        container.innerHTML = '';
+        
+        const ocean = document.createElement('div');
+        ocean.className = 'ocean';
+        
+        const wave1 = document.createElement('div');
+        wave1.className = 'wave';
+        
+        const wave2 = document.createElement('div');
+        wave2.className = 'wave';
+        
+        ocean.appendChild(wave1);
+        ocean.appendChild(wave2);
+        container.appendChild(ocean);
+    }
+
+    /**
+     * Crea elementos del tema rosa para matemáticas rápidas
+     */
+    createMathRosaElements() {
+        const container = document.getElementById('bg-wrap-rosa-math');
+        if (!container) return;
+        
+        container.innerHTML = '';
+        
+        const ocean = document.createElement('div');
+        ocean.className = 'ocean ocean-rosa';
+        
+        const wave1 = document.createElement('div');
+        wave1.className = 'wave wave-rosa';
+        
+        const wave2 = document.createElement('div');
+        wave2.className = 'wave wave-rosa';
+        
+        ocean.appendChild(wave1);
+        ocean.appendChild(wave2);
+        container.appendChild(ocean);
+    }
+
+    /**
+     * Crea elementos del tema neón para matemáticas rápidas
+     */
+    createMathNeonElements() {
+        const container = document.getElementById('bg-wrap-neon-math');
+        if (!container) return;
+        
+        container.innerHTML = '';
+        
+        // Para el tema neón, usar el efecto Three.js si está disponible
+        if (this.performanceMode === 'high') {
+            this.initMathNeonEffect(container);
+        } else {
+            // Fallback a CSS para dispositivos de bajo rendimiento
+            const ocean = document.createElement('div');
+            ocean.className = 'ocean ocean-neon';
+            
+            const wave1 = document.createElement('div');
+            wave1.className = 'wave wave-neon';
+            
+            const wave2 = document.createElement('div');
+            wave2.className = 'wave wave-neon';
+            
+            ocean.appendChild(wave1);
+            ocean.appendChild(wave2);
+            container.appendChild(ocean);
+        }
+    }
+
+    /**
+     * Inicializa el efecto neón específico para matemáticas
+     */
+    initMathNeonEffect(container) {
+        console.log('🔍 DEBUG: initMathNeonEffect llamado');
+        console.log('🔍 DEBUG: this =', this);
+        console.log('🔍 DEBUG: this.loadThreeJS =', typeof this.loadThreeJS);
+        
+        // Por ahora, usar siempre el fallback CSS para evitar errores
+        console.log('🔄 Usando fallback CSS para tema neón de matemáticas');
+        this.createMathNeonFallback(container);
+        
+        // Comentar la lógica de Three.js temporalmente
+        /*
+        // Implementación simplificada del efecto neón
+        try {
+            const loadPromise = this.loadThreeJS();
+            if (loadPromise && typeof loadPromise.then === 'function') {
+                loadPromise.then(() => {
+                    this.setupMathNeonScene(container);
+                }).catch((error) => {
+                    console.warn('⚠️ Three.js no disponible, usando fallback CSS para neón math:', error);
+                    this.createMathNeonFallback(container);
+                });
+            } else {
+                console.warn('⚠️ loadThreeJS no retornó una Promise válida, usando fallback CSS');
+                this.createMathNeonFallback(container);
+            }
+        } catch (error) {
+            console.error('❌ Error en initMathNeonEffect:', error);
+            this.createMathNeonFallback(container);
+        }
+        */
+    }
+
+    /**
+     * Crea el fallback CSS para el efecto neón de matemáticas
+     */
+    createMathNeonFallback(container) {
+        // Fallback a CSS
+        const ocean = document.createElement('div');
+        ocean.className = 'ocean ocean-neon';
+        
+        const wave1 = document.createElement('div');
+        wave1.className = 'wave wave-neon';
+        
+        const wave2 = document.createElement('div');
+        wave2.className = 'wave wave-neon';
+        
+        ocean.appendChild(wave1);
+        ocean.appendChild(wave2);
+        container.appendChild(ocean);
+    }
+
+    /**
+     * Configura la escena Three.js para el panel de matemáticas neón
+     */
+    setupMathNeonScene(container) {
+        if (!window.THREE) return;
+        
+        // Crear una versión simplificada del efecto neón
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0x0a0a0f, 0);
+        container.appendChild(renderer.domElement);
+        
+        // Crear geometría simple para partículas
+        const geometry = new THREE.BufferGeometry();
+        const particleCount = 100;
+        const positions = new Float32Array(particleCount * 3);
+        
+        for (let i = 0; i < particleCount; i++) {
+            positions[i * 3] = (Math.random() - 0.5) * 10;
+            positions[i * 3 + 1] = (Math.random() - 0.5) * 10;
+            positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
+        }
+        
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        
+        const material = new THREE.PointsMaterial({
+            color: 0x8b5cf6,
+            size: 0.1,
+            transparent: true,
+            opacity: 0.6
+        });
+        
+        const particles = new THREE.Points(geometry, material);
+        scene.add(particles);
+        
+        camera.position.z = 5;
+        
+        // Animación simple
+        const animate = () => {
+            requestAnimationFrame(animate);
+            particles.rotation.x += 0.01;
+            particles.rotation.y += 0.01;
+            renderer.render(scene, camera);
+        };
+        
+        animate();
+    }
+
+    /**
+     * Cambia el tema específicamente para el panel de matemáticas
+     */
+    switchMathTheme(theme) {
+        console.log(`🧮 Cambiando tema de matemáticas a: ${theme}`);
+        
+        const mathBgElements = {
+            'theme-light': document.getElementById('bg-wrap-math'),
+            'theme-dark': document.getElementById('bg-wrap-dark-math'),
+            'theme-rosa': document.getElementById('bg-wrap-rosa-math'),
+            'theme-neon': document.getElementById('bg-wrap-neon-math')
+        };
+        
+        // Ocultar todos los fondos
+        Object.values(mathBgElements).forEach(bg => {
+            if (bg) {
+                bg.style.display = 'none';
+                bg.style.opacity = '0';
             }
         });
         
-        this.backgrounds = {};
-        this.isInitialized = false;
-        
-        if (this.animationFrameId) {
-            cancelAnimationFrame(this.animationFrameId);
+        // Mostrar el fondo del tema actual
+        const activeBg = mathBgElements[theme];
+        if (activeBg) {
+            activeBg.style.display = 'block';
+            setTimeout(() => {
+                activeBg.style.opacity = '1';
+            }, 50);
         }
     }
 }

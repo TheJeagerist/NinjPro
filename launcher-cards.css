@@ -21,23 +21,29 @@
 
 /* Grid de aplicaciones */
 .launcher-apps-grid {
-  display: flex !important;
-  align-items: flex-start;
-  flex-wrap: wrap;
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(182px, 200px));
   gap: 18px;
   justify-content: center;
   visibility: visible !important;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 12px;
 }
 
 /* Tarjeta individual de aplicación */
 .launcher-app-item {
-  flex-basis: calc(25% - 22.5px);
-  min-width: 150px;
-  margin-bottom: 18px;
+  width: 100%;
+  aspect-ratio: 1;
+  min-width: 0;
+  max-width: 200px;
+  margin: 0 auto;
   overflow: hidden;
   border-radius: 17px;
   transition: transform 0.3s ease;
   cursor: pointer;
+  position: relative;
 }
 
 .launcher-app-item:hover {
@@ -46,8 +52,11 @@
 
 /* Link de la aplicación */
 .launcher-app-link {
-  display: block;
-  padding: 18px 15px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
   background-color: #121212;
   overflow: hidden;
   position: relative;
@@ -55,6 +64,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   border-radius: 17px;
+  box-sizing: border-box;
 }
 
 .launcher-app-link:hover,
@@ -67,10 +77,33 @@
   transform: scale(10);
 }
 
+/* Fondo animado circular */
+.launcher-app-bg {
+  height: 100px;
+  width: 100px;
+  background-color: #f9b234;
+  z-index: 1;
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  border-radius: 50%;
+  transition: all 1.67s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Contenido de la tarjeta */
+.launcher-app-content {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 /* Icono de la aplicación */
 .launcher-app-icon {
-  font-size: 1.5rem;
-  margin-bottom: 9px;
+  font-size: 2rem;
+  margin-bottom: 12px;
   z-index: 2;
   position: relative;
   display: block;
@@ -79,10 +112,10 @@
 /* Título de la aplicación */
 .launcher-app-title {
   min-height: 36px;
-  margin: 0 0 9px;
+  margin: 0 0 8px;
   overflow: hidden;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 15px;
   color: #FFF;
   z-index: 2;
   position: relative;
@@ -91,37 +124,25 @@
 
 /* Descripción de la aplicación */
 .launcher-app-description {
-  font-size: 10px;
+  font-size: 11px;
   color: #FFF;
   z-index: 2;
   position: relative;
   opacity: 0.8;
   line-height: 1.4;
+  margin-bottom: 8px;
 }
 
 .launcher-app-category {
   font-weight: bold;
   color: #f9b234;
   transition: color 0.5s ease;
-  font-size: 8px;
+  font-size: 9px;
   text-transform: uppercase;
   letter-spacing: 1px;
-  margin-top: 6px;
+  margin-top: auto;
   z-index: 2;
   position: relative;
-}
-
-/* Fondo animado circular */
-.launcher-app-bg {
-  height: 77px;
-  width: 77px;
-  background-color: #f9b234;
-  z-index: 1;
-  position: absolute;
-  top: -45px;
-  right: -45px;
-  border-radius: 50%;
-  transition: all 0.5s ease;
 }
 
 /* Colores específicos para diferentes aplicaciones */
@@ -170,26 +191,26 @@
 
 /* Responsive Design */
 @media only screen and (max-width: 1200px) {
-  .launcher-app-item {
-    flex-basis: calc(33.33333% - 12px);
-    min-width: 144px;
+  .launcher-apps-grid {
+    grid-template-columns: repeat(auto-fit, minmax(164px, 182px));
   }
-  
-  .launcher-app-title {
-    font-size: 13px;
-    min-height: 33px;
+  .launcher-app-item {
+    max-width: 182px;
   }
 }
 
 @media only screen and (max-width: 979px) {
-  .launcher-app-item {
-    flex-basis: calc(50% - 9px);
-    min-width: 132px;
+  .launcher-apps-grid {
+    grid-template-columns: repeat(auto-fit, minmax(146px, 164px));
   }
-  
+  .launcher-app-item {
+    max-width: 164px;
+  }
+  .launcher-app-icon {
+    font-size: 1.6rem;
+  }
   .launcher-app-title {
-    font-size: 12px;
-    min-height: 30px;
+    font-size: 13px;
   }
 }
 
@@ -201,32 +222,305 @@
   
   .launcher-apps-grid {
     gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(127px, 146px));
+    padding: 0 6px;
   }
-}
-
-@media only screen and (max-width: 639px) {
   .launcher-app-item {
-    flex-basis: 100%;
-    min-width: auto;
+    max-width: 146px;
   }
-  
+  .launcher-app-icon {
+    font-size: 1.4rem;
+  }
   .launcher-app-title {
-    min-height: 27px;
-    line-height: 1.1;
     font-size: 12px;
   }
-  
-  .launcher-app-link {
-    padding: 15px 18px;
   }
   
-  .launcher-app-description {
-    font-size: 8px;
+@media only screen and (max-width: 639px) {
+  .launcher-apps-grid {
+    grid-template-columns: minmax(182px, 200px);
   }
-  
-  .launcher-app-icon {
-    font-size: 1.2rem;
+  .launcher-app-item {
+    max-width: 200px;
   }
 }
 
 /* Animaciones de entrada removidas - las tarjetas aparecen inmediatamente */ 
+
+/* ================================
+   LIQUID GLASS EFFECT - TARJETAS LAUNCHER TEMA LIGHT
+   ================================ */
+
+/* Tarjetas del launcher en tema light con efecto Liquid Glass */
+body.theme-light .launcher-app-item {
+  /* Base del contenedor con vidrio líquido */
+  background: rgba(255, 255, 255, 0.15) !important;
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  border-radius: 20px !important;
+  box-shadow: 
+    0 8px 32px rgba(31, 38, 135, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+  overflow: hidden;
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Link interno de la tarjeta con efecto glass */
+body.theme-light .launcher-app-link {
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(15px) saturate(120%);
+  -webkit-backdrop-filter: blur(15px) saturate(120%);
+  border: none !important;
+  border-radius: 18px !important;
+  padding: 20px 16px !important;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Efecto de brillo ambiental para las tarjetas */
+body.theme-light .launcher-app-item::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(79, 188, 255, 0.05) 30%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  z-index: 0;
+}
+
+/* Efectos hover para las tarjetas */
+body.theme-light .launcher-app-item:hover {
+  background: rgba(255, 255, 255, 0.25) !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
+  transform: translateY(-5px) scale(1.02) !important;
+  box-shadow: 
+    0 16px 48px rgba(31, 38, 135, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Activar brillo ambiental en hover */
+body.theme-light .launcher-app-item:hover::before {
+  opacity: 1;
+}
+
+/* Hover para el link interno */
+body.theme-light .launcher-app-link:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.15) !important;
+  transform: none !important;
+}
+
+/* Fondo circular animado con efecto glass */
+body.theme-light .launcher-app-bg {
+  background: linear-gradient(135deg, 
+    rgba(79, 188, 255, 0.8),
+    rgba(31, 81, 255, 0.9)
+  ) !important;
+  box-shadow: 
+    0 8px 32px rgba(79, 188, 255, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+  border-radius: 50%;
+  transition: all 1.67s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Efectos específicos para cada color de fondo en tema light */
+body.theme-light .launcher-app-item:nth-child(1) .launcher-app-bg { 
+  background: linear-gradient(135deg, rgba(249, 178, 52, 0.8), rgba(255, 193, 7, 0.9)) !important;
+  box-shadow: 0 8px 32px rgba(249, 178, 52, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+body.theme-light .launcher-app-item:nth-child(2) .launcher-app-bg { 
+  background: linear-gradient(135deg, rgba(62, 205, 94, 0.8), rgba(40, 167, 69, 0.9)) !important;
+  box-shadow: 0 8px 32px rgba(62, 205, 94, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+body.theme-light .launcher-app-item:nth-child(3) .launcher-app-bg { 
+  background: linear-gradient(135deg, rgba(228, 64, 2, 0.8), rgba(220, 53, 69, 0.9)) !important;
+  box-shadow: 0 8px 32px rgba(228, 64, 2, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+body.theme-light .launcher-app-item:nth-child(4) .launcher-app-bg { 
+  background: linear-gradient(135deg, rgba(149, 42, 255, 0.8), rgba(138, 43, 226, 0.9)) !important;
+  box-shadow: 0 8px 32px rgba(149, 42, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+body.theme-light .launcher-app-item:nth-child(5) .launcher-app-bg { 
+  background: linear-gradient(135deg, rgba(205, 62, 148, 0.8), rgba(232, 62, 140, 0.9)) !important;
+  box-shadow: 0 8px 32px rgba(205, 62, 148, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+body.theme-light .launcher-app-item:nth-child(6) .launcher-app-bg { 
+  background: linear-gradient(135deg, rgba(76, 73, 234, 0.8), rgba(102, 126, 234, 0.9)) !important;
+  box-shadow: 0 8px 32px rgba(76, 73, 234, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+body.theme-light .launcher-app-item:nth-child(7) .launcher-app-bg { 
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.8), rgba(255, 99, 71, 0.9)) !important;
+  box-shadow: 0 8px 32px rgba(255, 107, 53, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+body.theme-light .launcher-app-item:nth-child(8) .launcher-app-bg { 
+  background: linear-gradient(135deg, rgba(0, 212, 170, 0.8), rgba(32, 201, 151, 0.9)) !important;
+  box-shadow: 0 8px 32px rgba(0, 212, 170, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+body.theme-light .launcher-app-item:nth-child(9) .launcher-app-bg { 
+  background: linear-gradient(135deg, rgba(255, 71, 87, 0.8), rgba(255, 99, 132, 0.9)) !important;
+  box-shadow: 0 8px 32px rgba(255, 71, 87, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+body.theme-light .launcher-app-item:nth-child(10) .launcher-app-bg { 
+  background: linear-gradient(135deg, rgba(83, 82, 237, 0.8), rgba(116, 115, 252, 0.9)) !important;
+  box-shadow: 0 8px 32px rgba(83, 82, 237, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+
+/* Textos con mejor contraste en tema light */
+body.theme-light .launcher-app-title {
+  color: rgba(55, 65, 81, 0.95) !important;
+  font-weight: 600 !important;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+  z-index: 3;
+}
+
+body.theme-light .launcher-app-description {
+  color: rgba(75, 85, 99, 0.8) !important;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
+  z-index: 3;
+}
+
+body.theme-light .launcher-app-category {
+  color: rgba(55, 65, 81, 0.7) !important;
+  font-weight: 500 !important;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.4);
+  z-index: 3;
+}
+
+body.theme-light .launcher-app-icon {
+  filter: drop-shadow(0 2px 4px rgba(255, 255, 255, 0.3));
+  z-index: 3;
+}
+
+/* Selector de temas mini con liquid glass */
+body.theme-light .launcher-app-item .mini-theme-btn {
+  background: rgba(255, 255, 255, 0.2) !important;
+  backdrop-filter: blur(10px) saturate(120%);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 
+    0 4px 16px rgba(31, 38, 135, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+
+body.theme-light .launcher-app-item .mini-theme-btn:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+  transform: scale(1.1);
+  box-shadow: 
+    0 6px 20px rgba(31, 38, 135, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+body.theme-light .launcher-app-item .mini-theme-btn.active {
+  background: rgba(79, 188, 255, 0.3) !important;
+  border-color: rgba(79, 188, 255, 0.5) !important;
+  transform: scale(1.2);
+  box-shadow: 
+    0 0 20px rgba(79, 188, 255, 0.4),
+    0 8px 24px rgba(31, 38, 135, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Responsive adjustments para tarjetas light */
+@media only screen and (max-width: 1200px) {
+  body.theme-light .launcher-app-item {
+    border-radius: 18px !important;
+  }
+  
+  body.theme-light .launcher-app-link {
+    border-radius: 16px !important;
+    padding: 18px 15px !important;
+  }
+}
+
+@media only screen and (max-width: 979px) {
+  body.theme-light .launcher-app-item {
+    border-radius: 16px !important;
+  }
+  
+  body.theme-light .launcher-app-link {
+    border-radius: 14px !important;
+    padding: 16px 14px !important;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  body.theme-light .launcher-app-item {
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    border-radius: 14px !important;
+  }
+  
+  body.theme-light .launcher-app-link {
+    backdrop-filter: blur(12px) saturate(110%);
+    -webkit-backdrop-filter: blur(12px) saturate(110%);
+    border-radius: 12px !important;
+  }
+}
+
+@media only screen and (max-width: 639px) {
+  body.theme-light .launcher-app-item {
+    border-radius: 12px !important;
+  }
+  
+  body.theme-light .launcher-app-link {
+    border-radius: 10px !important;
+    padding: 15px 18px !important;
+  }
+}
+
+/* Estado filtrado de las tarjetas */
+.launcher-app-item.filtered-out {
+    display: none;
+}
+
+/* Responsive Design */
+@media only screen and (max-width: 1200px) {
+    .launcher-apps-grid {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 280px));
+    }
+}
+
+@media only screen and (max-width: 979px) {
+    .launcher-apps-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 260px));
+    }
+}
+
+@media only screen and (max-width: 767px) {
+    .launcher-container {
+        width: 96%;
+        padding: 18px 6px;
+    }
+    
+    .launcher-apps-grid {
+        gap: 12px;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 240px));
+        padding: 0 6px;
+    }
+}
+
+@media only screen and (max-width: 639px) {
+    .launcher-apps-grid {
+        grid-template-columns: minmax(200px, 300px);
+  }
+}

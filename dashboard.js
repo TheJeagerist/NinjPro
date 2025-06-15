@@ -89,7 +89,7 @@ function setupThemeListeners() {
         });
     });
     
-    // Botones de temas en el header
+    // Botones de temas en el header (legacy)
     const headerThemeBtns = document.querySelectorAll('.header-theme-btn');
     
     headerThemeBtns.forEach(btn => {
@@ -102,6 +102,79 @@ function setupThemeListeners() {
             updateThemeButtonsState(theme);
         });
     });
+
+    // Botones de temas verticales (nuevos)
+    const verticalThemeBtns = document.querySelectorAll('.vertical-theme-btn');
+    
+    verticalThemeBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const theme = this.getAttribute('data-theme');
+            changeTheme(theme);
+            
+            // Actualizar estado activo de todos los botones de temas
+            updateThemeButtonsState(theme);
+            
+            // Ocultar el selector después de seleccionar un tema
+            hideThemeSelector();
+        });
+    });
+
+    // Botón de despliegue de temas
+    const toggleThemesBtn = document.getElementById('toggle-themes-btn');
+    const themeSelector = document.getElementById('vertical-theme-selector');
+    
+    if (toggleThemesBtn && themeSelector) {
+        toggleThemesBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            toggleThemeSelector();
+        });
+        
+        // Cerrar selector al hacer click fuera
+        document.addEventListener('click', function(e) {
+            const isClickInsideSelector = themeSelector.contains(e.target);
+            const isClickOnToggleBtn = toggleThemesBtn.contains(e.target);
+            
+            if (!isClickInsideSelector && !isClickOnToggleBtn && themeSelector.classList.contains('show')) {
+                hideThemeSelector();
+            }
+        });
+    }
+}
+
+function toggleThemeSelector() {
+    const themeSelector = document.getElementById('vertical-theme-selector');
+    const toggleBtn = document.getElementById('toggle-themes-btn');
+    
+    if (themeSelector && toggleBtn) {
+        const isVisible = themeSelector.classList.contains('show');
+        
+        if (isVisible) {
+            hideThemeSelector();
+        } else {
+            showThemeSelector();
+        }
+    }
+}
+
+function showThemeSelector() {
+    const themeSelector = document.getElementById('vertical-theme-selector');
+    const toggleBtn = document.getElementById('toggle-themes-btn');
+    
+    if (themeSelector && toggleBtn) {
+        themeSelector.classList.add('show');
+        toggleBtn.classList.add('active');
+    }
+}
+
+function hideThemeSelector() {
+    const themeSelector = document.getElementById('vertical-theme-selector');
+    const toggleBtn = document.getElementById('toggle-themes-btn');
+    
+    if (themeSelector && toggleBtn) {
+        themeSelector.classList.remove('show');
+        toggleBtn.classList.remove('active');
+    }
 }
 
 function updateThemeButtonsState(activeTheme) {
@@ -115,9 +188,19 @@ function updateThemeButtonsState(activeTheme) {
         }
     });
     
-    // Actualizar botones del header
+    // Actualizar botones del header (legacy)
     const headerThemeBtns = document.querySelectorAll('.header-theme-btn');
     headerThemeBtns.forEach(btn => {
+        if (btn.getAttribute('data-theme') === activeTheme) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+
+    // Actualizar botones verticales (nuevos)
+    const verticalThemeBtns = document.querySelectorAll('.vertical-theme-btn');
+    verticalThemeBtns.forEach(btn => {
         if (btn.getAttribute('data-theme') === activeTheme) {
             btn.classList.add('active');
         } else {
@@ -164,14 +247,13 @@ function navigateToTool(tool) {
                 updateActiveMenuItem('menu-multi');
                 window.location.hash = 'multi';
                 break;
-            case 'calendario':
-                showPanel('calendario-panel');
-                updateActiveMenuItem('menu-calendario');
-                window.location.hash = 'calendario';
-                break;
+            
 
             case 'word-counter':
-                window.location.href = 'word-counter.html';
+                showLoadingBar('Cargando Contador de Palabras...', 'Preparando herramienta de análisis de texto');
+                setTimeout(() => {
+                    window.location.href = 'word-counter.html';
+                }, 1500);
                 break;
             case 'rubricas':
                 showPanel('rubricas-panel');
@@ -179,19 +261,100 @@ function navigateToTool(tool) {
                 window.location.hash = 'rubricas';
                 break;
             case 'grupos-aleatorios':
-                window.location.href = 'grupos-aleatorios.html';
+                showLoadingBar('Cargando Grupos Aleatorios...', 'Preparando generador de grupos');
+                setTimeout(() => {
+                    window.location.href = 'grupos-aleatorios.html';
+                }, 1500);
                 break;
             case 'config':
                 showPanel('config');
                 updateActiveMenuItem('menu-config');
                 window.location.hash = 'config';
                 break;
-            case 'libro-clases':
-                window.location.href = 'libro-clases.html';
-                break;
             case 'matematicas-rapidas':
-                window.location.href = 'matematicas-rapidas.html';
+                showPanel('matematicas-rapidas-panel');
+                updateActiveMenuItem('menu-matematicas-rapidas');
+                window.location.hash = 'matematicas-rapidas';
+                // Mostrar el panel con la clase show
+                const mathPanel = document.getElementById('matematicas-rapidas-panel');
+                if (mathPanel) {
+                    mathPanel.classList.add('show');
+                }
+                
+                // Inicializar el fondo matemático exclusivo
+                if (typeof initMathBackground === 'function') {
+                    console.log('🎨 Activando fondo matemático exclusivo desde dashboard...');
+                    initMathBackground();
+                }
+                
+                // Inicializar fondos animados para matemáticas rápidas (sistema anterior)
+                if (window.animatedBackgrounds && window.animatedBackgrounds.switchTheme) {
+                    const currentTheme = localStorage.getItem('theme') || 'theme-dark';
+                    // Inicializar fondos específicos del panel
+                    setTimeout(() => {
+                        const mathBgElements = {
+                            'theme-light': document.getElementById('bg-wrap-math'),
+                            'theme-dark': document.getElementById('bg-wrap-dark-math'),
+                            'theme-rosa': document.getElementById('bg-wrap-rosa-math'),
+                            'theme-neon': document.getElementById('bg-wrap-neon-math')
+                        };
+                        
+                        // Ocultar todos los fondos del panel
+                        Object.values(mathBgElements).forEach(bg => {
+                            if (bg) {
+                                bg.style.display = 'none';
+                                bg.style.opacity = '0';
+                            }
+                        });
+                        
+                        // Mostrar el fondo del tema actual
+                        const activeBg = mathBgElements[currentTheme];
+                        if (activeBg) {
+                            activeBg.style.display = 'block';
+                            activeBg.style.opacity = '1';
+                        }
+                        
+                        // Inicializar fondos con animated-backgrounds
+                        window.animatedBackgrounds.createMathThemeElements();
+                        window.animatedBackgrounds.switchMathTheme(currentTheme);
+                    }, 100);
+                }
+                // Inicializar el juego de matemáticas rápidas
+                if (window.matematicasRapidas && typeof window.matematicasRapidas.init === 'function') {
+                    window.matematicasRapidas.init();
+                }
                 break;
+            case 'preguntas-rapidas':
+                showLoadingBar('Cargando Preguntas Rápidas...', 'Preparando juego de preguntas');
+                setTimeout(() => {
+                    window.location.href = 'preguntas-rapidas.html';
+                }, 1500);
+                break;
+            case 'creador-rubricas':
+                showLoadingBar('Cargando Creador de Rúbricas...', 'Preparando editor de rúbricas');
+                setTimeout(() => {
+                    window.location.href = 'creador-rubricas.html';
+                }, 1500);
+                break;
+            case 'evalua-rubricas':
+                showLoadingBar('Cargando Evaluador de Rúbricas...', 'Preparando sistema de evaluación');
+                setTimeout(() => {
+                    window.location.href = 'evalua-rubricas.html';
+                }, 1500);
+                break;
+            case 'simce':
+                showLoadingBar('Cargando SIMCE...', 'Preparando evaluación SIMCE');
+                setTimeout(() => {
+                    window.location.href = 'simce.html';
+                }, 1500);
+                break;
+            case 'paes':
+                showLoadingBar('Cargando PAES...', 'Preparando evaluación PAES');
+                setTimeout(() => {
+                    window.location.href = 'paes.html';
+                }, 1500);
+                break;
+            // Casos OMR eliminados
             // case 'themes': - ELIMINADO
             default:
                 console.warn('Herramienta no reconocida:', tool);
@@ -218,7 +381,8 @@ function showPanel(panelId) {
 function hideAllPanels() {
     const panels = [
         'calc-panel', 'escala-panel', 'multi-panel', 
-        'calendario-panel', 'rubricas-panel',
+        'rubricas-panel',
+        'matematicas-rapidas-panel',
         'config'
     ];
     
@@ -229,6 +393,17 @@ function hideAllPanels() {
             panel.style.opacity = '0';
             panel.style.transform = 'translateY(20px) scale(0.95)';
             panel.classList.remove('visible');
+            
+            // Para el panel de matemáticas rápidas, también quitar la clase show y destruir el fondo
+            if (panelId === 'matematicas-rapidas-panel') {
+                panel.classList.remove('show');
+                
+                // Destruir el fondo matemático exclusivo
+                if (typeof destroyMathBackground === 'function') {
+                    console.log('🗑️ Destruyendo fondo matemático exclusivo...');
+                    destroyMathBackground();
+                }
+            }
         }
     });
 }
@@ -323,11 +498,11 @@ function filterTools(searchTerm) {
         if (titleElement && descElement) {
             const title = titleElement.textContent.toLowerCase();
             const description = descElement.textContent.toLowerCase();
-            
-            if (title.includes(searchTerm) || description.includes(searchTerm)) {
-                card.classList.remove('hidden');
-            } else {
-                card.classList.add('hidden');
+        
+        if (title.includes(searchTerm) || description.includes(searchTerm)) {
+            card.classList.remove('hidden');
+        } else {
+            card.classList.add('hidden');
             }
         }
     });
@@ -371,20 +546,20 @@ function filterToolsByCategory(category) {
     const launcherAppItems = document.querySelectorAll('.launcher-app-item');
     launcherAppItems.forEach(item => {
         if (category === 'all') {
-            item.style.display = 'block';
+            item.classList.remove('filtered-out');
         } else {
             const itemCategory = item.getAttribute('data-category');
             if (itemCategory === category) {
-                item.style.display = 'block';
+                item.classList.remove('filtered-out');
             } else {
-                item.style.display = 'none';
+                item.classList.add('filtered-out');
             }
         }
     });
 }
 
 function changeTheme(theme) {
-    document.body.classList.remove('theme-dark', 'theme-light', 'theme-rosa', 'theme-oscuro');
+            document.body.classList.remove('theme-dark', 'theme-light', 'theme-rosa');
     document.body.classList.add(theme);
     localStorage.setItem('theme', theme); // Cambiar a 'theme' para consistencia
     console.log('Tema cambiado a:', theme);
@@ -553,8 +728,6 @@ function closeAllModals() {
     }
 }
 
-
-
 window.dashboardFunctions = {
     showDashboard,
     hideDashboard,
@@ -565,3 +738,124 @@ window.dashboardFunctions = {
     hideCreditsButton,
     closeAllModals
 }; 
+
+// ================================
+// SISTEMA DE BARRA DE CARGA GLOBAL
+// ================================
+
+/**
+ * Muestra la barra de carga con texto personalizado
+ * @param {string} text - Texto principal de carga
+ * @param {string} subtext - Texto secundario (opcional)
+ */
+function showLoadingBar(text = 'Cargando aplicación...', subtext = 'Por favor espera un momento') {
+    const overlay = document.getElementById('loading-overlay');
+    const loadingText = document.getElementById('loading-text');
+    const loadingSubtext = document.getElementById('loading-subtext');
+    const progressBar = document.getElementById('loading-progress-bar');
+    
+    if (overlay && loadingText && loadingSubtext && progressBar) {
+        // Configurar textos
+        loadingText.textContent = text;
+        loadingSubtext.textContent = subtext;
+        
+        // Resetear progreso
+        progressBar.style.width = '0%';
+        
+        // Mostrar overlay
+        overlay.classList.add('show');
+        
+        // Simular progreso de carga
+        simulateLoadingProgress();
+        
+        console.log('🔄 Barra de carga mostrada:', text);
+    }
+}
+
+/**
+ * Oculta la barra de carga
+ */
+function hideLoadingBar() {
+    const overlay = document.getElementById('loading-overlay');
+    
+    if (overlay) {
+        overlay.classList.remove('show');
+        console.log('✅ Barra de carga ocultada');
+    }
+}
+
+/**
+ * Simula el progreso de carga con una animación realista
+ */
+function simulateLoadingProgress() {
+    const progressBar = document.getElementById('loading-progress-bar');
+    if (!progressBar) return;
+    
+    let progress = 0;
+    const interval = setInterval(() => {
+        // Incremento variable para simular carga realista
+        const increment = Math.random() * 15 + 5; // Entre 5% y 20%
+        progress += increment;
+        
+        if (progress >= 100) {
+            progress = 100;
+            clearInterval(interval);
+        }
+        
+        progressBar.style.width = progress + '%';
+    }, 200); // Actualizar cada 200ms
+}
+
+/**
+ * Actualiza el progreso de la barra manualmente
+ * @param {number} percentage - Porcentaje de progreso (0-100)
+ */
+function updateLoadingProgress(percentage) {
+    const progressBar = document.getElementById('loading-progress-bar');
+    if (progressBar) {
+        progressBar.style.width = Math.min(100, Math.max(0, percentage)) + '%';
+    }
+}
+
+/**
+ * Actualiza el texto de la barra de carga
+ * @param {string} text - Nuevo texto principal
+ * @param {string} subtext - Nuevo texto secundario (opcional)
+ */
+function updateLoadingText(text, subtext) {
+    const loadingText = document.getElementById('loading-text');
+    const loadingSubtext = document.getElementById('loading-subtext');
+    
+    if (loadingText && text) {
+        loadingText.textContent = text;
+    }
+    
+    if (loadingSubtext && subtext) {
+        loadingSubtext.textContent = subtext;
+    }
+}
+
+// Agregar funciones de carga al objeto global
+window.dashboardFunctions.showLoadingBar = showLoadingBar;
+window.dashboardFunctions.hideLoadingBar = hideLoadingBar;
+window.dashboardFunctions.updateLoadingProgress = updateLoadingProgress;
+window.dashboardFunctions.updateLoadingText = updateLoadingText;
+
+// Listener para señales desde localStorage (comunicación con páginas externas)
+window.addEventListener('storage', function(e) {
+    if (e.key === 'hideLoadingBar') {
+        // Una página externa está pidiendo ocultar la barra de carga
+        hideLoadingBar();
+        // Limpiar la señal
+        localStorage.removeItem('hideLoadingBar');
+    }
+});
+
+// Función para mostrar la barra de carga desde páginas externas
+window.addEventListener('focus', function() {
+    // Cuando la ventana principal recupera el foco, verificar si hay señales pendientes
+    if (localStorage.getItem('hideLoadingBar')) {
+        hideLoadingBar();
+        localStorage.removeItem('hideLoadingBar');
+    }
+}); 

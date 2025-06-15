@@ -26,7 +26,6 @@
 }
 
 /* ========================================= */
-/* TEMA DARK - Ocean Waves Style con colores oscuros */
 /* ========================================= */
 #bg-animated-dark {
     background: radial-gradient(ellipse at center, rgba(26,26,46,1) 0%, rgba(22,33,62,1) 35%, #0f0f23 100%);
@@ -151,10 +150,10 @@
 }
 
 /* ========================================= */
-/* TEMA NEON - Ocean Waves Style con colores GameCube púrpura */
+/* TEMA NEON - Ocean Waves Style con colores PlayStation 4 */
 /* ========================================= */
 #bg-animated-neon {
-    background: radial-gradient(ellipse at center, rgb(43 16 77)  100%, rgba(75,73,144,1) 100%, #4A4A8A 100%);
+    background: radial-gradient(ellipse at center, #00246E 0%, #00439C 35%, #0070D1 100%);
     overflow: hidden;
     height: 100vh;
 }
@@ -165,7 +164,7 @@
     position: absolute;
     bottom: 0;
     left: 0;
-    background: #2D2B5F;
+    background: #1F1F1F;
 }
 
 #bg-animated-neon .wave-neon {
@@ -176,7 +175,7 @@
     height: 198px;
     animation: wave 7s cubic-bezier(0.36, 0.45, 0.63, 0.53) infinite;
     transform: translate3d(0, 0, 0);
-    filter:  brightness(0) saturate(100%) invert(100%) sepia(100%) hue-rotate(346deg) brightness(52%) contrast(3125%);
+    filter: brightness(0) saturate(100%) invert(25%) sepia(100%) saturate(3956%) hue-rotate(207deg) brightness(99%) contrast(101%);
     opacity: 1 !important;
 }
 
@@ -184,19 +183,16 @@
     top: -175px;
     animation: wave 7s cubic-bezier(0.36, 0.45, 0.63, 0.53) -.125s infinite, swell 7s ease -1.25s infinite;
     opacity: 1 !important;
-    filter: brightness(0) saturate(100%) invert(20%) sepia(35%) saturate(2500%) hue-rotate(330deg) brightness(150%) contrast(150%);
+    filter: brightness(0) saturate(100%) invert(7%) sepia(86%) saturate(5469%) hue-rotate(220deg) brightness(94%) contrast(106%);
 }
 
 /* ========================================= */
-/* TEMA OSCURO - 4 Olas Coloridas */
 /* ========================================= */
-#bg-animated-oscuro {
     background: #000000;
     overflow: hidden;
     height: 100vh;
 }
 
-#bg-animated-oscuro .ocean-oscuro { 
     height: 5%;
     width: 100%;
     position: absolute;
@@ -205,7 +201,6 @@
     background: #000000;
 }
 
-#bg-animated-oscuro .wave-oscuro {
     background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/85486/wave.svg) repeat-x; 
     position: absolute;
     top: -198px;
@@ -216,28 +211,24 @@
 }
 
 /* Ola 1 - Amarillo #EEB931 (base) */
-#bg-animated-oscuro .wave-oscuro.wave-yellow {
     top: -198px;
     filter: brightness(0) saturate(100%) invert(75%) sepia(85%) saturate(1800%) hue-rotate(357deg) brightness(100%) contrast(95%);
     animation-delay: 0s;
 }
 
 /* Ola 2 - Azul #5176BA */
-#bg-animated-oscuro .wave-oscuro.wave-blue {
     top: -175px;
     filter: brightness(0) saturate(100%) invert(35%) sepia(45%) saturate(2000%) hue-rotate(200deg) brightness(85%) contrast(105%);
     animation: wave 7s cubic-bezier(0.36, 0.45, 0.63, 0.53) -0.5s infinite, swell 7s ease -1.25s infinite;
 }
 
 /* Ola 3 - Rojo #CD2229 */
-#bg-animated-oscuro .wave-oscuro.wave-red {
     top: -152px;
     filter: brightness(0) saturate(100%) invert(15%) sepia(85%) saturate(4500%) hue-rotate(350deg) brightness(95%) contrast(110%);
     animation: wave 7s cubic-bezier(0.36, 0.45, 0.63, 0.53) -1s infinite, swell 7s ease -2.5s infinite;
 }
 
 /* Ola 4 - Verde #5CB49C */
-#bg-animated-oscuro .wave-oscuro.wave-green {
     top: -129px;
     filter: brightness(0) saturate(100%) invert(60%) sepia(25%) saturate(1500%) hue-rotate(147deg) brightness(90%) contrast(90%);
     animation: wave 7s cubic-bezier(0.36, 0.45, 0.63, 0.53) -1.5s infinite, swell 7s ease -3.75s infinite;
@@ -362,7 +353,6 @@
     animation: floatParticles 15s linear infinite;
 }
 
-/* Efecto de deriva para tema oscuro */
 .drift-effect {
     animation: drift 8s ease-in-out infinite;
 }
@@ -380,7 +370,6 @@
         filter: none !important;
     }
     
-    .wave, .wave-dark, .wave-rosa, .wave-neon, .wave-oscuro {
         stroke-width: 1 !important;
         filter: none !important;
     }
@@ -418,42 +407,32 @@
         animation: wave 10s cubic-bezier(0.36, 0.45, 0.63, 0.53) -.125s infinite, swell 10s ease -1.25s infinite !important;
     }
     
-    #bg-animated-oscuro .wave-oscuro {
         animation: wave 10s cubic-bezier(0.36, 0.45, 0.63, 0.53) infinite !important;
     }
     
-    #bg-animated-oscuro .wave-oscuro.wave-blue {
         animation: wave 10s cubic-bezier(0.36, 0.45, 0.63, 0.53) -0.5s infinite, swell 10s ease -1.25s infinite !important;
     }
     
-    #bg-animated-oscuro .wave-oscuro.wave-red {
         animation: wave 10s cubic-bezier(0.36, 0.45, 0.63, 0.53) -1s infinite, swell 10s ease -2.5s infinite !important;
     }
     
-    #bg-animated-oscuro .wave-oscuro.wave-green {
         animation: wave 10s cubic-bezier(0.36, 0.45, 0.63, 0.53) -1.5s infinite, swell 10s ease -3.75s infinite !important;
     }
     
-    /* Ocean waves oscuro responsive para móviles */
-    #bg-animated-oscuro .ocean-oscuro {
         height: 8%;
     }
 
-    #bg-animated-oscuro .wave-oscuro {
         width: 3200px;
         height: 150px;
         top: -150px;
     }
 
-    #bg-animated-oscuro .wave-oscuro.wave-blue {
         top: -130px;
     }
 
-    #bg-animated-oscuro .wave-oscuro.wave-red {
         top: -110px;
     }
-
-    #bg-animated-oscuro .wave-oscuro.wave-green {
+    
         top: -90px;
     }
 
@@ -537,24 +516,22 @@
         transition-duration: 0.01ms !important;
     }
     
-    /* Desactivar animaciones de océano oscuro para accesibilidad */
-    #bg-animated-oscuro .wave-oscuro {
         animation: none !important;
         transform: translate3d(0, 0, 0) !important;
     }
-
+    
     /* Desactivar animaciones de océano dark para accesibilidad */
     #bg-animated-dark .wave-dark {
         animation: none !important;
         transform: translate3d(0, 0, 0) !important;
     }
-
+    
     /* Desactivar animaciones de océano light para accesibilidad */
     #bg-animated-light .wave {
         animation: none !important;
         transform: translate3d(0, 0, 0) !important;
     }
-
+    
     /* Desactivar animaciones de océano rosa para accesibilidad */
     #bg-animated-rosa .wave-rosa {
         animation: none !important;
@@ -611,6 +588,5 @@
     transition: none !important;
 }
 
-.no-animations #bg-animated-oscuro .wave-oscuro {
     animation: none !important;
 } 

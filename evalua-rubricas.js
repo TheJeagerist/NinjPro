@@ -153,9 +153,39 @@ function cargarCursos() {
         // Convertir cursosData a formato esperado
         cursosDisponibles = [];
         Object.keys(cursosData).forEach(nombreCurso => {
+            // Verificar y convertir el formato de estudiantes si es necesario
+            const estudiantesCurso = cursosData[nombreCurso] || [];
+            const estudiantesFormateados = estudiantesCurso.map(estudiante => {
+                // Si el estudiante ya tiene el formato correcto (con nombre y apellido), mantenerlo
+                if (typeof estudiante === 'object' && estudiante.nombre) {
+                    return {
+                        nombre: estudiante.nombre,
+                        apellido: estudiante.apellido || '',
+                        id: estudiante.id || Math.random().toString(36).substr(2, 9)
+                    };
+                }
+                // Si es solo un string, convertirlo al formato esperado
+                else if (typeof estudiante === 'string') {
+                    const partesNombre = estudiante.trim().split(' ');
+                    return {
+                        nombre: partesNombre[0] || estudiante,
+                        apellido: partesNombre.slice(1).join(' ') || '',
+                        id: Math.random().toString(36).substr(2, 9)
+                    };
+                }
+                // Si tiene formato básico con solo nombre
+                else {
+                    return {
+                        nombre: estudiante.nombre || 'Estudiante',
+                        apellido: '',
+                        id: estudiante.id || Math.random().toString(36).substr(2, 9)
+                    };
+                }
+            });
+            
             cursosDisponibles.push({
                 nombre: nombreCurso,
-                estudiantes: cursosData[nombreCurso] || []
+                estudiantes: estudiantesFormateados
             });
         });
         

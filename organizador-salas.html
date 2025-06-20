@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organizador de Salas - NinjPro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="organizador-salas.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header Principal -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="header-icon">
+                        <i class="fas fa-school"></i>
+                    </div>
+                    <h1>Organizador de Salas</h1>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary" onclick="window.location.href='index.html'">
+                        <i class="fas fa-home"></i>
+                        Inicio
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Pantalla de Selección Inicial -->
+        <div id="selectionScreen" class="selection-screen">
+            <div class="selection-container">
+                <div class="selection-header">
+                    <h2>¿Qué deseas hacer?</h2>
+                    <p>Selecciona la herramienta que necesitas para gestionar tus salas de clase</p>
+                </div>
+                
+                <div class="selection-options">
+                    <!-- Opción Organizador de Puestos -->
+                    <div class="selection-card" onclick="showOrganizadorPuestos()">
+                        <div class="card-icon">
+                            <i class="fas fa-chair"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Organizador de Puestos</h3>
+                            <p>Distribuye y organiza los asientos de tus estudiantes en la sala de clases</p>
+                            <ul class="card-features">
+                                <li><i class="fas fa-check"></i> Distribución por grilla</li>
+                                <li><i class="fas fa-check"></i> Organización automática en parejas/tríos</li>
+                                <li><i class="fas fa-check"></i> Drag & drop intuitivo</li>
+                                <li><i class="fas fa-check"></i> Guardar disposiciones</li>
+                            </ul>
+                        </div>
+                        <div class="card-action">
+                            <span>Organizar Puestos</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+
+                    <!-- Opción Gestor de Salas -->
+                    <div class="selection-card" onclick="showGestorSalas()">
+                        <div class="card-icon">
+                            <i class="fas fa-door-open"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Gestor de Salas</h3>
+                            <p>Administra y configura las diferentes salas disponibles para cada curso</p>
+                            <ul class="card-features">
+                                <li><i class="fas fa-check"></i> Crear y editar salas</li>
+                                <li><i class="fas fa-check"></i> Definir capacidades</li>
+                                <li><i class="fas fa-check"></i> Organizar por orden</li>
+                                <li><i class="fas fa-check"></i> Gestión por curso</li>
+                            </ul>
+                        </div>
+                        <div class="card-action">
+                            <span>Gestionar Salas</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenedor del Organizador de Puestos -->
+        <div id="organizadorPuestosContainer" class="module-container hidden">
+            <!-- Header del módulo -->
+            <div class="module-header">
+                <div class="module-nav">
+                    <button class="btn-back" onclick="showSelectionScreen()">
+                        <i class="fas fa-arrow-left"></i>
+                        Volver
+                    </button>
+                    <h2><i class="fas fa-chair"></i> Organizador de Puestos</h2>
+                </div>
+                <div class="module-actions">
+                    <div class="auto-organize-group">
+                        <button id="organizePairs" class="btn btn-auto" title="Organizar en parejas">
+                            <i class="fas fa-users"></i>
+                            Parejas
+                        </button>
+                        <button id="organizeTrios" class="btn btn-auto" title="Organizar en tríos">
+                            <i class="fas fa-user-friends"></i>
+                            Tríos
+                        </button>
+                    </div>
+                    <button onclick="showGestorSalas()" class="btn btn-info" title="Ir al gestor de salas">
+                        <i class="fas fa-door-open"></i>
+                        Gestionar Salas
+                    </button>
+                    <button id="clearCanvas" class="btn btn-secondary">
+                        <i class="fas fa-trash"></i>
+                        Limpiar Canvas
+                    </button>
+                    <button id="saveLayout" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Guardar Disposición
+                    </button>
+                    <button id="exportPDF" class="btn btn-success">
+                        <i class="fas fa-file-pdf"></i>
+                        Exportar PDF
+                    </button>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <!-- Panel Izquierdo - Lista de Estudiantes -->
+                <div class="left-panel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-users"></i> Lista de Estudiantes</h3>
+                    </div>
+                    
+                    <!-- Selector de cursos para cargar estudiantes -->
+                    <div class="student-input-section">
+                        <div class="input-methods">
+                            <button id="loadFromCoursesBtn" class="input-method-btn active">
+                                <i class="fas fa-graduation-cap"></i>
+                                Desde Cursos
+                            </button>
+                            <button id="addManualBtn" class="input-method-btn">
+                                <i class="fas fa-keyboard"></i>
+                                Manual
+                            </button>
+                            <button id="addFileBtn" class="input-method-btn">
+                                <i class="fas fa-upload"></i>
+                                Archivo
+                            </button>
+                        </div>
+                        
+                        <div id="coursesInput" class="input-section">
+                            <div class="form-group">
+                                <label for="courseSelect">Seleccionar Curso:</label>
+                                <div class="course-selector-container">
+                                    <select id="courseSelect" class="course-selector">
+                                        <option value="">Seleccionar curso...</option>
+                                    </select>
+                                    <button id="refreshCoursesBtn" class="btn-refresh" title="Actualizar cursos">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button id="loadStudentsBtn" class="btn btn-primary" disabled>
+                                <i class="fas fa-users"></i>
+                                Cargar Estudiantes del Curso
+                            </button>
+                            <div class="course-info" id="courseInfo" style="display: none;">
+                                <p><i class="fas fa-info-circle"></i> <span id="courseInfoText"></span></p>
+                            </div>
+                        </div>
+                        
+                        <div id="manualInput" class="input-section hidden">
+                            <textarea 
+                                id="studentTextArea" 
+                                placeholder="Ingresa los nombres de los estudiantes, uno por línea:&#10;Juan Pérez&#10;María González&#10;Carlos López..."
+                                rows="6"
+                            ></textarea>
+                            <button id="addStudentsBtn" class="btn btn-primary">
+                                <i class="fas fa-plus"></i>
+                                Agregar Estudiantes
+                            </button>
+                        </div>
+                        
+                        <div id="fileInput" class="input-section hidden">
+                            <div class="file-upload-area" id="fileDropArea">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Arrastra un archivo de texto aquí o haz clic para seleccionar</p>
+                                <input type="file" id="fileInputElement" accept=".txt,.csv" hidden>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Lista de estudiantes -->
+                    <div class="students-list-container">
+                        <div class="students-count">
+                            <span>Estudiantes: <span id="studentCount">0</span></span>
+                            <button id="clearStudents" class="btn-icon" title="Limpiar lista">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div id="studentsList" class="students-list">
+                            <!-- Los estudiantes se agregarán aquí dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel Derecho - Canvas de Organización -->
+                <div class="right-panel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-th"></i> Sala de Clases</h3>
+                        <div class="canvas-controls">
+                            <div class="room-info-section" id="roomInfoSection" style="display: none;">
+                                <div class="room-selector">
+                                    <label for="roomSelect">Sala Actual:</label>
+                                    <select id="roomSelect" class="room-selector-dropdown">
+                                        <option value="">Seleccionar sala...</option>
+                                    </select>
+                                </div>
+                                <div class="room-details" id="roomDetails">
+                                    <span class="room-capacity"><i class="fas fa-users"></i> <span id="roomCapacityText">-</span></span>
+                                </div>
+                            </div>
+                            <div class="grid-control">
+                                <label for="gridColumns">Columnas:</label>
+                                <input type="number" id="gridColumns" value="3" min="2" max="8">
+                            </div>
+                            <div class="grid-control">
+                                <label for="gridRows">Filas:</label>
+                                <input type="number" id="gridRows" value="3" min="2" max="8">
+                            </div>
+                            <button id="updateGrid" class="btn-grid-update">
+                                <i class="fas fa-sync"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="canvas-container">
+                        <div id="canvas" class="canvas">
+                            <div id="gridContainer" class="grid-container">
+                                <!-- Las celdas del grid se generarán dinámicamente -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenedor del Gestor de Salas -->
+        <div id="gestorSalasContainer" class="module-container hidden">
+            <!-- Header del módulo -->
+            <div class="module-header">
+                <div class="module-nav">
+                    <button class="btn-back" onclick="showSelectionScreen()">
+                        <i class="fas fa-arrow-left"></i>
+                        Volver
+                    </button>
+                    <h2><i class="fas fa-door-open"></i> Gestor de Salas</h2>
+                </div>
+                <div class="module-actions">
+                    <button onclick="showOrganizadorPuestos()" class="btn btn-info" title="Ir al organizador de puestos">
+                        <i class="fas fa-chair"></i>
+                        Organizar Puestos
+                    </button>
+                    <button id="addRoom" class="btn btn-primary" disabled>
+                        <i class="fas fa-plus"></i>
+                        Nueva Sala
+                    </button>
+                    <button id="saveRooms" class="btn btn-success" disabled>
+                        <i class="fas fa-save"></i>
+                        Guardar
+                    </button>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <!-- Panel Izquierdo - Cursos -->
+                <div class="left-panel">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-graduation-cap"></i> Cursos Disponibles</h3>
+                        <button id="refreshCoursesGestor" class="btn-refresh" title="Actualizar cursos">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+
+                    <div class="courses-container">
+                        <div class="course-selector-container">
+                            <select id="courseSelectGestor" class="course-selector">
+                                <option value="">Seleccionar curso...</option>
+                            </select>
+                        </div>
+
+                        <div id="courseInfoGestor" class="course-info" style="display: none;">
+                            <i class="fas fa-info-circle"></i>
+                            <span id="courseInfoTextGestor"></span>
+                        </div>
+
+                        <div class="course-actions">
+                            <button id="selectCourseGestor" class="btn btn-primary" disabled>
+                                <i class="fas fa-check"></i>
+                                Seleccionar Curso
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Información del curso seleccionado -->
+                    <div id="selectedCourseInfoGestor" class="selected-course-info" style="display: none;">
+                        <h4 id="selectedCourseNameGestor"></h4>
+                        <div class="course-stats">
+                            <div class="stat-item">
+                                <i class="fas fa-users"></i>
+                                <span id="totalStudentsGestor">0</span> estudiantes
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-door-open"></i>
+                                <span id="totalRoomsGestor">0</span> salas
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-th"></i>
+                                <span id="totalLayoutsGestor">0</span> disposiciones
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel Derecho - Gestión de Salas y Disposiciones -->
+                <div class="right-panel">
+                    <!-- Pestañas para alternar entre salas y disposiciones -->
+                    <div class="panel-tabs">
+                        <button id="roomsTab" class="tab-button active">
+                            <i class="fas fa-door-open"></i> Salas
+                        </button>
+                        <button id="layoutsTab" class="tab-button">
+                            <i class="fas fa-th"></i> Disposiciones
+                        </button>
+                    </div>
+
+                    <!-- Contenido de Salas -->
+                    <div id="roomsContent" class="tab-content">
+                        <div class="panel-header">
+                            <h3><i class="fas fa-door-open"></i> Salas del Curso</h3>
+                        </div>
+
+                        <div class="rooms-container">
+                            <div id="noRoomsMessageGestor" class="no-rooms-message">
+                                <i class="fas fa-door-closed"></i>
+                                <p>Selecciona un curso para gestionar sus salas</p>
+                            </div>
+
+                            <div id="roomsListGestor" class="rooms-list" style="display: none;">
+                                <!-- Las salas se generarán dinámicamente aquí -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contenido de Disposiciones -->
+                    <div id="layoutsContent" class="tab-content hidden">
+                        <div class="panel-header">
+                            <h3><i class="fas fa-th"></i> Disposiciones Guardadas</h3>
+                        </div>
+
+                        <div class="layouts-container">
+                            <div id="noLayoutsMessageGestor" class="no-rooms-message">
+                                <i class="fas fa-th-large"></i>
+                                <p>No hay disposiciones guardadas para este curso</p>
+                            </div>
+
+                            <div id="layoutsListGestor" class="rooms-list" style="display: none;">
+                                <!-- Las disposiciones se generarán dinámicamente aquí -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modales -->
+    <!-- Modal para guardar disposición -->
+    <div id="saveModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Guardar Disposición</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <label for="layoutName">Nombre de la disposición:</label>
+                <input type="text" id="layoutName" placeholder="Ej: Clase de Matemáticas - Grupo A">
+                <div class="modal-actions">
+                    <button id="confirmSave" class="btn btn-primary">Guardar</button>
+                    <button id="cancelSave" class="btn btn-secondary">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para crear/editar sala -->
+    <div id="roomModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Nueva Sala</h3>
+                <button class="modal-close" onclick="hideRoomModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="roomName">Nombre de la Sala:</label>
+                    <input type="text" id="roomName" placeholder="Ej: Sala A, Aula 101, etc.">
+                </div>
+                <div class="form-group">
+                    <label for="roomDescription">Descripción (opcional):</label>
+                    <textarea id="roomDescription" placeholder="Descripción de la sala, ubicación, características..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="roomCapacity">Capacidad:</label>
+                    <input type="number" id="roomCapacity" min="1" max="100" placeholder="Número máximo de estudiantes">
+                </div>
+                <div class="form-group">
+                    <label for="roomOrder">Orden:</label>
+                    <input type="number" id="roomOrder" min="1" placeholder="Orden de la sala (1, 2, 3...)">
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="hideRoomModal()">Cancelar</button>
+                <button id="saveRoomBtn" class="btn btn-primary" onclick="saveRoom()">Guardar Sala</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación -->
+    <div id="confirmModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirmar Acción</h3>
+                <button class="modal-close" onclick="hideConfirmModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage"></p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="hideConfirmModal()">Cancelar</button>
+                <button id="confirmBtn" class="btn btn-danger">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Librerías para exportar PDF (locales) -->
+    <script src="jspdf.umd.min.js"></script>
+    <script src="html2canvas.min.js"></script>
+    
+    <script src="organizador-salas.js"></script>
+</body>
+</html> 

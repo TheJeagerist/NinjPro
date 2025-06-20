@@ -61,7 +61,7 @@ function inicializarEventListeners() {
     elements.nuevaRubricaBtn?.addEventListener('click', nuevaRubrica);
     elements.cargarRubricaBtn?.addEventListener('click', () => elements.fileInput.click());
     elements.descargarPlantillaWordBtn?.addEventListener('click', descargarPlantillaWord);
-    elements.descargarPlantillaExcelBtn?.addEventListener('click', descargarPlantillaExcel);
+    elements.descargarPlantillaExcelBtn?.addEventListener('click', descargarPlantillaRubricaExcel);
     
     // Editor buttons
     elements.guardarRubricaBtn?.addEventListener('click', guardarRubrica);
@@ -690,7 +690,7 @@ async function descargarPlantillaWord() {
     mostrarMensaje('Funcionalidad de plantilla Word en desarrollo', 'info');
 }
 
-async function descargarPlantillaExcel() {
+async function descargarPlantillaRubricaExcel() {
     try {
         const wb = XLSX.utils.book_new();
         const wsData = [

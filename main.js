@@ -551,18 +551,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
   }
 
-  // Función para descargar la plantilla Excel
-  function descargarPlantillaExcel() {
-      const ws = XLSX.utils.aoa_to_sheet([
-          ['ID', 'Nombre', 'Curso'],
-          ['1', 'Ejemplo Estudiante', '8°A'],
-      ]);
-      
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Estudiantes');
-      
-      XLSX.writeFile(wb, 'plantilla_estudiantes.xlsx');
-  }
+  // Función para descargar la plantilla Excel eliminada - se usa la de script.js
 
   // Modificar la función existente de inicialización
   document.addEventListener('DOMContentLoaded', function() {
@@ -1845,18 +1834,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
   }
 
-  // Función para descargar la plantilla Excel
-  function descargarPlantillaExcel() {
-      const ws = XLSX.utils.aoa_to_sheet([
-          ['ID', 'Nombre', 'Curso'],
-          ['1', 'Ejemplo Estudiante', '8°A'],
-      ]);
-      
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Estudiantes');
-      
-      XLSX.writeFile(wb, 'plantilla_estudiantes.xlsx');
-  }
+  // Segunda función duplicada para descargar plantilla Excel también eliminada
 
   // Modificar la función existente de inicialización
   document.addEventListener('DOMContentLoaded', function() {

@@ -1269,7 +1269,7 @@ function inicializarEventListenersRubrica() {
         agregarFilaBtn.addEventListener('click', agregarFila);
     }
     if (descargarExcelBtn) {
-        descargarExcelBtn.addEventListener('click', descargarPlantillaExcel);
+        descargarExcelBtn.addEventListener('click', descargarPlantillaRubricaExcel);
     }
     if (descargarWordBtn) {
         descargarWordBtn.addEventListener('click', descargarPlantillaWord);
@@ -1574,7 +1574,7 @@ async function descargarPlantillaWord() {
     }
 }
 
-async function descargarPlantillaExcel() {
+async function descargarPlantillaRubricaExcel() {
     try {
         // Crear un libro de Excel
         const wb = XLSX.utils.book_new();

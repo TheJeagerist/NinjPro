@@ -354,6 +354,18 @@ function navigateToTool(tool) {
                     window.location.href = 'paes.html';
                 }, 1500);
                 break;
+            case 'evaluacion-simple':
+                showLoadingBar('Cargando Evaluación Simple...', 'Preparando sistema de evaluación por puntajes');
+                setTimeout(() => {
+                    window.location.href = 'evaluacion-simple.html';
+                }, 1500);
+                break;
+            case 'organizador-salas':
+                showLoadingBar('Cargando Organizador de Salas...', 'Preparando gestión completa de aulas');
+                setTimeout(() => {
+                    window.location.href = 'organizador-salas.html';
+                }, 1500);
+                break;
             // Casos OMR eliminados
             // case 'themes': - ELIMINADO
             default:

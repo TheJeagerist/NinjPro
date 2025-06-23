@@ -1,0 +1,793 @@
+/* ===== GENERADOR DE ESCALA DE NOTAS - PROFENINJA ===== */
+
+/* Variables específicas para la aplicación */
+:root {
+    --escala-primary: #3b82f6;
+    --escala-success: #10b981;
+    --escala-warning: #f59e0b;
+    --escala-danger: #ef4444;
+    --escala-purple: #8b5cf6;
+    
+    --escala-glass-bg: rgba(255, 255, 255, 0.15);
+    --escala-glass-border: rgba(255, 255, 255, 0.2);
+    --escala-blur: blur(20px);
+    --escala-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    --escala-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    --escala-yellow: #fbbf24;
+    --escala-green: #10b981;
+    --escala-blue: #3b82f6;
+}
+
+/* Reset específico */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Botón volver al launcher - Minimalista en esquina superior izquierda */
+.btn-volver-launcher {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    color: inherit;
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn-volver-launcher:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Configuración base del body */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    color: #ffffff;
+    overflow-x: hidden;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+/* Temas dinámicos - Exactamente como el sistema principal */
+body.theme-dark {
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+    color: #ffffff;
+}
+
+body.theme-light {
+    background: linear-gradient(135deg, #e0f2fe 0%, #f3e5f5 50%, #fff3e0 100%);
+    color: #1a202c;
+}
+
+body.theme-rosa {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #ffffff;
+}
+
+body.theme-neon {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 50%, #2a1a4e 100%);
+    color: #ffffff;
+}
+
+/* Contenedor principal */
+.escala-container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem 2rem 4rem 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Panel principal de la aplicación - Glassmorphism */
+.escala-panel {
+    background: rgb(255 255 255 / 0%);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    padding: 2.5rem;
+    width: 900px;
+    min-height: auto;
+    position: relative;
+    overflow: visible;
+    margin-top: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.escala-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    pointer-events: none;
+    border-radius: 24px;
+}
+
+/* Encabezado */
+.escala-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 2;
+    flex-shrink: 0;
+}
+
+.escala-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #1f2937;
+}
+
+/* Modo selector */
+.modo-selector {
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+.modo-label {
+    color: var(--escala-primary);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* Contenedor de inputs - Grid de 5 columnas como en la imagen */
+.inputs-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 2;
+    flex-shrink: 0;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-group label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #6b7280;
+    text-align: center;
+    margin-bottom: 0.25rem;
+}
+
+.input-group input {
+    background: #ffffffab;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 0.75rem;
+    font-size: 1rem;
+    color: #374151;
+    text-align: center;
+    font-weight: 500;
+    transition: var(--escala-transition);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.input-group input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Botones de modo */
+.modo-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+.modo-btn {
+    background: #6b7280;
+    border: 1px solid #4b5563;
+    border-radius: 12px;
+    padding: 0.75rem 1.5rem;
+    color: white;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--escala-transition);
+    backdrop-filter: blur(10px);
+    position: relative;
+}
+
+.modo-btn.active {
+    background: #3b82f6;
+    border-color: #2563eb;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.modo-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+
+
+/* Conversor de puntaje a nota */
+.conversor-container {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 2;
+    flex-shrink: 0;
+}
+
+.conversor-header {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.conversor-header h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1f2937;
+    opacity: 0.9;
+}
+
+.conversor-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    align-items: end;
+}
+
+.conversor-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.conversor-group label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    opacity: 0.9;
+    text-align: center;
+}
+
+.conversor-group input {
+    background: #fde04742;
+    border: 2px solid #f3f3f3;
+    border-radius: 12px;
+    padding: 0.75rem;
+    font-size: 1rem;
+    color: #1f2937;
+    text-align: center;
+    font-weight: 600;
+    transition: var(--escala-transition);
+    backdrop-filter: blur(10px);
+}
+
+.conversor-group input:focus {
+    outline: none;
+    border-color: #eab308;
+    box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.3);
+    transform: scale(1.02);
+}
+
+.conversor-resultado {
+    background: #99ffd05e;
+    border: 2px solid #ffffff00;
+    border-radius: 12px;
+    padding: .35rem;
+    font-size: 1rem;
+    color: #1f2937;
+    text-align: center;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+    min-height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Controles de tabla */
+.tabla-controls {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 2;
+    flex-shrink: 0;
+}
+
+.btn-ocultar {
+    background: #bfdbfe;
+    border: 1px solid #93c5fd;
+    border-radius: 12px;
+    padding: 0.75rem 1.5rem;
+    color: #3b82f6;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--escala-transition);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-ocultar:hover {
+    background: #93c5fd;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
+}
+
+.tabla-icon {
+    font-size: 1rem;
+}
+
+/* Contenedor de tabla */
+.tabla-container {
+    position: relative;
+    z-index: 2;
+    margin-top: 1rem;
+    width: 100%;
+    overflow-x: auto;
+    flex-grow: 1;
+}
+
+.tabla-escala {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    padding: 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    gap: 2px;
+    width: 100%;
+    min-width: 800px;
+}
+
+.tabla-columna {
+    flex: 1;
+    background: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tabla-columna table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+.tabla-columna th {
+    background: #4b5563;
+    color: white;
+    padding: 0.5rem;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.8rem;
+    border: none;
+}
+
+.tabla-columna td {
+    padding: 0.3rem 0.5rem;
+    text-align: center;
+    color: #1f2937;
+    font-weight: 500;
+    border: none;
+    font-size: 0.8rem;
+}
+
+.tabla-columna tbody tr:nth-child(odd) {
+    background: #f9fafb;
+}
+
+.tabla-columna tbody tr:nth-child(even) {
+    background: #ffffff;
+}
+
+.tabla-columna tbody tr:hover {
+    background: #e5e7eb;
+}
+
+/* Estilo específico para las columnas de puntaje */
+.tabla-columna .col-puntaje {
+    background: #f3f4f6;
+    font-weight: 600;
+}
+
+/* Estilo específico para las columnas de nota */
+.tabla-columna .col-nota {
+    background: #ecfdf5;
+    font-weight: 600;
+    color: #059669;
+}
+
+/* Notas reprobatorias en rojo */
+.tabla-columna .col-nota.reprobado {
+    color: #dc2626;
+    background: #fee2e2;
+}
+
+/* Ajustes específicos para tema claro - Liquid Glass Effect */
+body.theme-light .escala-panel {
+    /* Base del contenedor con vidrio líquido - MÁS TRANSPARENTE */
+    background: rgba(255, 255, 255, 0.08) !important;
+    backdrop-filter: blur(25px) saturate(180%);
+    -webkit-backdrop-filter: blur(25px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 
+        0 12px 40px rgba(31, 38, 135, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.08) !important;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Efecto de brillo ambiental para el panel */
+body.theme-light .escala-panel::before {
+    background: radial-gradient(
+        circle at center,
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(79, 188, 255, 0.05) 30%,
+        transparent 70%
+    );
+    opacity: 0.3;
+}
+
+/* Hover effect para el panel */
+body.theme-light .escala-panel:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
+    box-shadow: 
+        0 20px 60px rgba(31, 38, 135, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.25),
+        0 0 0 1px rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Título con mejor contraste en tema light */
+body.theme-light .escala-header h1 {
+    color: rgba(55, 65, 81, 0.95) !important;
+    font-weight: 700 !important;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+/* Labels en tema light */
+body.theme-light .input-group label,
+body.theme-light .conversor-group label {
+    color: #6b7280 !important;
+    text-shadow: none !important;
+}
+
+/* Título del conversor */
+body.theme-light .conversor-header h3 {
+    color: rgba(55, 65, 81, 0.95) !important;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+/* Inputs en tema light - mismo estilo que imagen */
+body.theme-light .input-group input {
+    background: #ffffff !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 8px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+    color: #374151 !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+body.theme-light .input-group input:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 
+        0 0 0 3px rgba(59, 130, 246, 0.1),
+        0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Resultado del conversor con liquid glass */
+body.theme-light .conversor-resultado {
+    background: rgba(16, 185, 129, 0.8) !important;
+    border: 2px solid rgba(16, 185, 129, 0.6) !important;
+    backdrop-filter: blur(10px) saturate(120%);
+    -webkit-backdrop-filter: blur(10px) saturate(120%);
+    box-shadow: 
+        0 4px 16px rgba(16, 185, 129, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+    color: rgba(55, 65, 81, 0.95) !important;
+}
+
+/* Contenedor del conversor con liquid glass */
+body.theme-light .conversor-container {
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    box-shadow: 
+        0 6px 20px rgba(31, 38, 135, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Botones de modo con liquid glass */
+body.theme-light .modo-btn {
+    background: rgba(255, 255, 255, 0.2) !important;
+    backdrop-filter: blur(10px) saturate(120%);
+    -webkit-backdrop-filter: blur(10px) saturate(120%);
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: rgba(55, 65, 81, 0.9) !important;
+    box-shadow: 
+        0 4px 16px rgba(31, 38, 135, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+
+body.theme-light .modo-btn.active {
+    background: rgba(79, 188, 255, 0.3) !important;
+    border-color: rgba(79, 188, 255, 0.5) !important;
+    color: rgba(55, 65, 81, 0.95) !important;
+    box-shadow: 
+        0 0 20px rgba(79, 188, 255, 0.4),
+        0 8px 24px rgba(31, 38, 135, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Botón ocultar tabla con liquid glass */
+body.theme-light .btn-ocultar {
+    background: rgba(79, 188, 255, 0.2) !important;
+    backdrop-filter: blur(10px) saturate(120%);
+    -webkit-backdrop-filter: blur(10px) saturate(120%);
+    border: 1px solid rgba(79, 188, 255, 0.4) !important;
+    color: rgba(79, 188, 255, 0.9) !important;
+    box-shadow: 
+        0 4px 16px rgba(79, 188, 255, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+body.theme-light .btn-ocultar:hover {
+    background: rgba(79, 188, 255, 0.3) !important;
+    box-shadow: 
+        0 6px 20px rgba(79, 188, 255, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+
+/* Tabla con liquid glass */
+body.theme-light .tabla-columna {
+    background: rgba(255, 255, 255, 0.08) !important;
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 
+        0 6px 20px rgba(31, 38, 135, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.35) !important;
+}
+
+body.theme-light .tabla-columna th {
+    background: rgba(75, 85, 99, 0.8) !important;
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Ajustes específicos para tema neon */
+body.theme-neon .escala-panel {
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.1);
+}
+
+body.theme-neon .modo-btn.active {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .escala-panel {
+        width: 100%;
+        max-width: 900px;
+    }
+    
+    .inputs-container {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+    }
+    
+    .conversor-content {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .tabla-escala {
+        min-width: 600px;
+    }
+}
+
+@media (max-width: 768px) {
+    .escala-container {
+        padding: 1rem;
+    }
+    
+    .escala-panel {
+        padding: 1.5rem;
+        border-radius: 16px;
+        width: 100%;
+        max-width: none;
+    }
+    
+    .escala-header h1 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .inputs-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .input-group input {
+        padding: 0.65rem;
+        font-size: 0.95rem;
+    }
+    
+    .modo-buttons {
+        flex-direction: column;
+        gap: 0.75rem;
+        align-items: center;
+    }
+    
+    .modo-btn {
+        width: 100%;
+        max-width: 200px;
+    }
+    
+    .conversor-container {
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .conversor-content {
+        gap: 1rem;
+    }
+    
+    .tabla-escala {
+        flex-direction: column;
+        gap: 1rem;
+        min-width: auto;
+        width: 100%;
+    }
+
+    .tabla-columna {
+        margin-bottom: 0.5rem;
+    }
+
+    .tabla-columna table {
+        font-size: 0.8rem;
+    }
+    
+    .tabla-columna th,
+    .tabla-columna td {
+        padding: 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .escala-container {
+        padding: 0.5rem;
+    }
+    
+    .escala-panel {
+        padding: 1rem;
+        border-radius: 12px;
+        width: 100%;
+    }
+    
+    .escala-header h1 {
+        font-size: 1.25rem;
+    }
+    
+    .inputs-container {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+    
+    .input-group {
+        text-align: center;
+    }
+    
+    .input-group input {
+        padding: 0.75rem;
+        font-size: 1rem;
+    }
+    
+    .conversor-container {
+        padding: 0.75rem;
+    }
+    
+    .conversor-content {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .tabla-escala {
+        flex-direction: column;
+        gap: 0.5rem;
+        min-width: auto;
+        width: 100%;
+    }
+
+    .tabla-columna table {
+        font-size: 0.75rem;
+    }
+    
+    .tabla-columna th,
+    .tabla-columna td {
+        padding: 0.4rem;
+    }
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.escala-panel {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* Estados de hover mejorados */
+.escala-panel:hover {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Optimización de rendimiento */
+.escala-panel,
+.modo-btn,
+.input-group input,
+.conversor-container,
+.btn-ocultar {
+    will-change: transform;
+} 

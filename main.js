@@ -1,8 +1,11 @@
-const container = document.getElementById('rows-container');
-const saveBtn = document.getElementById('saveTpl');
-const select = document.getElementById('tplSelect');
-const delBtn = document.getElementById('delTpl');
+// Elementos de calculadora de promedio ponderado eliminados
+// const container = document.getElementById('rows-container');
+// const saveBtn = document.getElementById('saveTpl');
+// const select = document.getElementById('tplSelect');
+// const delBtn = document.getElementById('delTpl');
 
+// Funciones de calculadora de promedio ponderado eliminadas
+/*
 let initial = [];
 function initRows() { for(let i=0;i<4;i++) addRow(); initial = Array.from(container.children).map(r=>r.innerHTML); }
 function addRow(data) { const row = document.createElement('div'); row.className='row'; row.innerHTML = data || `<input type="number" class="grade" step="0.1" min="1" max="7"><input type="number" class="weight" min="1" max="100"><div class="percent">%</div>`; container.appendChild(row); }
@@ -12,6 +15,9 @@ function saveTemplate() { const name=document.getElementById('tplName').value.tr
 function loadTemplates() { select.innerHTML='<option value="">Seleccionar ramo</option>'; const tpl=JSON.parse(localStorage.getItem('templates')||'{}'); Object.keys(tpl).forEach(name=>select.innerHTML+=`<option value="${name}">${name}</option>`); }
 function applyTemplate() { const name=select.value; if(!name)return; resetAll(); const tpl=JSON.parse(localStorage.getItem('templates'))[name]; container.innerHTML=''; tpl.forEach(({grade,weight})=>addRow(`<input type="number" class="grade" value="${grade}" step="0.1" min="1" max="7"><input type="number" class="weight" value="${weight}" min="1" max="100"><div class="percent">%</div>`)); }
 function deleteTemplate() { const name=select.value; if(!name)return; const tpl=JSON.parse(localStorage.getItem('templates')||'{}'); delete tpl[name]; localStorage.setItem('templates',JSON.stringify(tpl)); loadTemplates(); }
+*/
+// Event listeners de calculadora de promedio ponderado eliminados
+/*
 saveBtn.addEventListener('click', function() {
   saveTemplate();
   // Oculta el panel con animación y muestra el botón Agregar Ramo
@@ -25,6 +31,7 @@ saveBtn.addEventListener('click', function() {
 
 select.addEventListener('change',applyTemplate);
 delBtn.addEventListener('click',deleteTemplate);
+*/
 
 function animateNumber(element, start, end, duration = 800, decimals = 2) {
   if (isNaN(start)) start = 0;
@@ -49,6 +56,8 @@ function animateNumber(element, start, end, duration = 800, decimals = 2) {
   requestAnimationFrame(step);
 }
 
+// Función calculateAverage eliminada - usaba elementos de calculadora de promedio ponderado
+/*
 function calculateAverage() {
   let total = 0, sum = 0;
   let grades = [];
@@ -180,6 +189,7 @@ function showError(msg) {
   document.getElementById('result-value').textContent = "-";
   document.getElementById('result-status').textContent = msg;
 }
+*/
 
 // Tema
 function setTheme(theme) {
@@ -231,7 +241,9 @@ const savedTheme = localStorage.getItem('theme') || 'theme-dark';
 setTheme(savedTheme);
 updateActiveBtn(savedTheme);
 
-// Mostrar y ocultar el panel de ramos
+// Mostrar y ocultar el panel de ramos - ELIMINADO
+// Los elementos show-ramo-panel y hide-ramo-panel fueron eliminados con la calculadora de promedio ponderado
+/*
 document.getElementById('show-ramo-panel').onclick = function() {
   const panel = document.getElementById('ramo-panel');
   panel.style.display = 'flex'; // Para activar la transición
@@ -251,8 +263,11 @@ document.getElementById('hide-ramo-panel').onclick = function() {
     showBtn.classList.add('pop-in');
   }, 450);
 };
+*/
 
-// Restricción en tiempo real para Notas (1-99) y Ponderaciones (1-100, solo enteros)
+// Restricción en tiempo real para Notas (1-99) y Ponderaciones (1-100, solo enteros) - ELIMINADO
+// El elemento container (rows-container) fue eliminado con la calculadora de promedio ponderado
+/*
 container.addEventListener('input', function(e) {
   const target = e.target;
   // Notas
@@ -286,6 +301,7 @@ container.addEventListener('input', function(e) {
     target.value = v ? v : '';
   }
 });
+*/
 
 const sideMenu = document.getElementById('side-menu');
 const collapseBtn = document.getElementById('collapse-menu-btn');
@@ -334,41 +350,34 @@ function initializeElements() {
 // Inicializar el panel activo según la URL o mostrar calculadora por defecto
 function initializePanels() {
   const elements = {
-    calcPanel: document.getElementById('calc-panel'),
-    escalaPanel: document.getElementById('escala-panel'),
+    // calcPanel eliminado - era la calculadora de promedio ponderado
+    // escalaPanel eliminado - está en archivo separado (escala-notas.html)
     multiPanel: document.getElementById('multi-panel'),
     sectionsContainer: document.getElementById('sections-container')
   };
 
-  // Solo verificar que existan los paneles principales
-  const requiredPanels = [elements.calcPanel, elements.escalaPanel, elements.multiPanel];
+  // Solo verificar que existan los paneles que realmente están en index.html
+  const requiredPanels = [elements.multiPanel];
   if (!requiredPanels.every(el => el)) {
-    console.warn('No se encontraron todos los paneles principales');
+    console.warn('No se encontraron los paneles requeridos');
     return;
   }
 
   const hash = window.location.hash;
 
   if (hash === '#escala') {
-    elements.calcPanel.style.display = "none";
-    elements.escalaPanel.style.display = "block";
+    // escala-panel no está en index.html - está en archivo separado
     elements.multiPanel.style.display = "none";
-    generarTablaEscala();
   } else if (hash === '#multi') {
-    elements.calcPanel.style.display = "none";
-    elements.escalaPanel.style.display = "none";
     elements.multiPanel.style.display = "block";
     if (elements.sectionsContainer && elements.sectionsContainer.children.length === 0) {
       addSection();
     }
   } else if (hash === '#calculator') {
-    elements.calcPanel.style.display = "block";
-    elements.escalaPanel.style.display = "none";
+    // calc-panel eliminado - redirigir al dashboard
     elements.multiPanel.style.display = "none";
   } else {
     // Sin hash específico, ocultar todos los paneles (mostrar solo dashboard)
-    elements.calcPanel.style.display = "none";
-    elements.escalaPanel.style.display = "none";
     elements.multiPanel.style.display = "none";
   }
 
@@ -411,24 +420,24 @@ function initializePanels() {
 
 // Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
-  // Inicializar elementos principales
+  // Inicializar elementos principales (sin calc-panel que fue eliminado)
   const elements = {
-    calcPanel: document.getElementById('calc-panel'),
-    escalaPanel: document.getElementById('escala-panel'),
+    // calcPanel eliminado - era la calculadora de promedio ponderado
+    // escalaPanel eliminado - está en archivo separado (escala-notas.html)
     multiPanel: document.getElementById('multi-panel'),
     sectionsContainer: document.getElementById('sections-container')
   };
   
-  // Solo verificar que los paneles principales existan
-  const requiredPanels = [elements.calcPanel, elements.escalaPanel, elements.multiPanel];
+  // Solo verificar que los paneles que están en index.html existan
+  const requiredPanels = [elements.multiPanel];
   if (!requiredPanels.every(el => el)) {
-    console.warn('No se encontraron todos los paneles principales');
+    console.warn('Panel multi-panel no encontrado');
     // No retornar, continuar con otras inicializaciones
   }
 
-  // Inicializar filas y plantillas
-  initRows();
-  loadTemplates();
+  // Inicializar filas y plantillas - ELIMINADO (calculadora de promedio ponderado)
+  // initRows();
+  // loadTemplates();
   
   
 
@@ -1116,7 +1125,8 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
-// Control de visibilidad de columnas
+// Control de visibilidad de columnas - COMENTADO (elementos no existen en index.html)
+/*
 document.addEventListener('DOMContentLoaded', function() {
   const toggleBtn = document.getElementById('toggle-columnas');
   const tablaEscala = document.getElementById('tablaEscala');
@@ -1145,6 +1155,7 @@ document.addEventListener('DOMContentLoaded', function() {
     actualizarEstadoColumnas();
   });
 });
+*/
 
 // Tabla de conversión PAES Competencia Lectora
 const tablaPAESCompetencia = {
@@ -2045,3 +2056,31 @@ function updateActiveMenuItem(menuId) {
   // En el nuevo dashboard no es necesaria, pero evita errores
   console.log('Menu item activado:', menuId);
 }
+
+// Funciones stub para evitar errores - agregadas al final del archivo
+// Reemplazo temporal para funciones que buscan elementos inexistentes
+
+// Función stub para generarTablaEscala
+function generarTablaEscalaStub() {
+  // Función deshabilitada silenciosamente - elementos no existen en index.html
+  return;
+}
+
+// Reemplazar referencias a la función original
+if (typeof generarTablaEscala !== 'undefined') {
+  // Si la función existe, la reemplazamos
+  window.generarTablaEscala = generarTablaEscalaStub;
+}
+
+// Event listener stub para evitar errores de elementos no encontrados
+document.addEventListener('DOMContentLoaded', function() {
+  // Verificación silenciosa de elementos de escala de notas
+  const elementosEscala = ['puntajeMax', 'exigencia', 'notaMin', 'notaMax', 'notaAprob', 'toggle-columnas', 'tablaEscala'];
+  const elementosEncontrados = elementosEscala.filter(id => document.getElementById(id));
+  
+  // Solo mostrar mensaje si hay elementos encontrados (evitar spam en consola)
+  if (elementosEncontrados.length > 0) {
+    console.log('Elementos de escala encontrados:', elementosEncontrados.join(', '));
+  }
+  // No mostrar mensaje si no hay elementos - es el comportamiento normal en index.html
+});

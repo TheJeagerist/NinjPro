@@ -1,10 +1,10 @@
 // Gestión de Rúbricas en Configuración
 document.addEventListener('DOMContentLoaded', function() {
     
-    // Referencias a elementos del DOM
-    const btnCargarRubricaConfig = document.getElementById('btn-cargar-rubrica-config');
-    const btnDescargarPlantillaRubrica = document.getElementById('btn-descargar-plantilla-rubrica');
-    const listaRubricas = document.getElementById('lista-rubricas');
+    // Referencias a elementos del DOM - GESTIÓN DE RÚBRICAS ELIMINADA
+    // const btnCargarRubricaConfig = document.getElementById('btn-cargar-rubrica-config');
+    // const btnDescargarPlantillaRubrica = document.getElementById('btn-descargar-plantilla-rubrica');
+    // const listaRubricas = document.getElementById('lista-rubricas');
     
     // Referencias al panel de rúbricas
     const rubricasGuardadasSelect = document.getElementById('rubricas-guardadas-select');
@@ -17,20 +17,20 @@ document.addEventListener('DOMContentLoaded', function() {
     fileInputRubrica.accept = '.docx,.xlsx,.xls,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel';
     document.body.appendChild(fileInputRubrica);
     
-    // Inicializar al cargar la página
-    cargarListaRubricas();
+    // Inicializar al cargar la página - GESTIÓN DE RÚBRICAS ELIMINADA
+    // cargarListaRubricas();
     actualizarSelectorRubricas();
     
-    // Event Listeners
-    if (btnCargarRubricaConfig) {
-        btnCargarRubricaConfig.addEventListener('click', function() {
-            fileInputRubrica.click();
-        });
-    }
+    // Event Listeners - COMENTADOS PORQUE LOS ELEMENTOS FUERON ELIMINADOS
+    // if (btnCargarRubricaConfig) {
+    //     btnCargarRubricaConfig.addEventListener('click', function() {
+    //         fileInputRubrica.click();
+    //     });
+    // }
     
-    if (btnDescargarPlantillaRubrica) {
-        btnDescargarPlantillaRubrica.addEventListener('click', descargarPlantillaRubrica);
-    }
+    // if (btnDescargarPlantillaRubrica) {
+    //     btnDescargarPlantillaRubrica.addEventListener('click', descargarPlantillaRubrica);
+    // }
     
     if (rubricasGuardadasSelect) {
         rubricasGuardadasSelect.addEventListener('change', function() {
@@ -81,8 +81,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // Guardar la rúbrica
             guardarRubricaEnLocalStorage(rubrica);
             
-            // Actualizar la lista
-            cargarListaRubricas();
+            // Actualizar la lista - GESTIÓN DE RÚBRICAS ELIMINADA
+            // cargarListaRubricas();
             actualizarSelectorRubricas();
             
             alert('Rúbrica cargada y guardada exitosamente: ' + rubrica.titulo);
@@ -231,7 +231,8 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('rubricas_guardadas', JSON.stringify(rubricas));
     }
     
-    // Función para cargar lista de rúbricas
+    // Función para cargar lista de rúbricas - ELIMINADA PORQUE SE QUITÓ LA GESTIÓN DE RÚBRICAS
+    /*
     function cargarListaRubricas() {
         if (!listaRubricas) return;
         
@@ -260,6 +261,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `).join('');
     }
+    */
     
     // Función para actualizar selector de rúbricas
     function actualizarSelectorRubricas() {
@@ -340,7 +342,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const nuevasRubricas = rubricas.filter(r => r.id !== rubricaId);
             localStorage.setItem('rubricas_guardadas', JSON.stringify(nuevasRubricas));
             
-            cargarListaRubricas();
+            // cargarListaRubricas();
             actualizarSelectorRubricas();
         }
     };
@@ -417,7 +419,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Exponer funciones globalmente para que puedan ser usadas por otros archivos
     window.RubricaConfig = {
-        cargarListaRubricas,
+        // cargarListaRubricas, // ELIMINADA
         actualizarSelectorRubricas,
         guardarRubricaEnLocalStorage
     };

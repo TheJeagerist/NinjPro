@@ -157,6 +157,15 @@
 .launcher-app-item:nth-child(9) .launcher-app-bg { background-color: #ff4757; }
 .launcher-app-item:nth-child(10) .launcher-app-bg { background-color: #5352ed; }
 
+/* Estilo especial para tarjeta roja - APLICACIÓN INICIO */
+.launcher-app-item.red .launcher-app-bg {
+  background-color: #e53e3e !important;
+}
+
+.launcher-app-item.red .launcher-app-category {
+  color: #ff6b6b !important;
+}
+
 /* Mini selector de temas en la tarjeta de configuración */
 .launcher-app-item .mini-theme-selector {
   position: absolute;
@@ -242,6 +251,40 @@
   }
   .launcher-app-item {
     max-width: 200px;
+  }
+}
+
+@media only screen and (max-width: 500px) {
+  .launcher-apps-grid {
+    grid-template-columns: minmax(136px, 150px);
+  }
+  .launcher-app-item {
+    max-width: 150px;
+  }
+  .launcher-app-link {
+    padding: 15px;
+  }
+  .launcher-app-icon {
+    font-size: 1.2rem;
+    margin-bottom: 9px;
+  }
+  .launcher-app-title {
+    font-size: 11px;
+    min-height: 27px;
+    margin-bottom: 6px;
+  }
+  .launcher-app-description {
+    font-size: 9px;
+    margin-bottom: 6px;
+  }
+  .launcher-app-category {
+    font-size: 8px;
+  }
+  .launcher-app-bg {
+    height: 75px;
+    width: 75px;
+    top: -37px;
+    right: -37px;
   }
 }
 
@@ -385,6 +428,16 @@ body.theme-light .launcher-app-item:nth-child(10) .launcher-app-bg {
   box-shadow: 0 8px 32px rgba(83, 82, 237, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
 }
 
+/* Estilo especial para tarjeta roja en tema light - APLICACIÓN INICIO */
+body.theme-light .launcher-app-item.red .launcher-app-bg {
+  background: linear-gradient(135deg, rgba(229, 62, 62, 0.8), rgba(255, 107, 107, 0.9)) !important;
+  box-shadow: 0 8px 32px rgba(229, 62, 62, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+
+body.theme-light .launcher-app-item.red .launcher-app-category {
+  color: rgba(139, 69, 19, 0.8) !important;
+}
+
 /* Textos con mejor contraste en tema light */
 body.theme-light .launcher-app-title {
   color: rgba(55, 65, 81, 0.95) !important;
@@ -480,11 +533,41 @@ body.theme-light .launcher-app-item .mini-theme-btn.active {
 @media only screen and (max-width: 639px) {
   body.theme-light .launcher-app-item {
     border-radius: 12px !important;
+    max-width: none;
   }
   
   body.theme-light .launcher-app-link {
     border-radius: 10px !important;
-    padding: 15px 18px !important;
+    padding: 15px 12px !important;
+  }
+}
+
+@media only screen and (max-width: 500px) {
+  body.theme-light .launcher-app-item {
+    border-radius: 10px !important;
+    max-width: none;
+    min-width: 140px;
+  }
+  
+  body.theme-light .launcher-app-link {
+    border-radius: 8px !important;
+    padding: 12px 10px !important;
+  }
+  
+  body.theme-light .launcher-app-icon {
+    font-size: 1.2rem;
+  }
+  
+  body.theme-light .launcher-app-title {
+    font-size: 11px !important;
+  }
+  
+  body.theme-light .launcher-app-description {
+    font-size: 9px !important;
+  }
+  
+  body.theme-light .launcher-app-category {
+    font-size: 8px !important;
   }
 }
 
@@ -521,6 +604,24 @@ body.theme-light .launcher-app-item .mini-theme-btn.active {
 
 @media only screen and (max-width: 639px) {
     .launcher-apps-grid {
-        grid-template-columns: minmax(200px, 300px);
-  }
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        max-width: 100%;
+    }
+    .launcher-app-item {
+        max-width: none;
+    }
+}
+
+@media only screen and (max-width: 500px) {
+    .launcher-apps-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        max-width: 100%;
+        padding: 0 8px;
+    }
+    .launcher-app-item {
+        max-width: none;
+        min-width: 140px;
+    }
 }

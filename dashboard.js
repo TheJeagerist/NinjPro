@@ -366,6 +366,24 @@ function navigateToTool(tool) {
                     window.location.href = 'organizador-salas.html';
                 }, 1500);
                 break;
+            case 'aprobado-reprobado':
+                showLoadingBar('Cargando Aprobado o Reprobado...', 'Preparando calculadora de promedio ponderado');
+                setTimeout(() => {
+                    window.location.href = 'aprobado-reprobado.html';
+                }, 1500);
+                break;
+            case 'escala-notas':
+                showLoadingBar('Cargando Generador de Escala de Notas...', 'Preparando herramienta de escalas');
+                setTimeout(() => {
+                    window.location.href = 'escala-notas.html';
+                }, 1500);
+                break;
+            case 'multiples-promedios':
+                showLoadingBar('Cargando Múltiples Promedios...', 'Preparando calculadora de notas parciales');
+                setTimeout(() => {
+                    window.location.href = 'multiples-promedios.html';
+                }, 1500);
+                break;
             // Casos OMR eliminados
             // case 'themes': - ELIMINADO
             default:
@@ -498,6 +516,19 @@ function returnToDashboard() {
     showDashboard();
     showCreditsButton();
     window.location.hash = '';
+}
+
+// Función optimizada para volver al launcher desde aplicaciones externas
+function fastReturnToLauncher() {
+    // Mostrar animación de carga rápida
+    showLoadingBar('Regresando al launcher...', 'Un momento por favor');
+    
+    // Simular un pequeño delay para UX suave
+    setTimeout(() => {
+        hideLoadingBar();
+        // Usar replace para evitar historial y hacer la transición más rápida
+        window.location.replace('index.html');
+    }, 300);
 }
 
 function filterTools(searchTerm) {
@@ -745,6 +776,7 @@ window.dashboardFunctions = {
     hideDashboard,
     navigateToTool,
     returnToDashboard,
+    fastReturnToLauncher,
     updateUserButtonState,
     showCreditsButton,
     hideCreditsButton,
@@ -756,31 +788,18 @@ window.dashboardFunctions = {
 // ================================
 
 /**
- * Muestra la barra de carga con texto personalizado
- * @param {string} text - Texto principal de carga
- * @param {string} subtext - Texto secundario (opcional)
+ * Muestra la barra de carga con la nueva animación PROFENINJA
+ * @param {string} text - Texto principal de carga (ya no se usa, siempre muestra PROFENINJA)
+ * @param {string} subtext - Texto secundario (ya no se usa)
  */
 function showLoadingBar(text = 'Cargando aplicación...', subtext = 'Por favor espera un momento') {
     const overlay = document.getElementById('loading-overlay');
-    const loadingText = document.getElementById('loading-text');
-    const loadingSubtext = document.getElementById('loading-subtext');
-    const progressBar = document.getElementById('loading-progress-bar');
     
-    if (overlay && loadingText && loadingSubtext && progressBar) {
-        // Configurar textos
-        loadingText.textContent = text;
-        loadingSubtext.textContent = subtext;
-        
-        // Resetear progreso
-        progressBar.style.width = '0%';
-        
-        // Mostrar overlay
+    if (overlay) {
+        // Mostrar overlay con la nueva animación
         overlay.classList.add('show');
         
-        // Simular progreso de carga
-        simulateLoadingProgress();
-        
-        console.log('🔄 Barra de carga mostrada:', text);
+        console.log('🔄 Barra de carga PROFENINJA mostrada:', text);
     }
 }
 
@@ -797,54 +816,22 @@ function hideLoadingBar() {
 }
 
 /**
- * Simula el progreso de carga con una animación realista
- */
-function simulateLoadingProgress() {
-    const progressBar = document.getElementById('loading-progress-bar');
-    if (!progressBar) return;
-    
-    let progress = 0;
-    const interval = setInterval(() => {
-        // Incremento variable para simular carga realista
-        const increment = Math.random() * 15 + 5; // Entre 5% y 20%
-        progress += increment;
-        
-        if (progress >= 100) {
-            progress = 100;
-            clearInterval(interval);
-        }
-        
-        progressBar.style.width = progress + '%';
-    }, 200); // Actualizar cada 200ms
-}
-
-/**
- * Actualiza el progreso de la barra manualmente
+ * Actualiza el progreso de la barra manualmente (función legacy - ya no se usa)
  * @param {number} percentage - Porcentaje de progreso (0-100)
  */
 function updateLoadingProgress(percentage) {
-    const progressBar = document.getElementById('loading-progress-bar');
-    if (progressBar) {
-        progressBar.style.width = Math.min(100, Math.max(0, percentage)) + '%';
-    }
+    // La nueva animación PROFENINJA no necesita progreso manual
+    console.log('📊 Progreso de carga (legacy):', percentage + '%');
 }
 
 /**
- * Actualiza el texto de la barra de carga
+ * Actualiza el texto de la barra de carga (función legacy - ya no se usa)
  * @param {string} text - Nuevo texto principal
  * @param {string} subtext - Nuevo texto secundario (opcional)
  */
 function updateLoadingText(text, subtext) {
-    const loadingText = document.getElementById('loading-text');
-    const loadingSubtext = document.getElementById('loading-subtext');
-    
-    if (loadingText && text) {
-        loadingText.textContent = text;
-    }
-    
-    if (loadingSubtext && subtext) {
-        loadingSubtext.textContent = subtext;
-    }
+    // La nueva animación PROFENINJA siempre muestra "PROFENINJA"
+    console.log('📝 Texto de carga (legacy):', text, subtext);
 }
 
 // Agregar funciones de carga al objeto global
@@ -852,6 +839,10 @@ window.dashboardFunctions.showLoadingBar = showLoadingBar;
 window.dashboardFunctions.hideLoadingBar = hideLoadingBar;
 window.dashboardFunctions.updateLoadingProgress = updateLoadingProgress;
 window.dashboardFunctions.updateLoadingText = updateLoadingText;
+window.dashboardFunctions.fastReturnToLauncher = fastReturnToLauncher;
+
+// Hacer la función disponible globalmente para fácil acceso
+window.fastReturnToLauncher = fastReturnToLauncher;
 
 // Listener para señales desde localStorage (comunicación con páginas externas)
 window.addEventListener('storage', function(e) {

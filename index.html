@@ -3,11 +3,11 @@
 <head> 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Calculadora de Promedio Ponderado</title>
+  <title>PROFENINJA - Dashboard</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="dashboard-styles.css">
   <link rel="stylesheet" href="launcher-cards.css">
-  <link rel="stylesheet" href="escala-notas-responsive.css">
+
   <link rel="stylesheet" href="matematicas-rapidas.css">
 
   <link rel="stylesheet" href="animated-backgrounds.css">
@@ -26,7 +26,7 @@
 
   <!-- Botón de Créditos en esquina superior izquierda -->
   <button id="credits-btn" class="credits-btn-fixed" role="button" title="Créditos y Licencias">
-    i
+    ℹ️
   </button>
 
   <!-- Botón para desplegar selector de temas -->
@@ -79,36 +79,36 @@
     <!-- Nuevo Launcher de Aplicaciones -->
     <div class="launcher-container">
       <div class="launcher-apps-grid">
-      <!-- Calculadora Principal -->
-        <div class="launcher-app-item" data-app="calculadora" data-category="calculadora">
-          <a href="#" class="launcher-app-link" data-tool="calculadora">
-            <div class="launcher-app-content">
-            <div class="launcher-app-icon">🧮</div>
-            <div class="launcher-app-title">Calculadora</div>
-            <div class="launcher-app-description">Promedio Ponderado</div>
-            <div class="launcher-app-category">Calculadora</div>
-            </div>
+      <!-- Inicio (anteriormente Gestión de Estudiantes) - PRIMERA APLICACIÓN -->
+        <div class="launcher-app-item red" data-app="estudiantes" data-category="configuracion">
+          <a href="#" class="launcher-app-link" data-tool="config">
+            <div class="launcher-app-icon">🏠</div>
+            <div class="launcher-app-title">Inicio</div>
+            <div class="launcher-app-description">Panel Principal</div>
+            <div class="launcher-app-category">Configuración</div>
             <div class="launcher-app-bg"></div>
           </a>
-      </div>
+        </div>
+
+
 
       <!-- Escala de Notas -->
-        <div class="launcher-app-item" data-app="conversor" data-category="calculadora">
-          <a href="#" class="launcher-app-link" data-tool="escala">
-            <div class="launcher-app-icon">🔄</div>
-            <div class="launcher-app-title">Escala de Notas</div>
-            <div class="launcher-app-description">Conversión de Escalas</div>
+        <div class="launcher-app-item" data-app="escala-notas" data-category="calculadora">
+          <a href="escala-notas.html" class="launcher-app-link" data-tool="escala-notas">
+            <div class="launcher-app-icon">📊</div>
+            <div class="launcher-app-title">Generador de Escala de Notas</div>
+            <div class="launcher-app-description">Escalas Normal, SIMCE y PAES</div>
             <div class="launcher-app-category">Calculadora</div>
             <div class="launcher-app-bg"></div>
           </a>
       </div>
 
       <!-- Múltiples Promedios -->
-        <div class="launcher-app-item" data-app="multi" data-category="calculadora">
-          <a href="#" class="launcher-app-link" data-tool="multi">
-            <div class="launcher-app-icon">📊</div>
-            <div class="launcher-app-title">Múltiples Promedios</div>
-            <div class="launcher-app-description">Gestión de Cursos</div>
+        <div class="launcher-app-item" data-app="multiples-promedios" data-category="calculadora">
+          <a href="multiples-promedios.html" class="launcher-app-link" data-tool="multiples-promedios">
+            <div class="launcher-app-icon">🧮</div>
+            <div class="launcher-app-title">Calculadora de Notas Parciales</div>
+            <div class="launcher-app-description">Múltiples Promedios</div>
             <div class="launcher-app-category">Calculadora</div>
             <div class="launcher-app-bg"></div>
           </a>
@@ -164,16 +164,7 @@
           </a>
       </div>
     
-      <!-- Gestión de Estudiantes -->
-        <div class="launcher-app-item" data-app="estudiantes" data-category="configuracion">
-          <a href="#" class="launcher-app-link" data-tool="config">
-            <div class="launcher-app-icon">👨‍🎓</div>
-            <div class="launcher-app-title">Gestión de Estudiantes</div>
-            <div class="launcher-app-description">Administración</div>
-            <div class="launcher-app-category">Configuración</div>
-            <div class="launcher-app-bg"></div>
-          </a>
-        </div>
+
 
         <!-- SIMCE -->
         <div class="launcher-app-item" data-app="simce" data-category="evaluacion">
@@ -256,74 +247,13 @@
   <!-- Sistema de fondos bg-wrap eliminado - ahora se usa animated-backgrounds.js -->
   </div>
 
-  <!-- Panel de Calculadora de Promedio Ponderado -->
-  <div class="container" id="calc-panel" style="display: none;">
-      <h1>Calculadora de Promedio Ponderado</h1>
-      
-      <!-- Panel superior con plantillas -->
-      <div class="top-panel">
-        <select id="tplSelect"><option value="">Seleccionar ramo</option></select>
-        <button id="show-ramo-panel" class="add-ramo-btn">+ Agregar Ramo</button>
-      </div>
 
-      <!-- Panel de guardado de ramos -->
-      <div class="template-controls" id="ramo-panel" style="display:none;">
-        <input type="text" id="tplName" placeholder="Nombre de ramo">
-        <div class="template-buttons">
-          <button id="delTpl">Eliminar</button>
-          <button id="saveTpl">Guardar</button>
-        </div>
-        <button id="hide-ramo-panel">Cerrar</button>
-      </div>
-
-      <div class="main">
-        <!-- Panel de notas -->
-        <div class="grades-panel">
-
-
-          <!-- Panel normal de notas -->
-          <div id="notas-normales">
-            <div class="controls">
-              <button class="btn-add" onclick="addRow()">+</button>
-              <button class="btn-remove" onclick="removeRow()">-</button>
-              <button class="btn-reset" onclick="resetAll()">↻</button>
-            </div>
-            
-            <div class="rows-wrapper">
-              <div class="labels">
-                <div>Notas</div>
-                <div>Ponderaciones</div>
-              </div>
-              <div id="rows-container"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Panel de resultados -->
-        <div class="results-panel" style="display: flex; flex-direction: column; gap: 15px;">
-          <div id="result-panel" class="result-panel red" style="display: block; opacity: 1; visibility: visible;">
-            <div id="result-title">Promedio ponderado</div>
-            <div id="result-value">0.00</div>
-            <div id="result-status">Reprobado</div>
-          </div>
-          
-          <div id="needed-panel" class="result-panel" style="display: none; opacity: 1; visibility: visible;">
-            <div id="needed-title">Nota mínima necesaria</div>
-            <div id="needed-value">-</div>
-          </div>
-
-          <!-- Botón calcular -->
-          <button id="calcBtn" onclick="calculateAverage()" style="display: block; opacity: 1; visibility: visible;">Calcular Promedio</button>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- Scripts originales -->
   <script src="script.js"></script>
   <script src="animated-backgrounds.js"></script>
   <script src="main.js"></script>
-  <script src="escala-notas-mobile.js"></script>
+
   <script src="multi-panel-functions.js"></script>
   <script src="rubricas.js"></script>
   <script src="rubrica-config.js"></script>
@@ -337,68 +267,7 @@
   <script src="supabase-adapter.js"></script>
   <script src="auth-manager.js"></script>
   <script src="supabase-init.js"></script>
-  <div id="escala-panel" style="display:none;max-width:900px;margin:40px auto 0 auto;">
-    <div class="container" style="background: var(--card-bg);">
-      <h2>Generador de Escala de Notas</h2>
-      
-      <!-- Panel de edición -->
-      <div class="inputs">
-        <div class="input-group">
-          <label for="puntajeMax">Puntaje máximo</label>
-          <input type="number" id="puntajeMax" min="1" value="100">
-        </div>
-        <div class="input-group">
-          <label for="exigencia">Exigencia (%)</label>
-          <input type="number" id="exigencia" min="0" max="100" value="60">
-        </div>
-        <div class="input-group">
-          <label for="notaMin">Nota mínima</label>
-          <input type="number" id="notaMin" step="0.1" min="1" max="10" value="1.0">
-        </div>
-        <div class="input-group">
-          <label for="notaMax">Nota máxima</label>
-          <input type="number" id="notaMax" step="0.1" min="1" max="10" value="7.0">
-        </div>
-        <div class="input-group">
-          <label for="notaAprob">Nota de aprobación</label>
-          <input type="number" id="notaAprob" step="0.1" min="1" max="10" value="4.0">
-        </div>
-      </div>
 
-      <!-- Botones de modo -->
-      <div class="tabla-controls">
-        <button class="tabla-mode-btn active" data-mode="normal">Normal</button>
-      </div>
-
-      <!-- Conversor de puntaje a nota -->
-      <div class="conversor-container">
-        <div class="conversor-title">Conversor de Puntaje a Nota</div>
-        <div class="conversor-inputs">
-          <div class="conversor-group">
-            <label class="conversor-label">Puntaje</label>
-            <input type="number" class="conversor-input" id="puntaje-input" placeholder="Ingrese puntaje">
-          </div>
-          <div class="conversor-group">
-            <label class="conversor-label">Nota</label>
-            <div class="conversor-result" id="nota-result">-.-</div>
-          </div>
-        </div>
-      </div>
-
-
-
-      <!-- Control de visibilidad de columnas -->
-      <div class="columnas-control">
-        <button id="toggle-columnas" class="tabla-mode-btn">
-          <span class="columnas-icon">📊</span>
-          <span class="columnas-texto">Ocultar tabla</span>
-        </button>
-      </div>
-
-      <!-- Tabla de escala -->
-      <div id="tablaEscala" class="tabla-multi"></div>
-    </div>
-  </div>
 
   <div id="multi-panel" style="display:none;">
     <div class="container">
@@ -562,17 +431,76 @@
   <!-- Panel de Inicio -->
   <div id="config" class="panel" style="display:none;">
     <div class="container">
-      <h2>Inicio</h2>
+     
       
       <!-- Contenedor horizontal para las secciones -->
       <div class="config-sections-container">
-          <!-- Sección de Gestión de Cursos - Izquierda -->
+          <!-- Panel de Instrucciones - Izquierda -->
+          <div class="config-section instructions-panel">
+              <h3>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M12 16v-4"></path>
+                      <path d="M12 8h.01"></path>
+                  </svg>
+                  Guía de Inicio
+              </h3>
+              
+              <div class="instructions-content">
+                  <div class="welcome-message">
+                      <h4>¡Bienvenido a PROFENINJA! 🚀</h4>
+                      <p>Estas son las primeras herramientas que necesitas conocer:</p>
+                  </div>
+                  
+                  <div class="instruction-steps">
+                      <div class="instruction-step">
+                          <div class="step-number">1</div>
+                          <div class="step-content">
+                              <h5>Carga tus estudiantes</h5>
+                              <p>Usa el botón "Cargar Lista de Estudiantes" para importar tu curso desde Excel.</p>
+                          </div>
+                      </div>
+                      
+                      <div class="instruction-step">
+                          <div class="step-number">2</div>
+                          <div class="step-content">
+                              <h5>Explora las herramientas</h5>
+                              <p>Navega por las diferentes aplicaciones desde el menú principal.</p>
+                          </div>
+                      </div>
+                      
+                      <div class="instruction-step">
+                          <div class="step-number">3</div>
+                          <div class="step-content">
+                              <h5>Sincronización automática</h5>
+                              <p>Los cursos que importes aquí estarán disponibles en todas las aplicaciones de PROFENINJA.</p>
+                          </div>
+                      </div>
+                  </div>
+                  
+                  <div class="ninja-tip">
+                      <div class="tip-icon">💡</div>
+                      <div class="tip-content">
+                          <strong>Tip NINJA:</strong> Una vez cargados tus cursos, podrás usar todas las herramientas sin necesidad de volver a importar datos.
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+          <!-- Sección de Gestión de Cursos - Derecha -->
           <div class="config-section">
-              <h3>Gestión de Cursos</h3>
+              <h3>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M9 12l2 2 4-4"></path>
+                      <path d="M21 12c.552 0 1-.448 1-1V5c0-.552-.448-1-1-1H3c-.552 0-1 .448-1 1v6c0 .552.448 1 1 1h18z"></path>
+                      <path d="M3 10h18"></path>
+                  </svg>
+                  Gestión de Estudiantes
+              </h3>
               
               <div class="config-controls">
                   <button id="btn-cargar-excel-config" class="btn-primary" type="button">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                           <polyline points="14 2 14 8 20 8"></polyline>
                           <line x1="12" y1="18" x2="12" y2="12"></line>
@@ -582,7 +510,7 @@
                   </button>
                   
                   <button id="btn-descargar-plantilla-config" class="btn-secondary" type="button">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                           <polyline points="7 10 12 15 17 10"></polyline>
                           <line x1="12" y1="15" x2="12" y2="3"></line>
@@ -597,71 +525,14 @@
                       <!-- Los cursos se cargarán dinámicamente aquí -->
                   </div>
                   
-                  <!-- Panel para mostrar estudiantes del curso seleccionado -->
-                  <div id="estudiantes-panel" class="estudiantes-panel" style="display: none;">
-                      <h4 id="curso-seleccionado-titulo">Estudiantes del curso</h4>
-                      <div class="estudiantes-header">
-                          <span class="estudiantes-count" id="estudiantes-count">0 estudiantes</span>
-                          <button id="cerrar-estudiantes" class="btn-cerrar">✕</button>
-                      </div>
-                      <div id="lista-estudiantes" class="lista-estudiantes">
-                          <!-- Los estudiantes se mostrarán aquí -->
-                      </div>
-                  </div>
-              </div>
-          </div>
 
-          <!-- Sección de Gestión de Rúbricas - Derecha -->
-          <div class="config-section">
-              <h3>Gestión de Rúbricas</h3>
-              
-              <div class="config-controls">
-                  <button id="btn-cargar-rubrica-config" class="btn-primary" type="button">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                          <polyline points="14 2 14 8 20 8"></polyline>
-                          <line x1="12" y1="18" x2="12" y2="12"></line>
-                          <line x1="9" y1="15" x2="15" y2="15"></line>
-                      </svg>
-                      Cargar Rúbrica desde Archivo
-                  </button>
-                  
-                  <button id="btn-descargar-plantilla-rubrica" class="btn-secondary" type="button">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                          <polyline points="7 10 12 15 17 10"></polyline>
-                          <line x1="12" y1="15" x2="12" y2="3"></line>
-                      </svg>
-                      Descargar Plantilla Rúbrica
-                  </button>
-              </div>
-
-              <div class="rubricas-list">
-                  <h4>Rúbricas Guardadas</h4>
-                  <div id="lista-rubricas" class="lista-rubricas">
-                      <!-- Las rúbricas se cargarán dinámicamente aquí -->
-                  </div>
               </div>
           </div>
       </div>
     </div>
   </div>
 
-  <!-- Panel independiente para mostrar estudiantes del curso -->
-  <div id="estudiantes-sidebar" class="estudiantes-sidebar">
-    <div class="estudiantes-sidebar-content">
-        <div class="estudiantes-sidebar-header">
-            <h3 id="estudiantes-sidebar-titulo">Estudiantes del curso</h3>
-            <button id="cerrar-estudiantes-sidebar" class="btn-cerrar-sidebar">✕</button>
-        </div>
-        <div class="estudiantes-sidebar-info">
-            <span id="estudiantes-sidebar-count">0 estudiantes</span>
-        </div>
-        <div id="estudiantes-sidebar-lista" class="estudiantes-sidebar-lista">
-            <!-- Los estudiantes se mostrarán aquí -->
-        </div>
-    </div>
-  </div>
+
   <!-- <script src="themes-editor.js"></script> - ELIMINADO -->
 
   
@@ -896,7 +767,7 @@
                 </div>
 
                 <div class="calculator-grid">
-                    <button class="calc-button primary" id="math-start-btn">�� Comenzar</button>
+                    <button class="calc-button primary" id="math-start-btn">Comenzar</button>
                 </div>
             </div>
 
@@ -981,14 +852,21 @@
   <!-- Barra de Carga Global -->
   <div id="loading-overlay" class="loading-overlay">
     <div class="loading-container">
-      <div class="loading-spinner"></div>
-      <h3 class="loading-text" id="loading-text">Cargando aplicación...</h3>
-      <p class="loading-subtext" id="loading-subtext">Por favor espera un momento</p>
-      <div class="loading-progress">
-        <div class="loading-progress-bar" id="loading-progress-bar"></div>
-      </div>
+      <div class="loader"></div>
     </div>
   </div>
+
+  <!-- Scripts -->
+  <script src="dashboard.js"></script>
+  <script>
+    // Hacer la función fastReturnToLauncher disponible globalmente desde el inicio
+    document.addEventListener('DOMContentLoaded', function() {
+      if (window.dashboardFunctions && window.dashboardFunctions.fastReturnToLauncher) {
+        window.fastReturnToLauncher = window.dashboardFunctions.fastReturnToLauncher;
+        console.log('✅ Función de retorno rápido al launcher disponible globalmente');
+      }
+    });
+  </script>
 
 </body>
 </html>

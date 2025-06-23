@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aprobado o Reprobado - PROFENINJA</title>
+    <link rel="stylesheet" href="aprobado-reprobado.css">
+    <link rel="stylesheet" href="animated-backgrounds.css">
+</head>
+<body>
+    <!-- Botón volver al launcher -->
+    <button id="btn-volver-launcher" class="btn-volver-launcher" title="Volver al launcher">
+        ←
+    </button>
+    
+    <div class="calculator-container">
+        <div class="calculator-panel">
+            <!-- Encabezado -->
+            <div class="calculator-header">
+                <h1>Calculadora de Promedio Ponderado</h1>
+            </div>
+
+            <!-- Contenido principal -->
+            <div class="calculator-content">
+                <!-- Panel izquierdo - Controles y notas -->
+                <div class="left-panel">
+                    <!-- Botones de control -->
+                    <div class="control-buttons">
+                        <button id="btn-agregar-fila" class="control-btn btn-add" title="Agregar fila">
+                            +
+                        </button>
+                        <button id="btn-eliminar-fila" class="control-btn btn-remove" title="Eliminar fila">
+                            −
+                        </button>
+                        <button id="btn-limpiar-todo" class="control-btn btn-clear" title="Limpiar todo">
+                            ↻
+                        </button>
+                    </div>
+
+                    <!-- Encabezados -->
+                    <div class="table-headers">
+                        <div class="header-nota">Nota</div>
+                        <div class="header-ponderacion">Ponderación</div>
+                    </div>
+
+                    <!-- Filas de notas -->
+                    <div id="filas-container" class="filas-container">
+                        <!-- Las filas se generarán dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- Panel derecho - Resultados -->
+                <div class="right-panel">
+                    <div class="resultado-container">
+                        <h3>Promedio ponderado</h3>
+                        <div id="promedio-valor" class="promedio-valor">0.00</div>
+                        <div id="estado-resultado" class="estado-resultado reprobado">Reprobado</div>
+                        <button id="btn-calcular" class="btn-calcular">Calcular Promedio</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="animated-backgrounds.js"></script>
+    <script src="aprobado-reprobado.js"></script>
+</body>
+</html> 

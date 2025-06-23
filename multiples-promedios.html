@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Notas Parciales - PROFENINJA</title>
+    <link rel="stylesheet" href="multiples-promedios.css">
+    <link rel="stylesheet" href="animated-backgrounds.css">
+</head>
+<body>
+    <!-- Botón volver al launcher -->
+    <button id="btn-volver-launcher" class="btn-volver-launcher" title="Volver al launcher">
+        ←
+    </button>
+    
+    <div class="multi-container">
+        <div class="multi-panel">
+            <!-- Encabezado -->
+            <div class="multi-header">
+                <h1>Calculadora de Notas Parciales</h1>
+            </div>
+
+            <!-- Controles superiores -->
+            <div class="controles-superiores">
+                <div class="selector-curso">
+                    <select id="selector-curso">
+                        <option value="">Seleccionar Curso</option>
+                    </select>
+                    <small class="curso-help">Los cursos se cargan desde Inicio → Gestión de Estudiantes</small>
+                </div>
+                <div class="botones-curso">
+                    <button id="btn-cargar-curso" class="btn-control cargar">
+                        📚 Cargar Curso
+                    </button>
+                    <button id="btn-recargar-cursos" class="btn-control recargar" title="Recargar cursos desde Gestión de Estudiantes">
+                        🔄 Actualizar Cursos
+                    </button>
+                    <button id="btn-limpiar-todo" class="btn-control limpiar">
+                        🗑️ Limpiar Todo
+                    </button>
+                </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="botones-accion">
+                <button id="btn-agregar-estudiante" class="btn-accion agregar">
+                    Agregar Estudiante
+                </button>
+                <button id="btn-eliminar-estudiante" class="btn-accion eliminar">
+                    Eliminar Estudiante
+                </button>
+            </div>
+
+            <!-- Controles de notas -->
+            <div class="controles-notas">
+                <div class="control-grupo">
+                    <input type="number" id="numero-notas" min="1" max="10" value="1" placeholder="Número de notas">
+                    <button id="btn-aplicar-notas" class="btn-aplicar">Número de notas</button>
+                </div>
+                <div class="control-grupo">
+                    <input type="number" id="porcentaje-dividir" min="1" max="100" value="100" placeholder="Porcentaje a dividir">
+                    <button id="btn-aplicar-porcentaje" class="btn-aplicar">Porcentaje a dividir</button>
+                </div>
+                <div class="control-grupo">
+                    <button id="btn-resetear-todos" class="btn-resetear">🔄 Resetear Todos</button>
+                </div>
+            </div>
+
+            <!-- Contenedor de estudiantes -->
+            <div id="estudiantes-container" class="estudiantes-container">
+                <!-- Los estudiantes se generan dinámicamente aquí -->
+            </div>
+
+            <!-- Botón calcular promedios -->
+            <div class="calcular-promedios-container">
+                <button id="btn-calcular-promedios" class="btn-calcular-promedios">
+                    🧮 Calcular Promedios
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="animated-backgrounds.js"></script>
+    <script src="multiples-promedios.js"></script>
+</body>
+</html> 

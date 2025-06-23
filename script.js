@@ -78,12 +78,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const configPanel = document.getElementById('config');
     const btnCargarExcel = document.getElementById('btn-cargar-excel-config');
     const btnDescargarPlantilla = document.getElementById('btn-descargar-plantilla-config');
+    
+
 
     console.log('=== DEBUG CONFIGURACIÓN ===');
     console.log('configBtn:', configBtn);
     console.log('configPanel:', configPanel);
     console.log('btnCargarExcel:', btnCargarExcel);
     console.log('btnDescargarPlantilla:', btnDescargarPlantilla);
+
     console.log('XLSX disponible:', typeof XLSX !== 'undefined');
 
     if (configBtn && configPanel) {
@@ -118,6 +121,8 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         console.error('No se encontró el botón de descargar plantilla config');
     }
+
+
 
     // Mostrar el panel de calculadora por defecto
     hideAllPanels();
@@ -510,3 +515,5 @@ function actualizarSelectoresCurso() {
         detail: { cursosData: cursosData }
     }));
 } 
+
+ 

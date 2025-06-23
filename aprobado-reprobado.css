@@ -1,0 +1,803 @@
+/* ===== APROBADO O REPROBADO - CALCULADORA DE PROMEDIO PONDERADO ===== */
+
+/* Variables específicas para la calculadora */
+:root {
+    --calc-primary: #3b82f6;
+    --calc-success: #10b981;
+    --calc-danger: #ef4444;
+    --calc-warning: #f59e0b;
+    --calc-purple: #8b5cf6;
+    
+    --calc-glass-bg: rgba(255, 255, 255, 0.15);
+    --calc-glass-border: rgba(255, 255, 255, 0.2);
+    --calc-blur: blur(20px);
+    --calc-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    --calc-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Reset específico */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Botón volver al launcher - Minimalista en esquina superior izquierda */
+.btn-volver-launcher {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    color: inherit;
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn-volver-launcher:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Configuración base del body */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    color: #ffffff;
+    overflow-x: hidden;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+/* Temas dinámicos - Exactamente como el sistema principal */
+body.theme-dark {
+    background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+    color: #ffffff;
+}
+
+body.theme-light {
+    background: linear-gradient(135deg, #e0f2fe 0%, #f3e5f5 50%, #fff3e0 100%);
+    color: #1a202c;
+}
+
+body.theme-rosa {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #ffffff;
+}
+
+body.theme-neon {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 50%, #2a1a4e 100%);
+    color: #ffffff;
+}
+
+/* Contenedor principal */
+.calculator-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+    position: relative;
+    z-index: 1;
+    gap: 1rem;
+}
+
+/* Panel principal de la calculadora - Exacto a la imagen */
+.calculator-panel {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    padding: 2.5rem;
+    max-width: 900px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.calculator-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    pointer-events: none;
+    border-radius: 24px;
+}
+
+/* Encabezado */
+.calculator-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+.calculator-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: inherit;
+}
+
+
+
+/* Contenido principal - Layout exacto a la imagen */
+.calculator-content {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 2rem;
+    position: relative;
+    z-index: 2;
+}
+
+/* Panel izquierdo */
+.left-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Botones de control - Exacto a la imagen */
+.control-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-start;
+    margin-bottom: 1rem;
+}
+
+.control-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    transition: var(--calc-transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Botón azul + */
+.btn-add {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+/* Botón rojo - */
+.btn-remove {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+}
+
+/* Botón amarillo 😊 */
+.btn-clear {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+}
+
+.control-btn:hover {
+    transform: translateY(-3px) scale(1.05);
+}
+
+.btn-add:hover {
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+}
+
+.btn-remove:hover {
+    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+}
+
+.btn-clear:hover {
+    box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+}
+
+/* Encabezados de tabla */
+.table-headers {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding: 0 0.5rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin-bottom: 1rem;
+}
+
+/* Contenedor de filas */
+.filas-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 0.5rem;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* Fila individual */
+.fila-nota {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    align-items: center;
+    animation: slideInRow 0.3s ease-out;
+}
+
+@keyframes slideInRow {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Inputs de nota - Amarillo exacto a la imagen */
+.input-nota {
+    background: rgba(255, 235, 59, 0.3);
+    border: 2px solid rgba(255, 235, 59, 0.4);
+    border-radius: 12px;
+    padding: 0.75rem;
+    font-size: 1rem;
+    color: inherit;
+    transition: var(--calc-transition);
+    backdrop-filter: blur(10px);
+}
+
+.input-nota:focus {
+    outline: none;
+    border-color: rgba(255, 235, 59, 0.8);
+    box-shadow: 0 0 0 3px rgba(255, 235, 59, 0.2);
+    transform: scale(1.02);
+}
+
+.input-nota::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Estilos para notas mínimas calculadas */
+.input-nota.nota-minima-calculada {
+    background: rgba(59, 130, 246, 0.25);
+    border-color: rgba(59, 130, 246, 0.6);
+    color: #60a5fa;
+    font-weight: 600;
+    font-style: italic;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+    animation: pulseBlue 2s infinite;
+}
+
+@keyframes pulseBlue {
+    0%, 100% { box-shadow: 0 0 10px rgba(59, 130, 246, 0.3); }
+    50% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+}
+
+/* Nota mínima cuando ya está aprobado */
+.input-nota.ya-aprobado {
+    background: rgba(16, 185, 129, 0.25);
+    border-color: rgba(16, 185, 129, 0.6);
+    color: #34d399;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+    animation: pulseGreen 2s infinite;
+}
+
+@keyframes pulseGreen {
+    0%, 100% { box-shadow: 0 0 10px rgba(16, 185, 129, 0.3); }
+    50% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.5); }
+}
+
+/* Nota imposible de alcanzar */
+.input-nota.imposible-aprobar {
+    background: rgba(239, 68, 68, 0.25);
+    border-color: rgba(239, 68, 68, 0.6);
+    color: #f87171;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+    animation: pulseRed 2s infinite;
+}
+
+@keyframes pulseRed {
+    0%, 100% { box-shadow: 0 0 10px rgba(239, 68, 68, 0.3); }
+    50% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.5); }
+}
+
+/* Mensaje de imposible aprobar - Minimalista */
+.mensaje-imposible-aprobar {
+    background: rgba(239, 68, 68, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    max-width: 900px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.15);
+    transform: translateY(10px);
+    opacity: 0;
+    transition: all 0.3s ease-out;
+}
+
+.mensaje-imposible-aprobar.mostrar {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.icono-imposible {
+    font-size: 1.5rem;
+    opacity: 0.8;
+}
+
+.texto-imposible {
+    text-align: center;
+}
+
+.texto-imposible h3 {
+    color: #ef4444;
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    opacity: 0.9;
+}
+
+.texto-imposible p {
+    color: rgba(239, 68, 68, 0.8);
+    font-size: 0.9rem;
+    margin: 0.25rem 0 0;
+    font-weight: 400;
+}
+
+.texto-imposible strong {
+    color: #ef4444;
+    font-weight: 600;
+}
+
+/* Grupo de ponderación */
+.ponderacion-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* Inputs de ponderación - Verde exacto a la imagen */
+.input-ponderacion {
+    background: rgba(76, 175, 80, 0.3);
+    border: 2px solid rgba(76, 175, 80, 0.4);
+    border-radius: 12px;
+    padding: 0.75rem;
+    padding-right: 2.5rem;
+    font-size: 1rem;
+    color: inherit;
+    transition: var(--calc-transition);
+    backdrop-filter: blur(10px);
+    width: 100%;
+}
+
+.input-ponderacion:focus {
+    outline: none;
+    border-color: rgba(76, 175, 80, 0.8);
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+    transform: scale(1.02);
+}
+
+.input-ponderacion::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.percent-symbol {
+    position: absolute;
+    right: 0.75rem;
+    font-weight: 600;
+    color: rgba(76, 175, 80, 0.8);
+    pointer-events: none;
+}
+
+/* Panel derecho - Resultados exacto a la imagen */
+.right-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.resultado-container {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    padding: 2rem;
+    text-align: center;
+    width: 100%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: var(--calc-transition);
+}
+
+.resultado-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.resultado-container h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    opacity: 0.9;
+    color: inherit;
+}
+
+/* Promedio valor grande - Exacto a la imagen */
+.promedio-valor {
+    font-size: 4rem;
+    font-weight: 800;
+    line-height: 1;
+    margin: 1rem 0;
+    color: inherit;
+}
+
+/* Estado resultado */
+.estado-resultado {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: var(--calc-transition);
+}
+
+.estado-resultado.aprobado {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.estado-resultado.reprobado {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.estado-resultado.pendiente {
+    background: rgba(245, 158, 11, 0.2);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+/* Botón calcular - Negro exacto a la imagen */
+.btn-calcular {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    border: none;
+    border-radius: 12px;
+    padding: 1rem 2rem;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--calc-transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-calcular::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: var(--calc-transition);
+}
+
+.btn-calcular:hover::before {
+    left: 100%;
+}
+
+.btn-calcular:hover {
+    background: rgba(0, 0, 0, 0.9);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Scrollbar personalizado */
+.filas-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.filas-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+}
+
+.filas-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}
+
+.filas-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Ajustes específicos para tema claro */
+body.theme-light .calculator-panel {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+body.theme-light .input-nota,
+body.theme-light .input-ponderacion {
+    background: rgba(255, 255, 255, 0.7);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+body.theme-light .input-nota::placeholder,
+body.theme-light .input-ponderacion::placeholder {
+    color: rgba(0, 0, 0, 0.5);
+}
+
+body.theme-light .filas-container {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+body.theme-light .mensaje-imposible-aprobar {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
+}
+
+body.theme-light .texto-imposible h3 {
+    color: #dc2626;
+}
+
+body.theme-light .texto-imposible p {
+    color: rgba(220, 38, 38, 0.8);
+}
+
+body.theme-light .texto-imposible strong {
+    color: #dc2626;
+}
+
+/* Ajustes específicos para tema neon */
+body.theme-neon .calculator-panel {
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.1);
+}
+
+body.theme-neon .control-btn {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+}
+
+body.theme-neon .mensaje-imposible-aprobar {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.5);
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3), 0 0 20px rgba(239, 68, 68, 0.1);
+}
+
+body.theme-rosa .mensaje-imposible-aprobar {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.25);
+}
+
+body.theme-dark .mensaje-imposible-aprobar {
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .calculator-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .right-panel {
+        order: -1;
+    }
+    
+    .resultado-container {
+        max-width: 400px;
+        margin: 0 auto;
+    }
+    
+    .promedio-valor {
+        font-size: 3rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .calculator-container {
+        padding: 1rem;
+        gap: 0.75rem;
+    }
+    
+    .calculator-panel {
+        padding: 1.5rem;
+        border-radius: 16px;
+    }
+    
+    .calculator-header h1 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    
+
+    
+    .control-buttons {
+        justify-content: center;
+        gap: 0.75rem;
+    }
+    
+    .control-btn {
+        width: 45px;
+        height: 45px;
+        font-size: 1.1rem;
+    }
+    
+    .table-headers {
+        font-size: 0.85rem;
+        padding: 0 0.25rem;
+    }
+    
+    .fila-nota {
+        gap: 0.75rem;
+    }
+    
+    .input-nota,
+    .input-ponderacion {
+        padding: 0.65rem;
+        font-size: 0.95rem;
+    }
+    
+    .filas-container {
+        max-height: 300px;
+        gap: 0.5rem;
+    }
+    
+    .resultado-container {
+        padding: 1.5rem;
+    }
+    
+    .promedio-valor {
+        font-size: 2.5rem;
+    }
+    
+    .btn-calcular {
+        padding: 0.875rem 1.5rem;
+        font-size: 1rem;
+    }
+    
+    .mensaje-imposible-aprobar {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .texto-imposible h3 {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .calculator-container {
+        padding: 0.5rem;
+        gap: 0.5rem;
+    }
+    
+    .calculator-panel {
+        padding: 1rem;
+        border-radius: 12px;
+    }
+    
+    .calculator-header h1 {
+        font-size: 1.25rem;
+    }
+    
+    .control-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .fila-nota {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+    
+    .table-headers {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+        text-align: center;
+    }
+    
+    .header-ponderacion {
+        margin-top: 0.5rem;
+    }
+    
+    .input-nota,
+    .input-ponderacion {
+        padding: 0.75rem;
+        text-align: center;
+    }
+    
+    .promedio-valor {
+        font-size: 2rem;
+    }
+    
+    .resultado-container {
+        padding: 1rem;
+    }
+    
+    .mensaje-imposible-aprobar {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.85rem;
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+    
+    .icono-imposible {
+        font-size: 1.25rem;
+    }
+    
+    .texto-imposible h3 {
+        font-size: 0.85rem;
+    }
+}
+
+/* Animaciones adicionales */
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.estado-resultado.aprobado {
+    animation: pulse 2s infinite;
+}
+
+/* Estados de hover mejorados */
+.calculator-panel:hover {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Optimización de rendimiento */
+.calculator-panel,
+.control-btn,
+.input-nota,
+.input-ponderacion,
+.resultado-container {
+    will-change: transform;
+} 

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Escala de Notas - PROFENINJA</title>
+    <link rel="stylesheet" href="escala-notas.css">
+    <link rel="stylesheet" href="animated-backgrounds.css">
+</head>
+<body>
+    <!-- Botón volver al launcher -->
+    <button id="btn-volver-launcher" class="btn-volver-launcher" title="Volver al launcher">
+        ←
+    </button>
+    
+    <div class="escala-container">
+        <div class="escala-panel">
+            <!-- Encabezado -->
+            <div class="escala-header">
+                <h1>Generador de Escala de Notas</h1>
+            </div>
+
+
+
+            <!-- Inputs principales -->
+            <div class="inputs-container">
+                <div class="input-group">
+                    <label for="puntaje-maximo">Puntaje máximo</label>
+                    <input type="number" id="puntaje-maximo" value="100" min="1" max="1500">
+                </div>
+                <div class="input-group">
+                    <label for="exigencia">Exigencia (%)</label>
+                    <input type="number" id="exigencia" value="60" min="0" max="100">
+                </div>
+                <div class="input-group">
+                    <label for="nota-minima">Nota mínima</label>
+                    <input type="number" id="nota-minima" value="1.0" min="1.0" max="7.0" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label for="nota-maxima">Nota máxima</label>
+                    <input type="number" id="nota-maxima" value="7.0" min="1.0" max="7.0" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label for="nota-aprobacion">Nota de aprobación</label>
+                    <input type="number" id="nota-aprobacion" value="4.0" min="1.0" max="7.0" step="0.1">
+                </div>
+            </div>
+
+
+
+            <!-- Conversor de puntaje a nota -->
+            <div class="conversor-container">
+                <div class="conversor-header">
+                    <h3>Conversor de Puntaje a Nota</h3>
+                </div>
+                <div class="conversor-content">
+                    <div class="conversor-group">
+                        <label>Puntaje</label>
+                        <input type="number" id="conversor-puntaje" placeholder="Ingrese puntaje">
+                    </div>
+                    <div class="conversor-group">
+                        <label>Nota</label>
+                        <div id="conversor-resultado" class="conversor-resultado">--</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botón ocultar tabla -->
+            <div class="tabla-controls">
+                <button id="btn-ocultar-tabla" class="btn-ocultar">
+                    <span class="tabla-icon">📊</span>
+                    Ocultar tabla
+                </button>
+            </div>
+
+            <!-- Tabla de escala (se genera dinámicamente) -->
+            <div id="tabla-escala-container" class="tabla-container">
+                <div id="tabla-escala" class="tabla-escala">
+                    <!-- La tabla se genera aquí -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="animated-backgrounds.js"></script>
+    <script src="escala-notas.js"></script>
+</body>
+</html> 
